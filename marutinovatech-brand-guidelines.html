@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marutinovatech — Brand Guidelines</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black:    #0A0A10;
+    --surface:  #12121A;
+    --card:     #1A1A26;
+    --border:   rgba(255,255,255,0.08);
+    --teal:     #00E5C8;
+    --teal-dim: rgba(0,229,200,0.12);
+    --coral:    #FF6B4A;
+    --coral-dim:rgba(255,107,74,0.12);
+    --white:    #F4F4F0;
+    --muted:    #7A7A96;
+    --font-display: 'Sora', sans-serif;
+    --font-body:    'DM Sans', sans-serif;
+    --font-mono:    'DM Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  /* COVER */
+  .cover {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    padding: 80px 40px;
+    text-align: center;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    width: 700px; height: 700px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,229,200,0.07) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+  }
+  .cover-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+  .cover-content { position: relative; z-index: 1; }
+  .cover-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 48px;
+    opacity: 0.8;
+  }
+  .cover h1 {
+    font-family: var(--font-display);
+    font-size: clamp(36px, 6vw, 72px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    margin-bottom: 20px;
+  }
+  .cover h1 span { color: var(--teal); }
+  .cover-sub {
+    font-size: 18px;
+    color: var(--muted);
+    font-weight: 300;
+    max-width: 480px;
+    margin: 0 auto 60px;
+  }
+  .cover-divider {
+    width: 1px; height: 60px;
+    background: linear-gradient(to bottom, var(--teal), transparent);
+    margin: 0 auto;
+  }
+
+  /* SECTIONS */
+  section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 100px 40px;
+    border-top: 1px solid var(--border);
+  }
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 16px;
+    opacity: 0.7;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-bottom: 12px;
+  }
+  .section-desc {
+    color: var(--muted);
+    font-size: 16px;
+    max-width: 560px;
+    margin-bottom: 64px;
+    font-weight: 300;
+  }
+
+  /* LOGO SECTION */
+  .logo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+  }
+  .logo-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 64px 48px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    position: relative;
+  }
+  .logo-card:first-child { border-radius: 16px 0 0 0; }
+  .logo-card:nth-child(2) { border-radius: 0 16px 0 0; background: #F4F4F0; }
+  .logo-card:nth-child(3) { border-radius: 0 0 0 16px; background: var(--card); }
+  .logo-card:last-child { border-radius: 0 0 16px 0; background: var(--teal); }
+  .logo-card-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    position: absolute;
+    bottom: 20px; left: 24px;
+  }
+  .logo-card:nth-child(2) .logo-card-label,
+  .logo-card:nth-child(4) .logo-card-label { color: rgba(10,10,16,0.4); }
+
+  /* THE ACTUAL LOGO MARK */
+  .logo-mark { display: flex; align-items: center; gap: 16px; }
+  .logo-icon { flex-shrink: 0; }
+  .logo-wordmark {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .logo-wordmark .maruti { font-weight: 300; }
+  .logo-wordmark .nova   { font-weight: 800; }
+  .logo-wordmark .tech   { font-weight: 400; opacity: 0.55; font-size: 0.7em; display: block; letter-spacing: 0.04em; text-transform: uppercase; font-family: var(--font-mono); margin-top: 2px; }
+
+  /* COLOR SECTION */
+  .color-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .color-block {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .color-swatch {
+    height: 120px;
+  }
+  .color-info {
+    padding: 14px 16px;
+    background: var(--surface);
+  }
+  .color-name {
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  .color-hex {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .color-role {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* TYPOGRAPHY SECTION */
+  .type-showcase {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 56px 56px;
+    margin-bottom: 32px;
+  }
+  .type-display {
+    font-family: var(--font-display);
+    font-size: 64px;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .type-display span { color: var(--teal); }
+  .type-alphabet {
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 300;
+    color: var(--muted);
+    letter-spacing: -0.01em;
+    line-height: 1.4;
+    margin-bottom: 40px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 40px;
+  }
+  .type-samples {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+  .type-sample-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .type-h1 { font-family: var(--font-display); font-size: 36px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; }
+  .type-h2 { font-family: var(--font-display); font-size: 24px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.2; }
+  .type-h3 { font-family: var(--font-display); font-size: 18px; font-weight: 600; line-height: 1.3; }
+  .type-body { font-family: var(--font-body); font-size: 16px; font-weight: 400; line-height: 1.7; color: var(--muted); }
+  .type-caption { font-family: var(--font-body); font-size: 13px; font-weight: 400; color: var(--muted); line-height: 1.5; }
+  .type-mono { font-family: var(--font-mono); font-size: 13px; color: var(--teal); }
+
+  /* BRAND VOICE */
+  .voice-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .voice-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+  }
+  .voice-card.accent-teal { border-color: rgba(0,229,200,0.25); }
+  .voice-card.accent-coral { border-color: rgba(255,107,74,0.25); }
+  .voice-card h4 {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .voice-card p { color: var(--muted); font-size: 15px; font-weight: 300; line-height: 1.6; }
+  .voice-dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+
+  /* UI COMPONENTS */
+  .ui-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+  .ui-demo {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 40px;
+  }
+  .ui-demo h4 {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+
+  /* BUTTONS */
+  .btn-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }
+  .btn {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    letter-spacing: -0.01em;
+    transition: transform 0.15s, opacity 0.15s;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-primary { background: var(--teal); color: var(--black); }
+  .btn-secondary { background: transparent; color: var(--white); border: 1px solid rgba(255,255,255,0.2); }
+  .btn-accent { background: var(--coral); color: var(--white); }
+  .btn-ghost { background: var(--teal-dim); color: var(--teal); }
+  .btn-sm { padding: 8px 16px; font-size: 12px; border-radius: 8px; }
+
+  /* TAGS/BADGES */
+  .badge {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: 6px;
+    letter-spacing: 0.05em;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .badge-teal { background: var(--teal-dim); color: var(--teal); }
+  .badge-coral { background: var(--coral-dim); color: var(--coral); }
+  .badge-neutral { background: rgba(255,255,255,0.06); color: var(--muted); }
+
+  /* CARD COMPONENT */
+  .course-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 12px;
+  }
+  .course-card h5 {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+  .course-card p { font-size: 13px; color: var(--muted); font-weight: 300; line-height: 1.5; }
+  .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; }
+
+  /* SPACING */
+  .spacing-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 12px;
+    align-items: end;
+  }
+  .spacing-block {
+    background: linear-gradient(to top, var(--teal), transparent);
+    border-radius: 4px;
+    opacity: 0.7;
+  }
+  .spacing-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 8px;
+  }
+
+  /* LOGO CLEARSPACE */
+  .clearspace-demo {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 32px;
+  }
+  .clearspace-inner {
+    position: relative;
+    padding: 40px;
+    border: 1px dashed rgba(0,229,200,0.3);
+    border-radius: 4px;
+  }
+  .clearspace-arrow {
+    position: absolute;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: rgba(0,229,200,0.5);
+    letter-spacing: 0.1em;
+  }
+  .clearspace-arrow.top { top: -28px; left: 50%; transform: translateX(-50%); }
+  .clearspace-arrow.bottom { bottom: -28px; left: 50%; transform: translateX(-50%); }
+  .clearspace-arrow.left { left: -56px; top: 50%; transform: translateY(-50%); }
+  .clearspace-arrow.right { right: -56px; top: 50%; transform: translateY(-50%); }
+
+  /* DON'T DO */
+  .donts-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .dont-card {
+    background: var(--surface);
+    border: 1px solid rgba(255,107,74,0.2);
+    border-radius: 16px;
+    padding: 28px;
+    position: relative;
+  }
+  .dont-card::before {
+    content: '✕';
+    position: absolute;
+    top: 16px; right: 16px;
+    color: var(--coral);
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .dont-card h5 {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--coral);
+  }
+  .dont-card p { font-size: 13px; color: var(--muted); line-height: 1.5; font-weight: 300; }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 60px 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  footer p { font-size: 13px; color: var(--muted); font-weight: 300; }
+  footer .footer-brand {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--white);
+  }
+  footer .footer-brand span { color: var(--teal); }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .logo-grid { grid-template-columns: 1fr; }
+    .logo-card:first-child { border-radius: 16px 16px 0 0; }
+    .logo-card:nth-child(2) { border-radius: 0; background: #F4F4F0; }
+    .logo-card:nth-child(3) { border-radius: 0; }
+    .logo-card:last-child { border-radius: 0 0 16px 16px; }
+    .color-row { grid-template-columns: repeat(3, 1fr); }
+    .type-samples { grid-template-columns: 1fr; }
+    .voice-grid, .ui-grid, .donts-grid { grid-template-columns: 1fr; }
+    .spacing-grid { grid-template-columns: repeat(4, 1fr); }
+    footer { flex-direction: column; gap: 16px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ COVER PAGE ═══ -->
+<div class="cover">
+  <div class="cover-grid"></div>
+  <div class="cover-content">
+    <p class="cover-label">Brand Identity System · v1.0</p>
+    
+    <!-- MAIN LOGO -->
+    <div style="display:flex; align-items:center; justify-content:center; gap:20px; margin-bottom:48px;">
+      <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+        <!-- Hexagon base -->
+        <path d="M32 4L56 18V46L32 60L8 46V18L32 4Z" fill="rgba(0,229,200,0.08)" stroke="rgba(0,229,200,0.3)" stroke-width="1"/>
+        <!-- Inner M-spark glyph -->
+        <path d="M18 42V24L25 34L32 22L39 34L46 24V42" stroke="#00E5C8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <!-- Spark dot at apex -->
+        <circle cx="32" cy="18" r="3" fill="#00E5C8"/>
+        <!-- Small dots on M peaks -->
+        <circle cx="25" cy="34" r="1.5" fill="rgba(0,229,200,0.5)"/>
+        <circle cx="39" cy="34" r="1.5" fill="rgba(0,229,200,0.5)"/>
+      </svg>
+      <div style="text-align:left;">
+        <div style="font-family:'Sora',sans-serif; font-size:42px; font-weight:800; letter-spacing:-0.04em; line-height:1; color:#F4F4F0;">
+          maruti<span style="color:#00E5C8;">nova</span>tech
+        </div>
+        <div style="font-family:'DM Mono',monospace; font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:rgba(122,122,150,0.8); margin-top:6px;">
+          Upskill · Accelerate · Get Hired
+        </div>
+      </div>
+    </div>
+
+    <h1>Brand<br><span>Guidelines</span></h1>
+    <p class="cover-sub">A unified visual system for Marutinovatech — built to inspire the next generation of tech talent.</p>
+    <div class="cover-divider"></div>
+  </div>
+</div>
+
+
+<!-- ═══ LOGO SECTION ═══ -->
+<section id="logo">
+  <p class="section-label">01 — Logo System</p>
+  <h2 class="section-title">The Mark</h2>
+  <p class="section-desc">The Marutinovatech logo is a hexagonal mark combining a stylized M-form with a spark node at its apex — symbolising the convergence of skill, technology, and the nova (explosion) of potential.</p>
+
+  <!-- Logo on 4 backgrounds -->
+  <div class="logo-grid" style="margin-bottom: 48px;">
+    <!-- Dark -->
+    <div class="logo-card">
+      <div class="logo-mark">
+        <svg class="logo-icon" width="52" height="52" viewBox="0 0 64 64" fill="none">
+          <path d="M32 4L56 18V46L32 60L8 46V18L32 4Z" fill="rgba(0,229,200,0.08)" stroke="rgba(0,229,200,0.3)" stroke-width="1"/>
+          <path d="M18 42V24L25 34L32 22L39 34L46 24V42" stroke="#00E5C8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <circle cx="32" cy="18" r="3" fill="#00E5C8"/>
+          <circle cx="25" cy="34" r="1.5" fill="rgba(0,229,200,0.5)"/>
+          <circle cx="39" cy="34" r="1.5" fill="rgba(0,229,200,0.5)"/>
+        </svg>
+        <div class="logo-wordmark" style="font-size:28px; color:#F4F4F0;">
+          <span class="maruti">maruti</span><span class="nova" style="color:#00E5C8;">nova</span>tech
+          <span class="tech" style="color:rgba(244,244,240,0.4);">Upskill · Accelerate</span>
+        </div>
+      </div>
+      <span class="logo-card-label">Dark Background</span>
+    </div>
+
+    <!-- Light -->
+    <div class="logo-card">
+      <div class="logo-mark">
+        <svg class="logo-icon" width="52" height="52" viewBox="0 0 64 64" fill="none">
+          <path d="M32 4L56 18V46L32 60L8 46V18L32 4Z" fill="rgba(0,100,90,0.08)" stroke="rgba(0,150,130,0.4)" stroke-width="1"/>
+          <path d="M18 42V24L25 34L32 22L39 34L46 24V42" stroke="#009E8C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <circle cx="32" cy="18" r="3" fill="#009E8C"/>
+          <circle cx="25" cy="34" r="1.5" fill="rgba(0,158,140,0.5)"/>
+          <circle cx="39" cy="34" r="1.5" fill="rgba(0,158,140,0.5)"/>
+        </svg>
+        <div class="logo-wordmark" style="font-size:28px; color:#0A0A10;">
+          <span class="maruti">maruti</span><span class="nova" style="color:#009E8C;">nova</span>tech
+          <span class="tech" style="color:rgba(10,10,16,0.4);">Upskill · Accelerate</span>
+        </div>
+      </div>
+      <span class="logo-card-label" style="color:rgba(10,10,16,0.35);">Light Background</span>
+    </div>
+
+    <!-- Icon only -->
+    <div class="logo-card" style="gap:16px;">
+      <svg width="72" height="72" viewBox="0 0 64 64" fill="none">
+        <path d="M32 4L56 18V46L32 60L8 46V18L32 4Z" fill="rgba(0,229,200,0.1)" stroke="rgba(0,229,200,0.35)" stroke-width="1"/>
+        <path d="M18 42V24L25 34L32 22L39 34L46 24V42" stroke="#00E5C8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <circle cx="32" cy="18" r="3" fill="#00E5C8"/>
+        <circle cx="25" cy="34" r="1.5" fill="rgba(0,229,200,0.5)"/>
+        <circle cx="39" cy="34" r="1.5" fill="rgba(0,229,200,0.5)"/>
+      </svg>
+      <span class="badge badge-neutral" style="font-size:11px;">Icon mark only</span>
+      <span class="logo-card-label">Icon Variant</span>
+    </div>
+
+    <!-- Teal bg -->
+    <div class="logo-card">
+      <div class="logo-mark">
+        <svg class="logo-icon" width="52" height="52" viewBox="0 0 64 64" fill="none">
+          <path d="M32 4L56 18V46L32 60L8 46V18L32 4Z" fill="rgba(0,0,0,0.15)" stroke="rgba(0,0,0,0.3)" stroke-width="1"/>
+          <path d="M18 42V24L25 34L32 22L39 34L46 24V42" stroke="#0A0A10" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <circle cx="32" cy="18" r="3" fill="#0A0A10"/>
+          <circle cx="25" cy="34" r="1.5" fill="rgba(10,10,16,0.5)"/>
+          <circle cx="39" cy="34" r="1.5" fill="rgba(10,10,16,0.5)"/>
+        </svg>
+        <div class="logo-wordmark" style="font-size:28px; color:#0A0A10;">
+          <span class="maruti">maruti</span><span class="nova">nova</span>tech
+          <span class="tech" style="color:rgba(10,10,16,0.5);">Upskill · Accelerate</span>
+        </div>
+      </div>
+      <span class="logo-card-label" style="color:rgba(10,10,16,0.35);">Brand Teal Background</span>
+    </div>
+  </div>
+
+  <!-- Logo anatomy -->
+  <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 56px; display: flex; gap: 64px; align-items: center;">
+    <svg width="180" height="180" viewBox="0 0 180 180" fill="none">
+      <!-- Big version for anatomy -->
+      <path d="M90 10L162 52V136L90 178L18 136V52L90 10Z" fill="rgba(0,229,200,0.06)" stroke="rgba(0,229,200,0.25)" stroke-width="1.5"/>
+      <path d="M44 122V68L65 98L90 60L115 98L136 68V122" stroke="#00E5C8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <circle cx="90" cy="48" r="8" fill="#00E5C8"/>
+      <circle cx="65" cy="98" r="4" fill="rgba(0,229,200,0.4)"/>
+      <circle cx="115" cy="98" r="4" fill="rgba(0,229,200,0.4)"/>
+      <!-- Annotation lines -->
+      <line x1="90" y1="36" x2="170" y2="16" stroke="rgba(0,229,200,0.2)" stroke-width="1" stroke-dasharray="3 3"/>
+      <line x1="136" y1="68" x2="170" y2="56" stroke="rgba(0,229,200,0.2)" stroke-width="1" stroke-dasharray="3 3"/>
+      <line x1="44" y1="95" x2="10" y2="75" stroke="rgba(0,229,200,0.2)" stroke-width="1" stroke-dasharray="3 3"/>
+    </svg>
+    <div style="flex: 1;">
+      <h3 style="font-family:'Sora',sans-serif; font-size:22px; font-weight:700; margin-bottom:28px; letter-spacing:-0.02em;">Logo Anatomy</h3>
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div style="display:flex; gap:16px; align-items:flex-start;">
+          <div style="width:8px; height:8px; border-radius:50%; background:#00E5C8; margin-top:6px; flex-shrink:0;"></div>
+          <div>
+            <div style="font-family:'Sora',sans-serif; font-size:14px; font-weight:600; margin-bottom:2px;">Nova Spark</div>
+            <div style="font-size:13px; color:var(--muted); font-weight:300;">The apex node represents the "nova" — a burst of new potential and the ignition point of learning.</div>
+          </div>
+        </div>
+        <div style="display:flex; gap:16px; align-items:flex-start;">
+          <div style="width:8px; height:8px; border-radius:50%; background:rgba(0,229,200,0.5); margin-top:6px; flex-shrink:0;"></div>
+          <div>
+            <div style="font-family:'Sora',sans-serif; font-size:14px; font-weight:600; margin-bottom:2px;">M-Form Path</div>
+            <div style="font-size:13px; color:var(--muted); font-weight:300;">The M stroke symbolises the journey of a student — rising, dipping (challenges), and rising again to success.</div>
+          </div>
+        </div>
+        <div style="display:flex; gap:16px; align-items:flex-start;">
+          <div style="width:8px; height:8px; border-radius:4px; background:rgba(0,229,200,0.15); border:1px solid rgba(0,229,200,0.3); margin-top:6px; flex-shrink:0;"></div>
+          <div>
+            <div style="font-family:'Sora',sans-serif; font-size:14px; font-weight:600; margin-bottom:2px;">Hexagon Frame</div>
+            <div style="font-size:13px; color:var(--muted); font-weight:300;">The hexagon is the geometry of efficiency and structure — a nod to circuits, hive minds, and engineering precision.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══ COLORS ═══ -->
+<section id="colors">
+  <p class="section-label">02 — Color System</p>
+  <h2 class="section-title">Color Palette</h2>
+  <p class="section-desc">Built on a deep-space foundation with electric teal as the primary action color and coral as the energy accent for Job Acceleration programs.</p>
+
+  <div class="color-row">
+    <div class="color-block">
+      <div class="color-swatch" style="background:#0A0A10;"></div>
+      <div class="color-info">
+        <div class="color-name">Deep Space</div>
+        <div class="color-hex">#0A0A10</div>
+        <div class="color-role">Primary Background</div>
+      </div>
+    </div>
+    <div class="color-block">
+      <div class="color-swatch" style="background:#00E5C8;"></div>
+      <div class="color-info">
+        <div class="color-name">Nova Teal</div>
+        <div class="color-hex">#00E5C8</div>
+        <div class="color-role">Primary Brand · CTA</div>
+      </div>
+    </div>
+    <div class="color-block">
+      <div class="color-swatch" style="background:#FF6B4A;"></div>
+      <div class="color-info">
+        <div class="color-name">Ignite Coral</div>
+        <div class="color-hex">#FF6B4A</div>
+        <div class="color-role">Job Acceleration</div>
+      </div>
+    </div>
+    <div class="color-block">
+      <div class="color-swatch" style="background:#F4F4F0;"></div>
+      <div class="color-info">
+        <div class="color-name">Cloud White</div>
+        <div class="color-hex">#F4F4F0</div>
+        <div class="color-role">Primary Text · Light</div>
+      </div>
+    </div>
+    <div class="color-block">
+      <div class="color-swatch" style="background:#7A7A96;"></div>
+      <div class="color-info">
+        <div class="color-name">Nebula Gray</div>
+        <div class="color-hex">#7A7A96</div>
+        <div class="color-role">Secondary Text</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="color-row">
+    <div class="color-block">
+      <div class="color-swatch" style="background:#12121A;"></div>
+      <div class="color-info">
+        <div class="color-name">Surface</div>
+        <div class="color-hex">#12121A</div>
+        <div class="color-role">Card Background</div>
+      </div>
+    </div>
+    <div class="color-block">
+      <div class="color-swatch" style="background:rgba(0,229,200,0.12);"></div>
+      <div class="color-info">
+        <div class="color-name">Teal Dim</div>
+        <div class="color-hex">Teal / 12%</div>
+        <div class="color-role">Ghost Buttons · Tags</div>
+      </div>
+    </div>
+    <div class="color-block">
+      <div class="color-swatch" style="background:rgba(255,107,74,0.12);"></div>
+      <div class="color-info">
+        <div class="color-name">Coral Dim</div>
+        <div class="color-hex">Coral / 12%</div>
+        <div class="color-role">Accent Tags</div>
+      </div>
+    </div>
+    <div class="color-block">
+      <div class="color-swatch" style="background:#1A1A26;"></div>
+      <div class="color-info">
+        <div class="color-name">Card Dark</div>
+        <div class="color-hex">#1A1A26</div>
+        <div class="color-role">Elevated Cards</div>
+      </div>
+    </div>
+    <div class="color-block">
+      <div class="color-swatch" style="background:rgba(255,255,255,0.08);"></div>
+      <div class="color-info">
+        <div class="color-name">Border</div>
+        <div class="color-hex">White / 8%</div>
+        <div class="color-role">Dividers · Borders</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Color usage note -->
+  <div style="background: var(--teal-dim); border: 1px solid rgba(0,229,200,0.2); border-radius: 14px; padding: 24px 28px; margin-top: 12px; display: flex; gap: 16px; align-items: flex-start;">
+    <div style="width:6px; height:6px; border-radius:50%; background:var(--teal); margin-top:7px; flex-shrink:0;"></div>
+    <div>
+      <strong style="font-family:'Sora',sans-serif; font-size:14px; font-weight:600;">Color Usage Rule:</strong>
+      <span style="font-size:14px; color:var(--muted); font-weight:300; margin-left:8px;">Nova Teal is for learning, skill, and progress. Ignite Coral is exclusively reserved for Job Acceleration Program touchpoints. Never use both colors at equal weight on the same surface.</span>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══ TYPOGRAPHY ═══ -->
+<section id="typography">
+  <p class="section-label">03 — Typography</p>
+  <h2 class="section-title">Type System</h2>
+  <p class="section-desc">Sora for display and headings — geometric, confident, and technically precise. DM Sans for body — warm, approachable, and readable at any size.</p>
+
+  <div class="type-showcase">
+    <div class="type-display">Upskill.<br><span>Get Hired.</span></div>
+    <div class="type-alphabet" style="margin-top:16px;">
+      Sora Display — A B C D E F G H I J K L M N O P Q R S T U V W X Y Z<br>
+      a b c d e f g h i j k l m n o p q r s t u v w x y z 0 1 2 3 4 5 6 7 8 9
+    </div>
+    <div class="type-samples">
+      <div>
+        <p class="type-sample-label">Heading 1 — Sora 700 / 36px / -2%</p>
+        <p class="type-h1">Data Science Mastery</p>
+      </div>
+      <div>
+        <p class="type-sample-label">Heading 2 — Sora 600 / 24px / -1%</p>
+        <p class="type-h2">Job Acceleration Program</p>
+      </div>
+      <div>
+        <p class="type-sample-label">Heading 3 — Sora 600 / 18px</p>
+        <p class="type-h3">Resume Optimization & Mock Interviews</p>
+      </div>
+      <div>
+        <p class="type-sample-label">Body — DM Sans 400 / 16px</p>
+        <p class="type-body">Our expert trainers solve your real-world blockers and guide you step by step from confusion to confidence — and from course completion to job offer.</p>
+      </div>
+      <div>
+        <p class="type-sample-label">Caption — DM Sans 400 / 13px</p>
+        <p class="type-caption">All courses include lifetime access, doubt-clearing sessions, and a dedicated career support team.</p>
+      </div>
+      <div>
+        <p class="type-sample-label">Mono — DM Mono 400 / 13px</p>
+        <p class="type-mono">DATA_SCIENCE · DATA_ENGINEERING · ML_OPS</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Font pairing note -->
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 28px;">
+      <p class="type-sample-label" style="margin-bottom:12px;">Display Font</p>
+      <div style="font-family:'Sora',sans-serif; font-size:32px; font-weight:800; letter-spacing:-0.03em; margin-bottom:8px;">Sora</div>
+      <div style="font-size:13px; color:var(--muted); font-weight:300; line-height:1.6;">Weights used: 300 Light, 400 Regular, 600 SemiBold, 700 Bold, 800 ExtraBold. Never use below 300.</div>
+    </div>
+    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 28px;">
+      <p class="type-sample-label" style="margin-bottom:12px;">Body Font</p>
+      <div style="font-family:'DM Sans',sans-serif; font-size:32px; font-weight:400; margin-bottom:8px;">DM Sans</div>
+      <div style="font-size:13px; color:var(--muted); font-weight:300; line-height:1.6;">Weights used: 300 Light, 400 Regular, 500 Medium. Line height minimum 1.6 for body text, 1.1 for display.</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══ BRAND VOICE ═══ -->
+<section id="voice">
+  <p class="section-label">04 — Brand Voice</p>
+  <h2 class="section-title">How We Sound</h2>
+  <p class="section-desc">Marutinovatech speaks like a mentor who has already walked the path — direct, encouraging, and technically fluent.</p>
+
+  <div class="voice-grid">
+    <div class="voice-card accent-teal">
+      <h4><span class="voice-dot" style="background:var(--teal);"></span>Empowering</h4>
+      <p>We frame every learner as capable. Language is solution-first, not problem-focused. "You'll get this" beats "this is hard."</p>
+    </div>
+    <div class="voice-card accent-teal">
+      <h4><span class="voice-dot" style="background:var(--teal);"></span>Precise</h4>
+      <p>Tech content is factually dense and accurate. No vague promises — specific skills, specific outcomes, specific timelines.</p>
+    </div>
+    <div class="voice-card accent-coral">
+      <h4><span class="voice-dot" style="background:var(--coral);"></span>Ambitious</h4>
+      <p>We're job-outcome obsessed. Every piece of copy connects skill-building to real career results and real hiring.</p>
+    </div>
+    <div class="voice-card accent-coral">
+      <h4><span class="voice-dot" style="background:var(--coral);"></span>Approachable</h4>
+      <p>No gatekeeping, no jargon walls. We make Data Science and Engineering feel achievable — not intimidating.</p>
+    </div>
+  </div>
+
+  <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 40px; margin-top: 16px;">
+    <p class="type-sample-label" style="margin-bottom:20px;">Voice in action</p>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+      <div>
+        <div style="display:flex; gap:8px; align-items:center; margin-bottom:10px;">
+          <div style="width:16px; height:16px; border-radius:50%; background:rgba(255,107,74,0.2); border:1px solid var(--coral); display:flex; align-items:center; justify-content:center;">
+            <div style="font-size:9px; color:var(--coral);">✕</div>
+          </div>
+          <span style="font-size:12px; color:var(--coral); font-family:'DM Mono',monospace;">Don't say</span>
+        </div>
+        <p style="font-size:15px; color:var(--muted); line-height:1.6; font-weight:300; font-style:italic;">"Our comprehensive curriculum provides exposure to various data-related technologies."</p>
+      </div>
+      <div>
+        <div style="display:flex; gap:8px; align-items:center; margin-bottom:10px;">
+          <div style="width:16px; height:16px; border-radius:50%; background:var(--teal-dim); border:1px solid var(--teal); display:flex; align-items:center; justify-content:center;">
+            <div style="font-size:9px; color:var(--teal);">✓</div>
+          </div>
+          <span style="font-size:12px; color:var(--teal); font-family:'DM Mono',monospace;">Do say</span>
+        </div>
+        <p style="font-size:15px; color:var(--white); line-height:1.6; font-weight:400;">"Master Python, SQL, and Spark — then land the job. We've helped 500+ students get hired at companies you know."</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══ UI COMPONENTS ═══ -->
+<section id="components">
+  <p class="section-label">05 — UI Components</p>
+  <h2 class="section-title">Component Library</h2>
+  <p class="section-desc">Reusable visual building blocks for all digital surfaces — website, app, and social media.</p>
+
+  <div class="ui-grid">
+    <!-- Buttons -->
+    <div class="ui-demo">
+      <h4>Buttons</h4>
+      <div class="btn-row">
+        <button class="btn btn-primary">Enroll Now</button>
+        <button class="btn btn-secondary">Learn More</button>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-accent">Get Hired</button>
+        <button class="btn btn-ghost">View Courses</button>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary btn-sm">Start Free</button>
+        <button class="btn btn-secondary btn-sm">See Pricing</button>
+        <button class="btn btn-ghost btn-sm">Browse</button>
+      </div>
+    </div>
+
+    <!-- Badges -->
+    <div class="ui-demo">
+      <h4>Badges & Tags</h4>
+      <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px;">
+        <span class="badge badge-teal">Data Science</span>
+        <span class="badge badge-teal">Python</span>
+        <span class="badge badge-teal">SQL</span>
+        <span class="badge badge-coral">Hiring Ready</span>
+        <span class="badge badge-coral">Job Accelerator</span>
+        <span class="badge badge-neutral">Beginner</span>
+        <span class="badge badge-neutral">Advanced</span>
+        <span class="badge badge-neutral">12 Weeks</span>
+      </div>
+      <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        <div style="background:var(--teal-dim); border:1px solid rgba(0,229,200,0.2); border-radius:8px; padding:10px 16px;">
+          <div style="font-family:'DM Mono',monospace; font-size:11px; color:var(--teal); margin-bottom:2px;">LIVE NOW</div>
+          <div style="font-size:13px; font-weight:500;">Data Engineering Cohort</div>
+        </div>
+        <div style="background:var(--coral-dim); border:1px solid rgba(255,107,74,0.2); border-radius:8px; padding:10px 16px;">
+          <div style="font-family:'DM Mono',monospace; font-size:11px; color:var(--coral); margin-bottom:2px;">OPEN</div>
+          <div style="font-size:13px; font-weight:500;">Job Acceleration Program</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Course Card -->
+    <div class="ui-demo">
+      <h4>Course Card</h4>
+      <div class="course-card">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+          <span class="badge badge-teal">Data Engineering</span>
+          <span style="font-family:'DM Mono',monospace; font-size:11px; color:var(--muted);">12 Weeks</span>
+        </div>
+        <h5>Apache Spark & PySpark Mastery</h5>
+        <p>Build production-grade data pipelines. Solve real industry problems with expert guidance from practitioners.</p>
+        <div class="card-footer">
+          <div style="display:flex; gap:4px; align-items:center;">
+            <div style="width:24px; height:24px; border-radius:50%; background:var(--teal-dim); border:1px solid rgba(0,229,200,0.3);"></div>
+            <span style="font-size:12px; color:var(--muted); font-weight:300;">Expert Trainer</span>
+          </div>
+          <button class="btn btn-ghost btn-sm">Enroll →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Job Acceleration Card -->
+    <div class="ui-demo">
+      <h4>Job Acceleration Card</h4>
+      <div style="background: linear-gradient(135deg, rgba(255,107,74,0.08) 0%, rgba(255,107,74,0.03) 100%); border: 1px solid rgba(255,107,74,0.2); border-radius: 16px; padding: 24px;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+          <span class="badge badge-coral">Job Accelerator</span>
+          <span style="font-family:'DM Mono',monospace; font-size:11px; color:var(--muted);">4 Weeks</span>
+        </div>
+        <h5 style="font-family:'Sora',sans-serif; font-size:16px; font-weight:600; margin-bottom:6px;">Resume + LinkedIn + Mock Interview</h5>
+        <p style="font-size:13px; color:var(--muted); font-weight:300; line-height:1.5; margin-bottom:16px;">Complete career transformation: ATS-optimised resume, LinkedIn profile audit, job application strategy, and 2 mock interviews.</p>
+        <div style="display:flex; gap:16px; margin-bottom:16px;">
+          <div style="text-align:center;">
+            <div style="font-family:'Sora',sans-serif; font-size:22px; font-weight:800; color:var(--coral);">500+</div>
+            <div style="font-size:11px; color:var(--muted);">Placed</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-family:'Sora',sans-serif; font-size:22px; font-weight:800; color:var(--coral);">92%</div>
+            <div style="font-size:11px; color:var(--muted);">Success Rate</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-family:'Sora',sans-serif; font-size:22px; font-weight:800; color:var(--coral);">3×</div>
+            <div style="font-size:11px; color:var(--muted);">Salary Bump</div>
+          </div>
+        </div>
+        <button class="btn btn-accent" style="width:100%;">Apply for Job Program</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══ SPACING & GRID ═══ -->
+<section id="spacing">
+  <p class="section-label">06 — Spacing & Grid</p>
+  <h2 class="section-title">Spacing Scale</h2>
+  <p class="section-desc">An 8px base unit system. All spacing values are multiples of 8 — enforces visual rhythm and consistency across all layouts.</p>
+
+  <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 48px;">
+    <div class="spacing-grid">
+      <div>
+        <div class="spacing-block" style="height:8px;"></div>
+        <div class="spacing-label">4px</div>
+      </div>
+      <div>
+        <div class="spacing-block" style="height:16px;"></div>
+        <div class="spacing-label">8px</div>
+      </div>
+      <div>
+        <div class="spacing-block" style="height:32px;"></div>
+        <div class="spacing-label">16px</div>
+      </div>
+      <div>
+        <div class="spacing-block" style="height:48px;"></div>
+        <div class="spacing-label">24px</div>
+      </div>
+      <div>
+        <div class="spacing-block" style="height:64px;"></div>
+        <div class="spacing-label">32px</div>
+      </div>
+      <div>
+        <div class="spacing-block" style="height:96px;"></div>
+        <div class="spacing-label">48px</div>
+      </div>
+      <div>
+        <div class="spacing-block" style="height:128px;"></div>
+        <div class="spacing-label">64px</div>
+      </div>
+      <div>
+        <div class="spacing-block" style="height:160px;"></div>
+        <div class="spacing-label">80px</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══ DO'S AND DON'TS ═══ -->
+<section id="usage">
+  <p class="section-label">07 — Logo Usage</p>
+  <h2 class="section-title">Usage Rules</h2>
+  <p class="section-desc">The mark is an asset. Protect it. These rules keep it strong and consistent across all touchpoints.</p>
+
+  <!-- Clearspace -->
+  <div class="clearspace-demo">
+    <div class="clearspace-inner">
+      <span class="clearspace-arrow top">↕ 1× cap-height</span>
+      <span class="clearspace-arrow bottom">↕ 1× cap-height</span>
+      <span class="clearspace-arrow left">↔</span>
+      <span class="clearspace-arrow right">↔</span>
+      <div style="display:flex; align-items:center; gap:14px;">
+        <svg width="40" height="40" viewBox="0 0 64 64" fill="none">
+          <path d="M32 4L56 18V46L32 60L8 46V18L32 4Z" fill="rgba(0,229,200,0.08)" stroke="rgba(0,229,200,0.3)" stroke-width="1"/>
+          <path d="M18 42V24L25 34L32 22L39 34L46 24V42" stroke="#00E5C8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <circle cx="32" cy="18" r="3" fill="#00E5C8"/>
+        </svg>
+        <div style="font-family:'Sora',sans-serif; font-size:24px; font-weight:800; letter-spacing:-0.03em; color:var(--white);">
+          <span style="font-weight:300;">maruti</span><span style="color:#00E5C8;">nova</span>tech
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p style="font-size:14px; color:var(--muted); margin-bottom:48px; font-weight:300;">Always maintain a minimum clear zone of 1× the cap-height of the wordmark on all sides. Never crowd the mark.</p>
+
+  <div class="donts-grid">
+    <div class="dont-card">
+      <h5>Don't stretch or distort</h5>
+      <p>Never alter the logo's aspect ratio. Scale proportionally from any corner.</p>
+    </div>
+    <div class="dont-card">
+      <h5>Don't recolor the icon</h5>
+      <p>The icon must always appear in Nova Teal (#00E5C8) or in solid white/black only.</p>
+    </div>
+    <div class="dont-card">
+      <h5>Don't use on busy backgrounds</h5>
+      <p>Always place the logo on a solid surface. No patterns, gradients, or photography directly under the mark.</p>
+    </div>
+    <div class="dont-card">
+      <h5>Don't add effects</h5>
+      <p>No drop shadows, glows, outlines, or 3D effects. The mark is flat — always.</p>
+    </div>
+    <div class="dont-card">
+      <h5>Don't separate the mark</h5>
+      <p>Never use the icon and wordmark as two separate unrelated elements in the same layout.</p>
+    </div>
+    <div class="dont-card">
+      <h5>Don't change the typeface</h5>
+      <p>The wordmark always uses Sora with the exact weight split: 300 / 800 / 400. No substitutions.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-brand">maruti<span>nova</span>tech</div>
+    <p style="margin-top:6px;">Upskill · Accelerate · Get Hired</p>
+  </div>
+  <div style="text-align:right;">
+    <p>Brand Guidelines v1.0</p>
+    <p style="margin-top:4px; font-family:'DM Mono',monospace; font-size:11px; color:rgba(122,122,150,0.5);">© 2025 Marutinovatech. All rights reserved.</p>
+  </div>
+</footer>
+
+</body>
+</html>

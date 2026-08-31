@@ -1,0 +1,2802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    (function() {
+      try {
+        function getVal(k) {
+          try { var v = localStorage.getItem(k); if(v) return v; } catch(e) {}
+          try { var v = sessionStorage.getItem(k); if(v) return v; } catch(e) {}
+          try { var m = document.cookie.match(new RegExp('(?:^|; )' + encodeURIComponent(k) + '=([^;]*)')); if(m && m[1]) return decodeURIComponent(m[1]); } catch(e) {}
+          return null;
+        }
+        var raw = getVal('currentUser') || getVal('mnt_user');
+        if (raw) {
+          try {
+            var u = JSON.parse(raw);
+            if (!u || u.role !== 'admin') { window.location.replace('index.html'); return; }
+          } catch(e) { window.location.replace('index.html'); return; }
+        } else {
+          window.location.replace('index.html');
+          return;
+        }
+      } catch(e) { window.location.replace('index.html'); }
+    })();
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Admin Dashboard — MarutiNovaTech Platform Administration">
+  <title>Admin Dashboard — MarutiNovaTech</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%230D1117'/><path d='M18 42V24l7 10 7-12 7 12 7-10v18' stroke='%2300E5C8' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/><circle cx='32' cy='18' r='3.5' fill='%2300E5C8'/></svg>">
+  <style>
+    :root {
+      /* Core Backgrounds */
+      --bg-base: #0B0F19;           /* Deep dark background */
+      --bg-surface: #111827;        /* Elevation level 1 */
+      --bg-card: rgba(17, 24, 39, 0.7); /* Glassmorphism card surface */
+      --bg-card-hover: rgba(31, 41, 55, 0.8);
+      
+      /* Accent Palette */
+      --accent-cyan: #06B6D4;       /* Primary interactive cyan */
+      --accent-cyan-glow: rgba(6, 182, 212, 0.25);
+      --accent-emerald: #10B981;    /* Positive status & highlight */
+      --accent-emerald-glow: rgba(16, 185, 129, 0.2);
+      
+      /* Borders & Dividers */
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-focus: rgba(6, 182, 212, 0.5);
+      
+      /* Typography & Contrast */
+      --text-primary: #F9FAFB;      /* Crisp white for high legibility */
+      --text-secondary: #9CA3AF;    /* Legible slate gray for sub-labels */
+      --text-muted: #6B7280;
+
+      /* Fallback tokens */
+      --teal: #06B6D4;
+      --teal-dim: rgba(6, 182, 212, 0.12);
+      --teal-border: rgba(6, 182, 212, 0.25);
+      --bg: #0B0F19;
+      --surface: #111827;
+      --elevated: #1F2937;
+      --text: #F9FAFB;
+      --muted: #9CA3AF;
+      --border: rgba(255, 255, 255, 0.08);
+      --fh: 'Plus Jakarta Sans', sans-serif;
+      --fb: 'Inter', sans-serif;
+      --fm: 'JetBrains Mono', monospace;
+      --r-sm:   8px;
+      --r-md:   12px;
+      --r-lg:   16px;
+      --r-xl:   20px;
+      --r-pill: 9999px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body { background: var(--bg-base); color: var(--text-primary); font-family: var(--fb); line-height: 1.6; overflow-x: hidden; }
+    a { color: inherit; text-decoration: none; }
+    ul, ol { list-style: none; }
+    button { cursor: pointer; font-family: inherit; border: none; }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-base); }
+    ::-webkit-scrollbar-thumb { background: rgba(6,182,212,0.35); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(6,182,212,0.6); }
+
+    /* ── Admin Topbar ───────────────────────────────────── */
+    .admin-topbar {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 32px;
+      background: rgba(11, 15, 25, 0.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .admin-topbar-left {
+      display: flex; align-items: center; gap: 14px;
+    }
+    .admin-topbar-left .admin-avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem; color: #fff; font-weight: 700;
+      box-shadow: 0 0 12px rgba(245,158,11,0.3);
+    }
+    .admin-topbar-left h1 {
+      font-family: var(--fh); font-size: 1.15rem; font-weight: 700; color: var(--text-primary);
+    }
+    .admin-topbar-left p {
+      font-size: 0.8rem; color: var(--text-secondary); margin: 0;
+    }
+    .admin-topbar-right {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .admin-topbar-right .back-home-btn {
+      padding: 7px 16px; border-radius: var(--r-pill);
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle);
+      color: var(--text-primary); font-size: 0.82rem; font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    .admin-topbar-right .back-home-btn:hover {
+      border-color: var(--border-focus); color: var(--accent-cyan);
+      transform: translateY(-1px);
+    }
+    .admin-topbar-right .logout-btn {
+      padding: 7px 16px; border-radius: var(--r-pill);
+      background: rgba(255,75,75,0.08); border: 1px solid rgba(255,75,75,0.2);
+      color: #FF4B4B; font-size: 0.82rem; font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    .admin-topbar-right .logout-btn:hover {
+      background: rgba(255,75,75,0.15); border-color: rgba(255,75,75,0.4);
+      transform: translateY(-1px);
+    }
+
+    /* ── Page Container ─────────────────────────────────── */
+    .admin-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 24px 64px;
+    }
+
+    /* ── Metrics Grid ───────────────────────────────────── */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .metric-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      padding: 22px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+    .metric-card:hover {
+      background: var(--bg-card-hover);
+      box-shadow: 0 0 20px var(--accent-cyan-glow);
+      border-color: var(--border-focus);
+      transform: translateY(-2px);
+    }
+    .metric-card:hover::before {
+      opacity: 1;
+    }
+    .mc-num {
+      font-family: var(--fh);
+      font-size: 1.7rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      line-height: 1.1;
+      margin-bottom: 4px;
+    }
+    .mc-label {
+      font-family: var(--fb);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    /* ── Roster Section ─────────────────────────────────── */
+    .roster-section {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+    .roster-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .roster-header-row h2 {
+      font-family: var(--fh);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #111827 !important;
+      margin: 0;
+    }
+    .roster-search-input {
+      background: rgba(11, 18, 39, 0.7);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--r-pill);
+      padding: 8px 18px;
+      color: var(--text-primary);
+      font-family: var(--fb);
+      font-size: 0.85rem;
+      width: 300px;
+      transition: all 0.2s ease;
+    }
+    .roster-search-input::placeholder { color: var(--text-muted); }
+    .roster-search-input:focus {
+      outline: none;
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 12px var(--accent-cyan-glow);
+    }
+    .table-wrapper { overflow-x: auto; }
+    .roster-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--fb);
+      font-size: 0.88rem;
+      text-align: left;
+    }
+    .roster-table th {
+      background: #131B2E;
+      padding: 12px 14px;
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .roster-table td {
+      padding: 14px;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+    }
+    .roster-table tbody tr {
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+    .roster-table tbody tr:hover {
+      background-color: var(--bg-card-hover);
+    }
+    .status-pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .status-pill.active {
+      background: var(--accent-emerald-glow);
+      color: var(--accent-emerald);
+      border: 1px solid rgba(16,185,129,0.3);
+    }
+    .status-pill.graduated {
+      background: rgba(6,182,212,0.15);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(6,182,212,0.3);
+    }
+    .view-detail-btn {
+      padding: 6px 14px;
+      background: rgba(6,182,212,0.12);
+      border: 1px solid rgba(6,182,212,0.3);
+      color: var(--accent-cyan);
+      border-radius: var(--r-pill);
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .view-detail-btn:hover {
+      background: var(--accent-cyan);
+      color: #0B0F19;
+      transform: translateY(-1px);
+      box-shadow: 0 0 12px var(--accent-cyan-glow);
+    }
+
+    /* ── Course Progress Pills, Badges & Indicators ── */
+    .course-progress-pills {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .pill-metric {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      font-family: var(--font-mono, monospace);
+      letter-spacing: 0.02em;
+    }
+    .pill-metric.pill-sql, .pill-metric:nth-child(1) {
+      background: #EFF6FF !important;
+      color: #1D4ED8 !important;
+      border: 1px solid #BFDBFE !important;
+    }
+    .pill-metric.pill-py, .pill-metric:nth-child(2) {
+      background: #FEF3C7 !important;
+      color: #B45309 !important;
+      border: 1px solid #FDE68A !important;
+    }
+    .pill-metric.pill-da, .pill-metric:nth-child(3) {
+      background: #ECFDF5 !important;
+      color: #047857 !important;
+      border: 1px solid #A7F3D0 !important;
+    }
+    .badge-cohort {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: #F1F5F9;
+      color: #334155;
+      border: 1px solid #E2E8F0;
+    }
+    .progress-bar-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 140px;
+    }
+    .progress-bar-track {
+      flex: 1;
+      height: 6px;
+      background: #E2E8F0;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #2563EB, #0D9488);
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+    .progress-pct {
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: #0F172A;
+      min-width: 32px;
+    }
+    .status-indicator {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 12px;
+      border-radius: 99px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .status-indicator.status-paid {
+      background: #ECFDF5;
+      color: #059669;
+      border: 1px solid #A7F3D0;
+    }
+    .status-indicator.status-free {
+      background: #F8FAFC;
+      color: #64748B;
+      border: 1px solid #E2E8F0;
+    }
+    .admin-student-row:hover {
+      background-color: #F8FAFC !important;
+    }
+    .student-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .student-inspect-btn {
+      background: none;
+      border: none;
+      padding: 0;
+      font-family: inherit;
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #0F172A;
+      cursor: pointer;
+      text-align: left;
+      transition: color 0.15s ease;
+    }
+    .student-inspect-btn:hover {
+      color: #2563EB;
+      text-decoration: underline;
+    }
+
+    /* ── Student Telemetry Inspector Modal ── */
+    .inspector-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: rgba(11, 15, 25, 0.75);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 1;
+      transition: opacity 0.2s ease;
+    }
+    .inspector-modal.hidden {
+      display: none !important;
+    }
+    .inspector-card {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 1060px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
+    }
+    .modal-top-header {
+      background: #0B0F19;
+      color: #FFFFFF;
+      padding: 14px 24px;
+      border-top-left-radius: 19px;
+      border-top-right-radius: 19px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* ── Student Detail Modal ───────────────────────────── */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 9999;
+      background: rgba(0, 0, 0, 0.78);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal-box {
+      background: #111827 !important;
+      border: 1px solid rgba(255, 255, 255, 0.12) !important;
+      border-radius: 20px !important;
+      width: 92%; max-width: 740px;
+      max-height: 88vh; overflow-y: auto;
+      padding: 32px 34px !important;
+      position: relative;
+      color: #F9FAFB !important;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.65), 0 0 30px rgba(6, 182, 212, 0.12) !important;
+      transform: translateY(14px) scale(0.97);
+      transition: transform 0.25s ease;
+    }
+    .modal-box.live-dashboard-modal {
+      background: #F8FAFC !important;
+      border: 1px solid rgba(0, 0, 0, 0.1) !important;
+      border-radius: 20px !important;
+      width: 95% !important; max-width: 1160px !important;
+      max-height: 90vh !important; overflow-y: auto !important;
+      padding: 28px 32px !important;
+      color: #0F172A !important;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.3) !important;
+    }
+    .modal-box.live-dashboard-modal > .modal-close {
+      display: none !important;
+    }
+    .modal-box, .modal-box * {
+      font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif !important;
+    }
+    .modal-overlay.open .modal-box {
+      transform: translateY(0) scale(1);
+    }
+    .modal-close {
+      position: absolute; top: 20px; right: 22px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #9CA3AF;
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      font-size: 1.25rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      line-height: 1;
+      transition: all 0.2s ease;
+      z-index: 10;
+    }
+    .modal-close:hover {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: rgba(239, 68, 68, 0.4);
+      color: #FCA5A5;
+      transform: scale(1.05);
+    }
+    .modal-question-scroll-list::-webkit-scrollbar {
+      width: 6px;
+    }
+    .modal-question-scroll-list::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 999px;
+    }
+    .modal-question-scroll-list::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.18);
+      border-radius: 999px;
+    }
+    .modal-question-scroll-list::-webkit-scrollbar-thumb:hover {
+      background: rgba(6, 182, 212, 0.5);
+    }
+
+    /* ── Admin Inspection Modal — Dashboard Mirror ────── */
+    .admin-inspect-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .admin-inspect-card {
+      background: #FFFFFF;
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    }
+    .admin-inspect-card-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #475569;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .admin-inspect-card-value {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #0F172A;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .admin-inspect-card-sub {
+      font-size: 0.78rem;
+      color: #64748B;
+      font-weight: 500;
+    }
+    .admin-inspect-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+    .admin-inspect-panel {
+      background: #FFFFFF;
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 14px;
+      padding: 22px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    }
+    .admin-inspect-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .admin-inspect-panel-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #475569;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .admin-inspect-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #0284C7;
+    }
+    .admin-course-table-container {
+      max-height: 400px;
+      overflow-y: auto;
+      border: 1px solid #E2E8F0;
+      border-radius: 12px;
+      background: #FFFFFF;
+    }
+    .admin-course-table-container::-webkit-scrollbar { width: 6px; }
+    .admin-course-table-container::-webkit-scrollbar-track { background: #F8FAFC; border-radius: 4px; }
+    .admin-course-table-container::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
+    .admin-course-table-container::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+    .admin-course-progress-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      text-align: left;
+    }
+    .admin-course-progress-table th {
+      background: #F8FAFC;
+      color: #475569;
+      font-weight: 700;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 12px 16px;
+      border-bottom: 1px solid #E2E8F0;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+    .admin-course-progress-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid #F1F5F9;
+      color: #0F172A;
+      vertical-align: middle;
+    }
+    .admin-course-progress-table tr:last-child td { border-bottom: none; }
+    .admin-course-progress-table tr:hover td { background: #F8FAFC; }
+    .admin-badge-active {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #059669;
+      background: rgba(16,185,129,0.1);
+      border: 1px solid rgba(16,185,129,0.25);
+      padding: 4px 10px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+    .admin-badge-locked {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #D97706;
+      background: rgba(245,158,11,0.08);
+      border: 1px solid rgba(245,158,11,0.25);
+      padding: 4px 10px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+    .admin-telemetry-feed {
+      max-height: 220px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .admin-telemetry-feed::-webkit-scrollbar { width: 5px; }
+    .admin-telemetry-feed::-webkit-scrollbar-track { background: #F8FAFC; border-radius: 4px; }
+    .admin-telemetry-feed::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
+    .admin-telemetry-feed::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+    .admin-telem-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 14px;
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 10px;
+      background: #F8FAFC;
+    }
+    .admin-telem-item-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+    .admin-telem-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+    .admin-telem-badge.passed {
+      color: #059669;
+      background: rgba(16,185,129,0.12);
+    }
+    .admin-telem-badge.solving {
+      color: #D97706;
+      background: rgba(245,158,11,0.12);
+    }
+    .admin-telem-title {
+      font-weight: 700;
+      color: #0F172A;
+      font-size: 0.85rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .admin-telem-time {
+      font-size: 0.72rem;
+      color: #64748B;
+      font-weight: 500;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    @media (max-width: 768px) {
+      .admin-inspect-cards { grid-template-columns: 1fr; }
+      .admin-inspect-grid { grid-template-columns: 1fr; }
+    }
+
+    .dash-header { margin-bottom: 20px; }
+    .dash-user-badge {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .user-avatar-badge {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--teal);
+      color: #0A0A10;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--fh);
+      font-weight: 700;
+      font-size: 0.82rem;
+      flex-shrink: 0;
+    }
+    .dash-user-badge h3 {
+      font-family: var(--fh);
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+    .dash-user-badge p {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin: 0;
+    }
+    .lab-bars-list {
+      display: flex; flex-direction: column; gap: 12px; margin-top: 12px;
+    }
+    .lab-bar-item { display: flex; flex-direction: column; gap: 6px; }
+    .lbi-header {
+      display: flex; justify-content: space-between;
+      font-size: 0.85rem; color: var(--muted);
+    }
+    .lbi-track {
+      height: 8px; background: rgba(255,255,255,0.06);
+      border-radius: 999px; overflow: hidden;
+    }
+    .lbi-fill {
+      height: 100%; border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    @media (max-width: 640px) {
+      .admin-topbar { padding: 12px 16px; flex-wrap: wrap; gap: 10px; }
+      .admin-container { padding: 20px 14px 48px; }
+      .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+      .roster-search-input { width: 100%; }
+    }
+
+    /* ── Active Student Monitor Panel (ADMIN ONLY) ────── */
+    .active-monitor-section {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 32px;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+    .active-monitor-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .am-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .am-title-wrap h2 {
+      font-family: var(--fh);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #111827 !important;
+      margin: 0;
+    }
+    .live-pulse-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #10B981;
+      box-shadow: 0 0 10px #10B981;
+      display: inline-block;
+      animation: pulseLive 2s infinite;
+    }
+    @keyframes pulseLive {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16,185,129,0.7); }
+      70% { transform: scale(1.15); box-shadow: 0 0 0 8px rgba(16,185,129,0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16,185,129,0); }
+    }
+    .live-tag {
+      font-family: var(--fm);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      background: rgba(0,229,200,0.12);
+      color: #0891B2;
+      border: 1px solid rgba(0,229,200,0.3);
+      padding: 2px 8px;
+      border-radius: var(--r-pill);
+    }
+    .am-subtitle {
+      font-size: 0.8rem;
+      color: #4B5563 !important;
+      font-weight: 500;
+      margin-top: 3px;
+    }
+    .am-stats-summary {
+      display: flex;
+      gap: 10px;
+    }
+    .am-stat-pill {
+      font-size: 0.78rem;
+      color: #111827 !important;
+      background: rgba(0,0,0,0.05) !important;
+      border: 1px solid rgba(0,0,0,0.12) !important;
+      padding: 5px 12px;
+      border-radius: var(--r-pill);
+      font-weight: 600;
+    }
+    .am-stat-pill strong { color: #0891B2 !important; font-weight: 800; }
+
+    .am-student-cell {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .am-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(0,229,200,0.25), rgba(0,229,200,0.08));
+      border: 1px solid rgba(0,229,200,0.35);
+      color: var(--teal);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--fh);
+      font-weight: 700;
+      font-size: 0.82rem;
+      flex-shrink: 0;
+    }
+    .am-q-prefix {
+      font-size: 0.72rem;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 1px;
+    }
+    .am-q-title {
+      font-weight: 600;
+      color: var(--text);
+      font-size: 0.86rem;
+    }
+    .live-dot-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.82rem;
+    }
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .live-dot.online {
+      background: #10B981;
+      box-shadow: 0 0 8px #10B981;
+    }
+    .live-dot.idle {
+      background: var(--muted);
+      opacity: 0.5;
+    }
+    .exec-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: var(--r-pill);
+      font-size: 0.75rem;
+      font-weight: 600;
+      font-family: var(--fm);
+    }
+    .exec-badge.solving {
+      background: rgba(0,229,200,0.12);
+      color: var(--teal);
+      border: 1px solid rgba(0,229,200,0.25);
+    }
+    .exec-badge.submitted {
+      background: rgba(245,158,11,0.12);
+      color: #F59E0B;
+      border: 1px solid rgba(245,158,11,0.25);
+    }
+    .exec-badge.passed {
+      background: rgba(16,185,129,0.15);
+      color: #10B981;
+      border: 1px solid rgba(16,185,129,0.3);
+    }
+
+    /* ── WHITE/LIGHT THEME DESIGN SYSTEM ───────────────────────────── */
+
+    body {
+      background-color: #F1F5F9 !important;
+      color: #0F172A !important;
+    }
+
+    /* 1. Header Bar Overhaul (Dark Executive Navy Header) */
+    .admin-topbar {
+      background-color: #111827 !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+    }
+    .admin-topbar-left h1 {
+      color: #FFFFFF !important;
+      font-weight: 700 !important;
+    }
+    .admin-topbar-left p,
+    .admin-topbar-left p strong,
+    #topbarAdminName {
+      color: #E5E7EB !important;
+      font-weight: 500 !important;
+    }
+    .admin-topbar-right .back-home-btn {
+      background-color: rgba(255, 255, 255, 0.1) !important;
+      border: 1px solid rgba(255, 255, 255, 0.25) !important;
+      color: #FFFFFF !important;
+      font-weight: 600 !important;
+    }
+    .admin-topbar-right .logout-btn {
+      background-color: rgba(239, 68, 68, 0.18) !important;
+      border: 1px solid rgba(239, 68, 68, 0.35) !important;
+      color: #FCA5A5 !important;
+      font-weight: 600 !important;
+    }
+
+    /* 2 & 3. White Cards & Containers */
+    .metric-card,
+    .active-monitor-section,
+    .roster-section {
+      background-color: #FFFFFF !important;
+      border: 1px solid rgba(0, 0, 0, 0.08) !important;
+      color: #0F172A !important;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06) !important;
+      border-radius: 14px !important;
+    }
+
+    .admin-container .metrics-grid .metric-card .mc-label,
+    .mc-label {
+      font-family: var(--fb) !important;
+      font-size: 0.75rem !important;
+      font-weight: 700 !important;
+      color: #1E293B !important;
+      letter-spacing: 0.05em !important;
+      text-transform: uppercase !important;
+    }
+    .admin-container .metrics-grid .metric-card .mc-num,
+    .mc-num {
+      font-family: var(--fh) !important;
+      font-size: 1.7rem !important;
+      font-weight: 800 !important;
+      color: #0F172A !important;
+      line-height: 1.1 !important;
+      margin-bottom: 4px !important;
+    }
+
+    /* 4. Table Headers & Rows */
+    .active-monitor-section th,
+    .active-monitor-section table th,
+    .roster-table th,
+    table th {
+      background-color: #0F172A !important;
+      color: #FFFFFF !important;
+      font-family: inherit !important;
+      font-weight: 700 !important;
+      font-size: 0.75rem !important;
+      letter-spacing: 0.06em !important;
+      text-transform: uppercase !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+      padding: 12px 14px !important;
+    }
+    .roster-table td,
+    .active-monitor-section td {
+      color: #0F172A !important;
+      font-size: 0.88rem !important;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+    }
+    .roster-table td div,
+    .roster-table td span,
+    .roster-table td strong {
+      color: #111827;
+    }
+    /* Fix Target 1: Student Profile Name */
+    .roster-table .am-student-cell div > div:first-child,
+    .am-student-cell div > div:first-child {
+      color: #111827 !important;
+      font-weight: 700 !important;
+    }
+    /* Fix Target 2: Current Activity Title */
+    .roster-table td > div > div:first-child,
+    .am-q-title {
+      color: #1F2937 !important;
+      font-weight: 700 !important;
+    }
+    /* Fix Target 3 & 4: Subtext & Percentage Labels */
+    .roster-table td span[style*="color:#1F2937"],
+    .roster-table td span[style*="font-family"] {
+      color: #1F2937 !important;
+      font-weight: 700 !important;
+    }
+    .roster-table tr:hover,
+    .active-monitor-section tr:hover {
+      background-color: #F8FAFC !important;
+    }
+
+    /* Search Bar Fix */
+    .roster-search-input {
+      background-color: #1F2937 !important;
+      color: #FFFFFF !important;
+      border: 1px solid rgba(255, 255, 255, 0.2) !important;
+      font-weight: 500 !important;
+    }
+    .roster-search-input::placeholder {
+      color: #9CA3AF !important;
+      opacity: 1 !important;
+    }
+
+    /* Subtext styling */
+    .roster-table td div[style*="color:var(--muted)"],
+    .active-monitor-section td div[style*="color:var(--muted)"],
+    .am-student-cell div[style*="color:var(--muted)"],
+    .am-subtitle,
+    .am-q-prefix,
+    span[style*="color:var(--muted)"] {
+      color: #475569 !important;
+      font-weight: 500 !important;
+    }
+    .status-pill.active {
+      background: rgba(16,185,129,0.15) !important;
+      color: #047857 !important;
+      font-weight: 700 !important;
+      border: 1px solid rgba(16,185,129,0.4) !important;
+    }
+    .status-pill.graduated {
+      background: rgba(6,182,212,0.15) !important;
+      color: #0284C7 !important;
+      font-weight: 700 !important;
+      border: 1px solid rgba(6,182,212,0.4) !important;
+    }
+    .exec-badge.solving {
+      background: rgba(6,182,212,0.15) !important;
+      color: #0284C7 !important;
+      font-weight: 700 !important;
+      border: 1px solid rgba(6,182,212,0.4) !important;
+    }
+    .exec-badge.submitted {
+      background: rgba(245,158,11,0.15) !important;
+      color: #B45309 !important;
+      font-weight: 700 !important;
+      border: 1px solid rgba(245,158,11,0.4) !important;
+    }
+    .exec-badge.passed {
+      background: rgba(16,185,129,0.15) !important;
+      color: #047857 !important;
+      font-weight: 700 !important;
+      border: 1px solid rgba(16,185,129,0.4) !important;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ ADMIN TOPBAR ═══════════════════════════════════════════ -->
+  <header class="admin-topbar">
+    <div class="admin-topbar-left">
+      <div class="admin-avatar" id="topbarAdminAvatar">VR</div>
+      <div>
+        <h1>Admin Dashboard • MarutiNovaTech</h1>
+        <p>Logged in as <strong id="topbarAdminName" style="color:#F59E0B;">Vikramaditya Rao</strong> (Platform Administrator)</p>
+      </div>
+    </div>
+    <div class="admin-topbar-right" style="position: relative; z-index: 101; pointer-events: auto; display: flex; align-items: center; gap: 12px;">
+      <div class="user-dropdown-container" style="position: relative;">
+        <button class="user-profile-btn" style="border-color:rgba(245,158,11,0.5); background: rgba(245,158,11,0.15); color:#FFFFFF; display:flex; align-items:center; gap:8px; padding:6px 14px; border-radius:999px; border:1px solid rgba(245,158,11,0.5); font-weight:700; font-size:0.88rem; cursor:pointer;" onclick="toggleAdminMenu(event)" aria-label="Admin account menu">
+          <span class="user-avatar-badge" style="background:linear-gradient(135deg, #F59E0B, #D97706); color:#fff; width:26px; height:26px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700;" id="adminAvatarBadge">VR</span>
+          <span class="user-name-text" id="adminNameText" style="color:#FFFFFF !important; font-weight:700; letter-spacing:0.2px;">Vikramaditya Rao</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="user-dropdown-menu" id="adminDropdownMenu" style="position: absolute; top: calc(100% + 8px); right: 0; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); width: 220px; display: none; flex-direction: column; padding: 8px 0; z-index: 9999;">
+          <div class="user-menu-header" style="padding: 8px 16px 6px 16px;">
+            <div class="user-menu-name" id="adminMenuUserName" style="font-weight: 700; color: #0F172A; font-size: 0.9rem;">Vikramaditya Rao</div>
+            <div class="user-menu-role" style="color: #F59E0B; font-size: 0.75rem; font-weight: 600;">Platform Administrator</div>
+          </div>
+          <div style="height: 1px; background: #E2E8F0; margin: 6px 0;"></div>
+          <a href="admin.html" style="display: flex; align-items: center; gap: 10px; padding: 8px 16px; color: #334155; font-size: 0.85rem; font-weight: 500; text-decoration: none;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> Admin Dashboard</a>
+          <a href="sql.html" style="display: flex; align-items: center; gap: 10px; padding: 8px 16px; color: #334155; font-size: 0.85rem; font-weight: 500; text-decoration: none;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg> SQL Lab Portal</a>
+          <div style="height: 1px; background: #E2E8F0; margin: 6px 0;"></div>
+          <button onclick="logoutAdmin()" style="display: flex; align-items: center; gap: 10px; padding: 8px 16px; color: #64748B; font-size: 0.85rem; font-weight: 600; background: none; border: none; cursor: pointer; width: 100%; text-align: left;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Sign Out
+          </button>
+        </div>
+      </div>
+      <a href="index.html" class="back-home-btn" style="cursor: pointer; position: relative; z-index: 102; pointer-events: auto;">← Home</a>
+      <button class="logout-btn" id="btnAdminSignOut" onclick="logoutAdmin()" style="cursor: pointer; position: relative; z-index: 102; pointer-events: auto;">Sign Out</button>
+    </div>
+  </header>
+
+  <!-- ═══ ADMIN PAGE BODY ════════════════════════════════════════ -->
+  <main class="admin-container">
+
+    <!-- Top Course Overview Cards (Active Course Matrix) -->
+    <section class="course-overview-section" style="margin-bottom: 24px;">
+      <div id="admin-course-metrics" class="metrics-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px;">
+        <!-- Dynamically populated with SQL, Python, and Data Analyst metrics -->
+      </div>
+    </section>
+
+    <!-- Global Platform Metric Cards -->
+    <section class="metrics-grid" id="adminMetricsGrid" style="margin-bottom: 24px;">
+      <div class="metric-card">
+        <div class="mc-num" id="adminTotalStudents">0</div>
+        <div class="mc-label">Enrolled Students</div>
+      </div>
+      <div class="metric-card">
+        <div class="mc-num" id="adminTotalSolved" style="color:#10B981 !important;">0 Solved</div>
+        <div class="mc-label">Platform Solved</div>
+      </div>
+      <div class="metric-card">
+        <div class="mc-num" id="adminAvgCompletion" style="color:#06B6D4 !important;">0%</div>
+        <div class="mc-label">Avg. Completion Rate</div>
+      </div>
+      <div class="metric-card">
+        <div class="mc-num" id="adminOnlineStudents">0 Active</div>
+        <div class="mc-label">Students Online</div>
+      </div>
+    </section>
+
+    <!-- ═══ REAL-TIME ACTIVE STUDENT MONITOR (ADMIN ONLY) ═════════ -->
+    <section class="active-monitor-section" id="adminActiveMonitorSection">
+      <div class="active-monitor-header">
+        <div>
+          <div class="am-title-wrap">
+            <span class="live-pulse-dot"></span>
+            <h2>Active Student Monitor</h2>
+            <span class="live-tag">LIVE TELEMETRY</span>
+          </div>
+          <p class="am-subtitle">Real-time background tracking of student playground activity, question attempts &amp; code executions</p>
+        </div>
+        <div class="am-stats-summary">
+          <span class="am-stat-pill"><strong id="amActiveCount">1</strong> Active Now</span>
+        </div>
+      </div>
+      <div class="table-wrapper">
+        <table class="roster-table">
+          <thead>
+            <tr>
+              <th>Student Profile</th>
+              <th>Current Activity</th>
+              <th>Live Indicator</th>
+              <th>Last Active</th>
+            </tr>
+          </thead>
+          <tbody id="adminActiveMonitorTbody">
+            <!-- Dynamically populated via real-time telemetry -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Student Directory & Roster Table -->
+    <section class="roster-section">
+      <div class="roster-header-row">
+        <h2>Student Directory &amp; Course Analytics</h2>
+        <input type="text" id="adminSearchInput" placeholder="Search student name, email, or phone…" class="roster-search-input" oninput="filterAndRenderRoster()">
+      </div>
+      <div class="table-wrapper">
+        <table class="roster-table">
+          <thead>
+            <tr>
+              <th style="width: 45px;">#</th>
+              <th>Student Profile</th>
+              <th>Cohort</th>
+              <th>Course Progress</th>
+              <th>Overall Completion</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="admin-students-tbody">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- ═══ STUDENT TELEMETRY INSPECTOR MODAL ═══════════════════ -->
+  <div id="student-inspector-modal" class="inspector-modal hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+    <div class="inspector-card bg-slate-50 border border-slate-200 rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-y-auto shadow-2xl">
+      
+      <!-- Modal Top Bar -->
+      <div class="modal-top-header bg-[#0B0F19] text-white px-6 py-4 rounded-t-2xl flex justify-between items-center" style="background:#0B0F19; color:#FFFFFF; padding:16px 24px; border-top-left-radius:18px; border-top-right-radius:18px; display:flex; justify-content:space-between; align-items:center;">
+        <div class="flex items-center gap-3" style="display:flex; align-items:center; gap:10px;">
+          <div class="w-2.5 h-2.5 rounded-full bg-emerald-400" style="width:10px; height:10px; border-radius:50%; background:#34D399; box-shadow:0 0 8px #34D399;"></div>
+          <span class="font-medium text-sm text-slate-300" style="font-weight:600; font-size:0.88rem; color:#CBD5E1;">MarutiNovaTech &nbsp;|&nbsp; Student Telemetry Inspector</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <button onclick="closeStudentInspector()" class="text-slate-400 hover:text-white text-xl font-bold px-2 py-1 cursor-pointer bg-transparent border-0" style="color:#94A3B8; font-size:1.4rem; font-weight:700; cursor:pointer; background:none; border:none; line-height:1;">&times;</button>
+        </div>
+      </div>
+
+      <div class="p-6 space-y-6" style="padding:24px; display:flex; flex-direction:column; gap:20px;">
+        <!-- Student Profile Header Banner -->
+        <div class="student-profile-header flex items-center gap-4 bg-white p-5 rounded-xl border border-slate-200 shadow-sm" style="background:#FFFFFF; padding:20px 24px; border-radius:14px; border:1px solid #E2E8F0; display:flex; align-items:center; gap:18px; box-shadow:0 1px 3px rgba(0,0,0,0.02);">
+          <div id="insp-avatar" class="w-14 h-14 rounded-full bg-[#0284C7] text-white font-bold text-xl flex items-center justify-center flex-shrink-0" style="width:56px; height:56px; border-radius:50%; background:#0284C7; color:#FFFFFF; font-weight:800; font-size:1.25rem; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            ST
+          </div>
+          <div>
+            <h2 id="insp-name" class="text-2xl font-bold text-slate-900" style="font-size:1.45rem; font-weight:800; color:#0F172A; margin:0;">Student Name</h2>
+            <p id="insp-meta" class="text-sm text-slate-500 mt-0.5" style="font-size:0.88rem; color:#64748B; margin:4px 0 0;">
+              Student • <span id="insp-cohort">Cohort 14</span> • <span id="insp-course">SQL &amp; Database Mastery</span> • <span id="insp-email">email@marutinova.com</span>
+            </p>
+          </div>
+        </div>
+
+        <!-- 3 Metrics Top Row -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:16px;">
+          <!-- Metric 1: Completion Progress -->
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between" style="background:#FFFFFF; padding:20px; border-radius:14px; border:1px solid #E2E8F0; display:flex; flex-direction:column; justify-content:space-between; min-height:130px; box-shadow:0 1px 3px rgba(0,0,0,0.02);">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-500" style="font-size:0.75rem; font-weight:700; color:#64748B; text-transform:uppercase; letter-spacing:0.06em;">Completion Progress</span>
+            <div id="insp-progress-val" class="text-3xl font-extrabold text-slate-900 mt-2" style="font-size:1.85rem; font-weight:800; color:#0F172A; margin-top:8px;">0%</div>
+            <div class="w-full bg-slate-100 h-2 rounded-full mt-3 overflow-hidden" style="width:100%; background:#F1F5F9; height:8px; border-radius:99px; margin-top:12px; overflow:hidden;">
+              <div id="insp-progress-bar" class="bg-blue-600 h-full w-0 transition-all duration-300" style="background:#2563EB; height:100%; width:0%; border-radius:99px; transition:width 0.3s ease;"></div>
+            </div>
+          </div>
+
+          <!-- Metric 2: Streak Count -->
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between" style="background:#FFFFFF; padding:20px; border-radius:14px; border:1px solid #E2E8F0; display:flex; flex-direction:column; justify-content:space-between; min-height:130px; box-shadow:0 1px 3px rgba(0,0,0,0.02);">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-500" style="font-size:0.75rem; font-weight:700; color:#64748B; text-transform:uppercase; letter-spacing:0.06em;">Streak Count</span>
+            <div id="insp-streak-val" class="text-3xl font-extrabold text-slate-900 mt-2" style="font-size:1.85rem; font-weight:800; color:#0F172A; margin-top:8px;">0 Days</div>
+            <span id="insp-streak-sub" class="text-xs text-slate-400 mt-2" style="font-size:0.78rem; color:#94A3B8; margin-top:8px;">0 Days (Streak Reset)</span>
+          </div>
+
+          <!-- Metric 3: Resume Status -->
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between" style="background:#FFFFFF; padding:20px; border-radius:14px; border:1px solid #E2E8F0; display:flex; flex-direction:column; justify-content:space-between; min-height:130px; box-shadow:0 1px 3px rgba(0,0,0,0.02);">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-500" style="font-size:0.75rem; font-weight:700; color:#64748B; text-transform:uppercase; letter-spacing:0.06em;">Resume Status</span>
+            <div class="mt-2" style="margin-top:8px;">
+              <span id="insp-last-topic" class="inline-flex items-center px-4 py-2 rounded-lg bg-[#00D2FF] text-slate-950 font-semibold text-sm" style="display:inline-flex; align-items:center; padding:8px 16px; border-radius:8px; background:#00D2FF; color:#020617; font-weight:700; font-size:0.88rem; box-shadow:0 0 12px rgba(0,210,255,0.3);">
+                Resume Topic &rarr;
+              </span>
+            </div>
+            <span id="insp-last-active" class="text-xs text-slate-400 mt-2" style="font-size:0.78rem; color:#94A3B8; margin-top:8px;">Updated Recently</span>
+          </div>
+        </div>
+
+        <!-- Bottom Row: Course Progress & Weekly Telemetry -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(340px, 1fr)); gap:16px;">
+          <!-- Left: Course Progress & Lab Access -->
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm" style="background:#FFFFFF; padding:20px 24px; border-radius:14px; border:1px solid #E2E8F0; box-shadow:0 1px 3px rgba(0,0,0,0.02);">
+            <div class="flex justify-between items-center mb-4" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-500" style="font-size:0.75rem; font-weight:700; color:#64748B; text-transform:uppercase; letter-spacing:0.06em;">Course Progress &amp; Lab Access</span>
+              <div class="flex gap-2" style="display:flex; gap:8px;">
+                <span id="insp-unlocked-badge" class="text-[11px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-medium" style="font-size:0.72rem; padding:2px 8px; border-radius:99px; background:#ECFDF5; color:#047857; border:1px solid #A7F3D0; font-weight:600;">• 1 Unlocked</span>
+                <span id="insp-locked-badge" class="text-[11px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200 font-medium" style="font-size:0.72rem; padding:2px 8px; border-radius:99px; background:#F1F5F9; color:#475569; border:1px solid #E2E8F0; font-weight:600;">• 0 Locked</span>
+              </div>
+            </div>
+
+            <table class="w-full text-left text-xs border-collapse" style="width:100%; text-align:left; font-size:0.8rem; border-collapse:collapse;">
+              <thead>
+                <tr class="border-b border-slate-200 text-slate-500 uppercase font-medium" style="border-bottom:1px solid #E2E8F0; color:#64748B; text-transform:uppercase; font-size:0.72rem;">
+                  <th class="py-2" style="padding:10px 8px; font-weight:700;">Course Name</th>
+                  <th class="py-2" style="padding:10px 8px; font-weight:700;">Total Questions</th>
+                  <th class="py-2" style="padding:10px 8px; font-weight:700;">Progress</th>
+                  <th class="py-2" style="padding:10px 8px; font-weight:700;">Access Status</th>
+                </tr>
+              </thead>
+              <tbody id="insp-courses-tbody" class="divide-y divide-slate-100 text-slate-700" style="color:#334155;">
+                <!-- Dynamically Populated -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Right: Weekly Activity Telemetry -->
+          <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between" style="background:#FFFFFF; padding:24px; border-radius:16px; border:1px solid #E2E8F0; display:flex; flex-direction:column; justify-content:space-between; box-shadow:0 1px 3px rgba(0,0,0,0.02); font-family:var(--fm, monospace);">
+            <!-- Top Header -->
+            <div class="flex justify-between items-center mb-6" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+              <div class="flex items-center gap-2" style="display:flex; align-items:center; gap:8px;">
+                <span class="text-slate-600 font-semibold tracking-wider text-xs uppercase" style="font-size:0.8rem; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.06em;">WEEKLY ACTIVITY</span>
+                <span class="flex items-center gap-1.5 text-emerald-600 text-xs font-bold" style="font-size:0.75rem; font-weight:700; color:#059669; display:flex; align-items:center; gap:6px;">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" style="width:8px; height:8px; border-radius:50%; background:#10B981; display:inline-block;"></span>
+                  LIVE TELEMETRY
+                </span>
+              </div>
+
+              <div id="insp-weekly-count" class="bg-emerald-50 border border-emerald-300 text-emerald-700 text-xs font-semibold px-4 py-1.5 rounded-full" style="background:#ECFDF5; border:1px solid #A7F3D0; color:#047857; font-size:0.75rem; font-weight:700; padding:4px 12px; border-radius:99px;">
+                0 Solved This Week
+              </div>
+            </div>
+
+            <!-- Category Legend -->
+            <div class="flex items-center gap-5 text-xs text-slate-700 font-medium mb-8" style="display:flex; align-items:center; gap:20px; font-size:0.78rem; font-weight:600; color:#334155; margin-bottom:24px;">
+              <div class="flex items-center gap-2" style="display:flex; align-items:center; gap:6px;">
+                <span class="w-3 h-3 rounded-sm bg-emerald-500" style="width:12px; height:12px; border-radius:3px; background:#10B981; display:inline-block;"></span>
+                <span>SQL</span>
+              </div>
+              <div class="flex items-center gap-2" style="display:flex; align-items:center; gap:6px;">
+                <span class="w-3 h-3 rounded-sm bg-blue-500" style="width:12px; height:12px; border-radius:3px; background:#3B82F6; display:inline-block;"></span>
+                <span>Python</span>
+              </div>
+            </div>
+
+            <!-- Bar Telemetry Row & Single Day Labels (Rendered ONCE here) -->
+            <div id="insp-weekly-bars-container" class="flex justify-between items-end px-2" style="display:flex; justify-content:space-between; align-items:flex-end; height:96px; padding:0 4px; gap:8px; position:relative;">
+              <!-- Dynamically populated per day with bar + single day label -->
+            </div>
+
+            <!-- Divider Line -->
+            <div class="border-t border-dashed border-slate-200 mt-4" style="border-top:1px dashed #CBD5E1; margin-top:14px;"></div>
+          </div>
+        </div>
+
+        <!-- Student Solved History & Verification Section -->
+        <div class="mt-6 bg-white p-5 rounded-xl border border-slate-200 shadow-sm" style="margin-top: 20px; background: #FFFFFF; padding: 18px; border-radius: 12px; border: 1px solid #E2E8F0;">
+          <div class="flex justify-between items-center mb-3" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-500" style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748B;">Student Solved History &amp; Verification</span>
+            <div class="flex gap-2" id="admin-course-filter-btns" style="display: flex; gap: 8px;">
+              <button id="admin-filter-all" class="px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-900 text-white" style="padding: 4px 10px; font-size: 0.75rem; font-weight: 600; border-radius: 6px; background: #0F172A; color: #FFFFFF; border: none; cursor: pointer;" onclick="filterAdminHistory('all')">All</button>
+              <button id="admin-filter-sql" class="px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700" style="padding: 4px 10px; font-size: 0.75rem; font-weight: 600; border-radius: 6px; background: #F1F5F9; color: #334155; border: 1px solid #E2E8F0; cursor: pointer;" onclick="filterAdminHistory('sql')">SQL</button>
+              <button id="admin-filter-python" class="px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700" style="padding: 4px 10px; font-size: 0.75rem; font-weight: 600; border-radius: 6px; background: #F1F5F9; color: #334155; border: 1px solid #E2E8F0; cursor: pointer;" onclick="filterAdminHistory('python')">Python</button>
+            </div>
+          </div>
+
+          <div class="max-h-60 overflow-y-auto border border-slate-100 rounded-lg" style="max-height: 220px; overflow-y: auto; border: 1px solid #F1F5F9; border-radius: 8px;">
+            <table class="w-full text-left text-xs border-collapse" style="width: 100%; text-align: left; font-size: 0.78rem; border-collapse: collapse;">
+              <thead class="bg-slate-50 sticky top-0" style="background: #F8FAFC; position: sticky; top: 0; z-index: 1;">
+                <tr class="border-b border-slate-200 text-slate-500 font-semibold" style="border-bottom: 1px solid #E2E8F0; color: #64748B; font-weight: 600;">
+                  <th class="py-2 px-3" style="padding: 8px 12px;">Course</th>
+                  <th class="py-2 px-3" style="padding: 8px 12px;">Item Title</th>
+                  <th class="py-2 px-3" style="padding: 8px 12px;">Item ID</th>
+                  <th class="py-2 px-3" style="padding: 8px 12px;">Date &amp; Time Solved</th>
+                </tr>
+              </thead>
+              <tbody id="admin-student-history-tbody" class="divide-y divide-slate-100" style="color: #334155;">
+                <!-- Rendered dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ STUDENT DETAIL MODAL (LEGACY FALLBACK) ══════════════════ -->
+  <div class="modal-overlay" id="studentDetailModal" role="dialog" aria-modal="true" aria-label="Student Details">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeStudentDetail()">&times;</button>
+      <div id="studentDetailContent">
+        <!-- Dynamically rendered -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+  /* ── TIME FORMATTER HELPER ──────────────────────────────────── */
+  function formatStudyTime(decimalHours) {
+    if (!decimalHours || decimalHours <= 0) return '0 min';
+
+    const totalMinutes = Math.round(decimalHours * 60);
+    const hrs = Math.floor(totalMinutes / 60);
+    const mins = totalMinutes % 60;
+
+    if (hrs === 0) return `${mins} min`;
+    if (mins === 0) return `${hrs} hr`;
+    return `${hrs} hr ${mins} min`;
+  }
+
+  /* ── MOCK STUDENT DATA ──────────────────────────────────────── */
+  const MOCK_STUDENTS = [];
+
+  let studentsRoster = [];
+
+  /* ── STORAGE HELPERS ────────────────────────────────────────── */
+  function getStorageItem(k) {
+    try { var v = localStorage.getItem(k); if(v) return v; } catch(e) {}
+    try { var v = sessionStorage.getItem(k); if(v) return v; } catch(e) {}
+    try { var m = document.cookie.match(new RegExp('(?:^|; )' + encodeURIComponent(k) + '=([^;]*)')); if(m && m[1]) return decodeURIComponent(m[1]); } catch(e) {}
+    return null;
+  }
+  function removeStorageItem(k) {
+    try { localStorage.removeItem(k); } catch(e) {}
+    try { sessionStorage.removeItem(k); } catch(e) {}
+    try { document.cookie = encodeURIComponent(k) + '=; max-age=0; path=/; SameSite=Lax'; } catch(e) {}
+  }
+
+  /* ── SHARED FRONTEND API HELPER & ACCESS CONTROL ────────── */
+  async function apiFetch(url, options = {}) {
+    options.headers = options.headers || {};
+    const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+    if (token && !options.headers['Authorization']) {
+      options.headers['Authorization'] = 'Bearer ' + token;
+    }
+    try {
+      const res = await fetch(url, options);
+      if (res.status === 401 || res.status === 403) {
+        console.warn('API returned unauthorized status:', res.status);
+      }
+      return res;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  /* ── AUTH BUTTON VISIBILITY TOGGLE ──────────────────────────── */
+  function updateAuthHeaderState() {
+    const isLoggedIn = Boolean(
+      getStorageItem('currentUser') || 
+      getStorageItem('mnt_user') || 
+      getStorageItem('authToken') || 
+      getStorageItem('isLoggedIn')
+    );
+
+    const signInBtn = document.getElementById('btnAdminSignIn') || document.querySelector('.admin-topbar-right .signin-btn');
+    const signOutBtn = document.getElementById('btnAdminSignOut') || document.querySelector('.admin-topbar-right .logout-btn');
+
+    if (signInBtn) signInBtn.style.display = isLoggedIn ? 'none' : 'inline-flex';
+    if (signOutBtn) signOutBtn.style.display = isLoggedIn ? 'inline-flex' : 'none';
+  }
+
+  function checkAdminAccess() {
+    let token = getStorageItem('authToken');
+    let userRole = getStorageItem('userRole') || getStorageItem('role');
+    const user = getStorageItem('currentUser') || getStorageItem('mnt_user');
+    let role = userRole;
+    if (!role && user) {
+      try {
+        const u = typeof user === 'string' ? JSON.parse(user) : user;
+        role = u.role;
+      } catch(e) {}
+    }
+    
+    // Seamless access: Grant admin session when opening admin.html
+    if (!token || role !== 'admin' || location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+      try {
+        localStorage.setItem('authToken', 'demo-admin-token');
+        localStorage.setItem('userRole', 'admin');
+        const adminUser = {
+          id: 'admin-user',
+          email: 'admin@marutinova.com',
+          name: 'Vikramaditya Rao',
+          role: 'admin',
+          avatar: '👑'
+        };
+        localStorage.setItem('currentUser', JSON.stringify(adminUser));
+        localStorage.setItem('mnt_user', JSON.stringify(adminUser));
+      } catch(e) {}
+    }
+    updateAuthHeaderState();
+    return true;
+  }
+  checkAdminAccess();
+
+  function handleSignIn(e) {
+    if (e && typeof e.preventDefault === 'function') e.preventDefault();
+    if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
+    try {
+      if (typeof openAuthModal === 'function') {
+        openAuthModal('signin');
+      } else {
+        window.location.href = 'index.html?auth=signin';
+      }
+    } catch(err) {
+      console.error('Sign-In navigation error:', err);
+      window.location.href = 'index.html?auth=signin';
+    }
+  }
+
+  function toggleAdminMenu(e) {
+    if (e) e.stopPropagation();
+    const menu = document.getElementById('adminDropdownMenu');
+    if (menu) menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
+  }
+  document.addEventListener('click', () => {
+    const menu = document.getElementById('adminDropdownMenu');
+    if (menu) menu.style.display = 'none';
+  });
+
+  /* ── LOGOUT ─────────────────────────────────────────────────── */
+  function logoutAdmin() {
+    removeStorageItem('currentUser');
+    removeStorageItem('mnt_user');
+    removeStorageItem('isLoggedIn');
+    removeStorageItem('userRole');
+    removeStorageItem('authToken');
+    updateAuthHeaderState();
+    window.location.href = 'index.html';
+  }
+
+  function normalizeQuestionId(item) {
+    if (item === null || item === undefined) return '';
+    const str = String(item).trim();
+    if (!str) return '';
+    const m = str.match(/\d+/);
+    if (m) {
+      const num = parseInt(m[0], 10);
+      if (!isNaN(num) && num >= 1 && num <= 145) {
+        return 'q' + (num < 10 ? '0' : '') + num;
+      }
+    }
+    return str.toLowerCase();
+  }
+
+  /* ── FULL 145 EXERCISE CATALOG MAPPING ───────────────────────── */
+  const BASE_QUESTIONS = [
+    { title: 'Find Duplicate Emails', difficulty: 'BEGINNER', category: 'SELECT' },
+    { title: 'Customers Who Never Ordered', difficulty: 'BEGINNER', category: 'JOINS' },
+    { title: 'Employees Earning More Than Their Manager', difficulty: 'BEGINNER', category: 'JOINS' },
+    { title: 'Average Product Rating Per Category', difficulty: 'BEGINNER', category: 'AGGREGATE' },
+    { title: 'Rising Temperature', difficulty: 'BEGINNER', category: 'DATE FN' },
+    { title: 'Second Highest Salary', difficulty: 'BEGINNER', category: 'SELECT' },
+    { title: 'Top 5 Customers by Order Count', difficulty: 'BEGINNER', category: 'AGGREGATE' },
+    { title: 'Department Top 3 Salaries', difficulty: 'INTERMEDIATE', category: 'WINDOW FN' },
+    { title: 'Employees with Salary Above Department Average', difficulty: 'INTERMEDIATE', category: 'AGGREGATE' },
+    { title: 'Month-over-Month Revenue Growth', difficulty: 'INTERMEDIATE', category: 'DATE FN' },
+    { title: '7-Day Rolling Average of Daily Active Users', difficulty: 'INTERMEDIATE', category: 'WINDOW FN' },
+    { title: 'Restaurants with Declining Orders Month-over-Month', difficulty: 'INTERMEDIATE', category: 'SUBQUERY' },
+    { title: 'Customers Who Ordered in Both 2023 and 2024', difficulty: 'INTERMEDIATE', category: 'SUBQUERY' },
+    { title: 'Rank Scores Without Gaps (DENSE_RANK)', difficulty: 'INTERMEDIATE', category: 'WINDOW FN' },
+    { title: 'Running Total of Sales by Date', difficulty: 'INTERMEDIATE', category: 'WINDOW FN' },
+    { title: 'Median Employee Salary per Department', difficulty: 'EXPERT', category: 'WINDOW FN' },
+    { title: 'Human Traffic of Stadium — 3+ Consecutive Days', difficulty: 'EXPERT', category: 'SUBQUERY' },
+    { title: 'Trips and Users — Cancellation Rate', difficulty: 'EXPERT', category: 'JOINS' }
+  ];
+
+  const ALL_QUESTIONS_CATALOG = [];
+  for (let i = 1; i <= 145; i++) {
+    const base = BASE_QUESTIONS[(i - 1) % BASE_QUESTIONS.length];
+    const numPrefix = String(i).padStart(2, '0');
+    let diff = i <= 45 ? 'BEGINNER' : (i <= 110 ? 'INTERMEDIATE' : 'EXPERT');
+    ALL_QUESTIONS_CATALOG.push({
+      id: 'q' + String(i).padStart(2, '0'),
+      title: `${numPrefix} ${base.title}${i > 18 ? ' (' + i + ')' : ''}`,
+      difficulty: diff,
+      category: base.category,
+      estMinutes: 10 + (i % 20)
+    });
+  }
+
+  // Active question bank array (dynamically updated if questions are added/removed)
+  window.questionsArray = ALL_QUESTIONS_CATALOG.slice();
+
+  /* ── DEFENSIVE FALLBACK DATA RESTORATION (ADMIN) ────────────── */
+  function ensureAdminDefaultData() {
+    // 1. Non-destructive Fallback questions check
+    try {
+      const rawQ = localStorage.getItem('questions') || localStorage.getItem('mnt_questions') || localStorage.getItem('questionsBank');
+      let existingQuestions = [];
+      if (rawQ && rawQ !== 'null' && rawQ !== 'undefined') {
+        try { existingQuestions = JSON.parse(rawQ); } catch(e) {}
+      }
+
+      if (!Array.isArray(existingQuestions) || existingQuestions.length < ALL_QUESTIONS_CATALOG.length) {
+        const mergedQuestions = ALL_QUESTIONS_CATALOG.slice();
+        if (Array.isArray(existingQuestions) && existingQuestions.length > 0) {
+          existingQuestions.forEach(q => {
+            const idx = mergedQuestions.findIndex(mq => mq.id === q.id || mq.title === q.title);
+            if (idx >= 0) {
+              mergedQuestions[idx] = { ...mergedQuestions[idx], ...q };
+            } else {
+              mergedQuestions.push(q);
+            }
+          });
+        }
+        localStorage.setItem('questions', JSON.stringify(mergedQuestions));
+        localStorage.setItem('mnt_questions', JSON.stringify(mergedQuestions));
+        window.questionsArray = mergedQuestions.slice();
+      } else {
+        window.questionsArray = existingQuestions.slice();
+      }
+    } catch(e) {
+      localStorage.setItem('questions', JSON.stringify(ALL_QUESTIONS_CATALOG));
+      window.questionsArray = ALL_QUESTIONS_CATALOG.slice();
+    }
+
+    // 2. Defensive check for registeredUsers
+    try {
+      if (localStorage.getItem('registeredUsers') === null) {
+        localStorage.setItem('registeredUsers', JSON.stringify([]));
+      }
+      if (localStorage.getItem('mnt_registered_users') === null) {
+        localStorage.setItem('mnt_registered_users', JSON.stringify([]));
+      }
+    } catch(e) {}
+  }
+
+  let currentActiveDrawerStudentId = null;
+
+  /* ── SEARCH FILTER ENGINE (ADMIN ROSTER) ────────────────────── */
+  function filterAndRenderRoster() {
+    const searchVal = (document.getElementById('adminSearchInput')?.value || '').toLowerCase().trim();
+    if (!studentsRoster || !Array.isArray(studentsRoster)) return;
+
+    if (!searchVal) {
+      renderStudentDirectoryTable(studentsRoster);
+      return;
+    }
+
+    const filtered = studentsRoster.filter(s => {
+      const name = (s.name || s.studentName || s.fullName || '').toLowerCase();
+      const email = (s.email || '').toLowerCase();
+      const phone = (s.phone || s.mobile || '').toLowerCase();
+      const course = (s.course || '').toLowerCase();
+      const cohort = (s.cohort || '').toLowerCase();
+      return name.includes(searchVal) || email.includes(searchVal) || phone.includes(searchVal) || course.includes(searchVal) || cohort.includes(searchVal);
+    });
+
+    renderStudentDirectoryTable(filtered);
+  }
+
+  /* ── REACTIVE METRICS UI RENDERER (ADMIN) ──────────────────── */
+  function updateMetricsUI() {
+    ensureAdminDefaultData();
+    const qArray = window.questionsArray || ALL_QUESTIONS_CATALOG;
+    if (document.getElementById('adminTotalQuestions')) {
+      document.getElementById('adminTotalQuestions').textContent = qArray.length;
+    }
+    if (studentsRoster && studentsRoster.length > 0) {
+      filterAndRenderRoster();
+    }
+    if (currentActiveDrawerStudentId) {
+      viewStudentDetails(currentActiveDrawerStudentId);
+    }
+  }
+
+  /* ── LIVE TELEMETRY LOOKUP FOR STUDENT DIRECTORY ───────────────── */
+  function getStudentTelemetry(student) {
+    if (!student) return null;
+    let telemetryList = [];
+    try {
+      const single = localStorage.getItem('student_activity_telemetry');
+      if (single) {
+        const obj = JSON.parse(single);
+        if (obj && (obj.studentName || obj.email)) telemetryList.push(obj);
+      }
+      const multi = localStorage.getItem('mnt_active_students_telemetry');
+      if (multi) {
+        const arr = JSON.parse(multi);
+        if (Array.isArray(arr)) {
+          arr.forEach(item => {
+            if (item && (item.studentName || item.email) && !telemetryList.some(t =>
+              (t.email && item.email && t.email.toLowerCase().trim() === item.email.toLowerCase().trim()) ||
+              (t.studentName && item.studentName && t.studentName.toLowerCase().trim() === item.studentName.toLowerCase().trim())
+            )) {
+              telemetryList.push(item);
+            }
+          });
+        }
+      }
+    } catch(e) {}
+
+    const sEmail = (student.email || '').toLowerCase().trim();
+    const sName = (student.name || student.studentName || '').toLowerCase().trim();
+    const sId = (student.id || '').toLowerCase().trim().replace(/^student-/, '');
+
+    const match = telemetryList.find(t => {
+      const tEmail = (t.email || '').toLowerCase().trim();
+      const tName = (t.studentName || t.name || '').toLowerCase().trim();
+      const tId = (t.id || '').toLowerCase().trim().replace(/^student-/, '');
+
+      if (sEmail && tEmail && sEmail === tEmail) return true;
+      if (sName && tName && (sName === tName || sName.replace(/\s+/g, '-') === tName.replace(/\s+/g, '-'))) return true;
+      if (sId && tId && (sId === tId || sId.replace(/^user-/, '') === tId.replace(/^user-/, ''))) return true;
+      return false;
+    });
+
+    return match;
+  }
+
+  // Active Course Registry for Admin Panel
+  const ACTIVE_COURSES = [
+    { id: 'sql', name: 'SQL & Database Mastery', totalUnits: 145, unitLabel: 'Questions' },
+    { id: 'python', name: 'Python Fundamentals', totalUnits: 33, unitLabel: 'Questions' }
+  ];
+
+  /* ── UNIFIED COURSE UNLOCK & SOLVED METRICS ENGINE ────────── */
+  function isCourseUnlockedForStudent(student, courseId) {
+    if (!student) return false;
+    const cid = String(courseId || '').toLowerCase().trim();
+    const cleanEmail = String(student.email || '').toLowerCase().trim();
+
+    // 1. Direct boolean flags
+    if (student.isPaid === true) return true;
+    if (cid === 'sql' && (student.isSqlPaid === true || student.isSqlUnlocked === true)) return true;
+    if (cid === 'python' && (student.isPythonPaid === true || student.isPythonUnlocked === true)) return true;
+    if ((cid === 'analytics' || cid === 'pyspark') && student.isAnalyticsPaid === true) return true;
+    if (cid === 'powerbi' && student.isPowerBIPaid === true) return true;
+
+    // 2. Unlocked courses/playgrounds lists
+    const matchesCid = (item) => {
+      const s = String(item || '').toLowerCase().trim();
+      if (s === cid) return true;
+      if (cid === 'sql' && (s.includes('sql') || s === 'sql_bootcamp')) return true;
+      if (cid === 'python' && (s.includes('python') || s === 'python_fundamentals')) return true;
+      return false;
+    };
+
+    if (Array.isArray(student.unlockedCourses) && student.unlockedCourses.some(matchesCid)) return true;
+    if (Array.isArray(student.unlockedPlaygrounds) && student.unlockedPlaygrounds.some(matchesCid)) return true;
+    if (Array.isArray(student.enrolledCourses) && student.enrolledCourses.some(matchesCid)) return true;
+
+    // 3. Match primary course title if enrolled
+    if (typeof student.course === 'string') {
+      const cStr = student.course.toLowerCase();
+      if (cid === 'sql' && (cStr.includes('sql') || cStr.includes('data & cloud') || cStr.includes('data analytics'))) return true;
+      if (cid === 'python' && cStr.includes('python')) return true;
+    }
+
+    // 4. LocalStorage user synchronization fallback
+    if (cleanEmail) {
+      try {
+        const localPaid = JSON.parse(localStorage.getItem('mnt_paid_unlocks_' + cleanEmail) || '[]');
+        if (Array.isArray(localPaid) && localPaid.some(matchesCid)) return true;
+      } catch(e) {}
+
+      try {
+        const regUsers = JSON.parse(localStorage.getItem('mnt_registered_users') || localStorage.getItem('registeredUsers') || '[]');
+        if (Array.isArray(regUsers)) {
+          const regU = regUsers.find(u => (u.email || '').toLowerCase().trim() === cleanEmail);
+          if (regU) {
+            if (regU.isPaid === true) return true;
+            if (cid === 'sql' && (regU.isSqlPaid === true || (Array.isArray(regU.unlockedCourses) && regU.unlockedCourses.some(matchesCid)) || (Array.isArray(regU.unlockedPlaygrounds) && regU.unlockedPlaygrounds.some(matchesCid)) || (Array.isArray(regU.enrolledCourses) && regU.enrolledCourses.some(matchesCid)))) return true;
+            if (cid === 'python' && (regU.isPythonPaid === true || (Array.isArray(regU.unlockedCourses) && regU.unlockedCourses.some(matchesCid)) || (Array.isArray(regU.unlockedPlaygrounds) && regU.unlockedPlaygrounds.some(matchesCid)) || (Array.isArray(regU.enrolledCourses) && regU.enrolledCourses.some(matchesCid)))) return true;
+          }
+        }
+      } catch(e) {}
+
+      try {
+        const curr = JSON.parse(localStorage.getItem('currentUser') || localStorage.getItem('mnt_user') || '{}');
+        if (curr && (curr.email || '').toLowerCase().trim() === cleanEmail) {
+          if (curr.isPaid === true) return true;
+          if (cid === 'sql' && (curr.isSqlPaid === true || (Array.isArray(curr.unlockedCourses) && curr.unlockedCourses.some(matchesCid)) || (Array.isArray(curr.unlockedPlaygrounds) && curr.unlockedPlaygrounds.some(matchesCid)) || (Array.isArray(curr.enrolledCourses) && curr.enrolledCourses.some(matchesCid)))) return true;
+          if (cid === 'python' && (curr.isPythonPaid === true || (Array.isArray(curr.unlockedCourses) && curr.unlockedCourses.some(matchesCid)) || (Array.isArray(curr.unlockedPlaygrounds) && curr.unlockedPlaygrounds.some(matchesCid)) || (Array.isArray(curr.enrolledCourses) && curr.enrolledCourses.some(matchesCid)))) return true;
+        }
+      } catch(e) {}
+    }
+
+    return false;
+  }
+
+  function getStudentSolvedMetrics(student) {
+    if (!student) return { sqlSolved: 0, pythonSolved: 0, totalSolved: 0, sqlPct: 0, pyPct: 0, totalPct: 0, sqlList: [], pythonList: [] };
+
+    const sqlSet = new Set();
+    const pySet = new Set();
+
+    // 1. Authoritative SQL solved questions
+    const rawSql = [
+      ...(Array.isArray(student.solvedQuestions) ? student.solvedQuestions : []),
+      ...(Array.isArray(student.completedQuestions) ? student.completedQuestions : [])
+    ];
+    rawSql.forEach(item => {
+      if (!item || item === 'undefined' || item === 'null') return;
+      const norm = normalizeQuestionId(item);
+      if (norm && /^q\d+$/i.test(norm)) {
+        sqlSet.add(norm.toLowerCase());
+      }
+    });
+
+    // 2. Authoritative Python solved questions
+    const rawPy = Array.isArray(student.pythonCompleted) ? student.pythonCompleted : [];
+    rawPy.forEach(item => {
+      if (!item || item === 'undefined' || item === 'null') return;
+      const str = String(item).toLowerCase().trim();
+      const norm = str.replace(/^py_/, '').replace(/^q0*/, 'q');
+      if (norm && (/^q\d+$/i.test(norm) || /^\d+$/.test(norm))) {
+        pySet.add(norm.startsWith('q') ? norm : ('q' + norm));
+      }
+    });
+
+    // 3. Fallback: only if authoritative arrays are empty, check activityLog entries with status === 'SOLVED'
+    if (sqlSet.size === 0 && Array.isArray(student.activityLog)) {
+      student.activityLog.forEach(entry => {
+        if (!entry || !entry.itemId) return;
+        const status = String(entry.status || '').toUpperCase();
+        if (status !== 'SOLVED' && status !== 'PASSED' && !entry.solvedAt) return;
+        const cId = String(entry.courseId || entry.course || entry.courseName || '').toLowerCase();
+        if (cId === 'sql' || cId.includes('sql')) {
+          const norm = normalizeQuestionId(entry.itemId);
+          if (norm && /^q\d+$/i.test(norm)) sqlSet.add(norm.toLowerCase());
+        }
+      });
+    }
+
+    if (pySet.size === 0 && Array.isArray(student.activityLog)) {
+      student.activityLog.forEach(entry => {
+        if (!entry || !entry.itemId) return;
+        const status = String(entry.status || '').toUpperCase();
+        if (status !== 'SOLVED' && status !== 'PASSED' && !entry.solvedAt) return;
+        const cId = String(entry.courseId || entry.course || entry.courseName || '').toLowerCase();
+        if (cId === 'python' || cId.includes('python')) {
+          const str = String(entry.itemId).toLowerCase().trim();
+          const norm = str.replace(/^py_/, '').replace(/^q0*/, 'q');
+          if (norm && (/^q\d+$/i.test(norm) || /^\d+$/.test(norm))) {
+            pySet.add(norm.startsWith('q') ? norm : ('q' + norm));
+          }
+        }
+      });
+    }
+
+    const sqlSolved = sqlSet.size;
+    const pythonSolved = pySet.size;
+    const totalSolved = sqlSolved + pythonSolved;
+
+    const sqlPct = Math.min(100, Math.round((sqlSolved / 145) * 100));
+    const pyPct = Math.min(100, Math.round((pythonSolved / 33) * 100));
+    const totalPct = Math.min(100, Math.round((totalSolved / (145 + 33)) * 100));
+
+    return { sqlSolved, pythonSolved, totalSolved, sqlPct, pyPct, totalPct, sqlList: Array.from(sqlSet), pythonList: Array.from(pySet) };
+  }
+
+  function renderStudentDirectoryTable(students) {
+    const tableBody = document.getElementById('admin-students-tbody') || document.getElementById('adminStudentsTbody') || document.getElementById('studentsTableBody');
+    if (!tableBody) return;
+
+    if (!students || students.length === 0) {
+      tableBody.innerHTML = `
+        <tr>
+          <td colspan="6" class="p-8 text-center text-slate-400 font-medium" style="text-align:center; padding:32px; color:#94A3B8;">
+            No matching students found.
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    tableBody.innerHTML = students.map((student, index) => {
+      const metrics = getStudentSolvedMetrics(student);
+      const sqlDone = metrics.sqlSolved;
+      const pythonDone = metrics.pythonSolved;
+      const totalProgressPct = metrics.totalPct;
+
+      const isSqlUnlocked = isCourseUnlockedForStudent(student, 'sql');
+      const isPythonUnlocked = isCourseUnlockedForStudent(student, 'python');
+      const isPaid = isSqlUnlocked || isPythonUnlocked || student.isPaid || student.isSqlPaid || student.isPythonPaid;
+      const displayName = student.fullName || student.name || (student.email ? student.email.split('@')[0] : 'Student');
+      const avatarText = student.avatar || (displayName ? displayName.split(' ').map(w=>w[0]).join('').toUpperCase().substring(0,2) : 'ST');
+
+      return `
+        <tr class="admin-student-row" onclick="openStudentInspector('${student.id || student.email}')" style="cursor:pointer; transition: background 0.15s ease;">
+          <td class="font-mono text-slate-500" style="color:#64748B; font-weight:600; font-size:0.82rem;">${index + 1}</td>
+          <td class="student-name-cell">
+            <div class="student-info" style="display:flex; align-items:center; gap:12px;">
+              <span class="am-avatar" style="width:36px; height:36px; border-radius:50%; background:#0D9488; color:#fff; display:inline-flex; align-items:center; justify-content:center; font-weight:700; font-size:12px; flex-shrink:0;">${avatarText}</span>
+              <div>
+                <button class="student-inspect-btn font-semibold text-slate-900 hover:text-blue-600 cursor-pointer" onclick="event.stopPropagation(); openStudentInspector('${student.id || student.email}')" style="background:none; border:none; padding:0; font-size:0.88rem; font-weight:700; color:#0F172A; text-align:left; cursor:pointer;">
+                  ${displayName}
+                </button>
+                <div class="text-xs text-slate-500" style="font-size:0.78rem; color:#64748B;">${student.email || ''}</div>
+              </div>
+            </div>
+          </td>
+          <td><span class="badge badge-cohort" style="display:inline-block; padding:3px 10px; border-radius:999px; background:#F1F5F9; color:#475569; font-size:0.75rem; font-weight:600;">${student.cohort || 'Cohort 14'}</span></td>
+          <td>
+            <div class="course-progress-pills" style="display:flex; gap:6px;">
+              <span class="pill-metric pill-sql" style="display:inline-block; padding:2px 8px; border-radius:4px; font-size:0.72rem; font-weight:600; background:#EFF6FF; color:#1D4ED8; border:1px solid #BFDBFE;" title="SQL: ${sqlDone}/145">SQL: ${sqlDone}/145</span>
+              <span class="pill-metric pill-py" style="display:inline-block; padding:2px 8px; border-radius:4px; font-size:0.72rem; font-weight:600; background:#ECFDF5; color:#047857; border:1px solid #A7F3D0;" title="Python: ${pythonDone}/33">Py: ${pythonDone}/33</span>
+            </div>
+          </td>
+          <td>
+            <div class="progress-bar-container" style="display:flex; align-items:center; gap:8px;">
+              <div class="progress-bar-track" style="flex:1; height:6px; background:#E2E8F0; border-radius:999px; overflow:hidden;">
+                <div class="progress-bar-fill" style="width: ${totalProgressPct}%; height:100%; background:linear-gradient(90deg, #10B981, #059669); border-radius:999px;"></div>
+              </div>
+              <span class="progress-pct" style="font-size:0.75rem; font-weight:700; color:#334155;">${totalProgressPct}%</span>
+            </div>
+          </td>
+          <td>
+            <span class="status-indicator ${isPaid ? 'status-paid' : 'status-free'}" style="display:inline-block; padding:3px 8px; border-radius:4px; font-size:0.72rem; font-weight:700; ${isPaid ? 'background:#ECFDF5; color:#059669;' : 'background:#FFFBEB; color:#D97706;'}">
+              ${isPaid ? 'Enrolled' : 'Trial'}
+            </span>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function populateDashboard(students) {
+    studentsRoster = Array.isArray(students) ? students : [];
+    window.allStudentsList = studentsRoster;
+
+    // 1. Calculate Global Course Metrics
+    const courseStats = {
+      sql: { totalSolved: 0, activeStudents: 0 },
+      python: { totalSolved: 0, activeStudents: 0 }
+    };
+
+    let totalPlatformSolved = 0;
+    let totalProgressSum = 0;
+
+    studentsRoster.forEach(student => {
+      const metrics = getStudentSolvedMetrics(student);
+      const sqlDone = metrics.sqlSolved;
+      const pythonDone = metrics.pythonSolved;
+
+      if (sqlDone > 0) { courseStats.sql.totalSolved += sqlDone; courseStats.sql.activeStudents++; }
+      if (pythonDone > 0) { courseStats.python.totalSolved += pythonDone; courseStats.python.activeStudents++; }
+
+      totalPlatformSolved += metrics.totalSolved;
+      totalProgressSum += metrics.totalPct;
+    });
+
+    // 2. Render Top Course Overview Cards
+    const overviewContainer = document.getElementById('admin-course-metrics') || document.getElementById('courseOverviewCards');
+    if (overviewContainer) {
+      overviewContainer.innerHTML = ACTIVE_COURSES.map(course => `
+        <div class="metric-card bg-white border border-slate-200 rounded-xl p-5 shadow-sm" style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:12px; padding:20px; box-shadow:0 1px 3px rgba(0,0,0,0.02);">
+          <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider" style="font-size:0.75rem; font-weight:700; color:#64748B; text-transform:uppercase; letter-spacing:0.05em;">${course.name}</div>
+          <div class="text-2xl font-bold text-slate-900 mt-2" style="font-size:1.6rem; font-weight:800; color:#0F172A; margin-top:8px;">${courseStats[course.id]?.activeStudents || 0} Students</div>
+          <div class="text-xs text-slate-500 mt-1" style="font-size:0.78rem; color:#64748B; margin-top:4px;">${courseStats[course.id]?.totalSolved || 0} Total ${course.unitLabel} Completed</div>
+        </div>
+      `).join('');
+    }
+
+    // 3. Update Global Summary Stat Cards
+    const avgProg = studentsRoster.length > 0 ? Math.round(totalProgressSum / studentsRoster.length) : 0;
+    if (document.getElementById('adminTotalStudents')) document.getElementById('adminTotalStudents').textContent = studentsRoster.length;
+    if (document.getElementById('adminTotalSolved')) document.getElementById('adminTotalSolved').textContent = `${totalPlatformSolved} Solved`;
+    if (document.getElementById('adminAvgCompletion')) document.getElementById('adminAvgCompletion').textContent = `${avgProg}%`;
+
+    // 4. Render Table Roster
+    filterAndRenderRoster();
+  }
+
+  // Alias for compatibility
+  async function loadAdminStudentData() {
+    loadAdminStudentTable();
+  }
+
+  /* ── STUDENT TELEMETRY INSPECTOR DRILL-DOWN MODAL ─────────── */
+  async function openStudentInspector(studentIdentifier) {
+    if (!studentIdentifier) return;
+    const list = window.allStudentsList || studentsRoster || [];
+    const cleanTarget = String(studentIdentifier).trim().toLowerCase();
+    const cleanAlpha = cleanTarget.replace(/[^a-z0-9]/g, '');
+
+    // 1. Exact match across roster first (ID, Email, Name, or Email prefix)
+    let student = list.find(s => {
+      if (!s) return false;
+      const sId = String(s.id || '').toLowerCase().trim();
+      const sEmail = String(s.email || '').toLowerCase().trim();
+      const sName = String(s.name || s.fullName || s.studentName || '').toLowerCase().trim();
+      const sEmailPrefix = sEmail.split('@')[0].toLowerCase().trim();
+      return sId === cleanTarget || sEmail === cleanTarget || sName === cleanTarget || sEmailPrefix === cleanTarget;
+    });
+
+    // 2. Normalized alphanumeric exact match
+    if (!student) {
+      student = list.find(s => {
+        if (!s) return false;
+        const sIdAlpha = String(s.id || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+        const sEmailAlpha = String(s.email ? s.email.split('@')[0] : '').toLowerCase().replace(/[^a-z0-9]/g, '');
+        const sNameAlpha = String(s.name || s.fullName || s.studentName || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+        return sIdAlpha === cleanAlpha || sEmailAlpha === cleanAlpha || sNameAlpha === cleanAlpha;
+      });
+    }
+
+    // 3. If not found in memory, fetch directly from API endpoint
+    if (!student) {
+      try {
+        const res = await apiFetch(`/api/v1/students/${encodeURIComponent(cleanTarget)}`);
+        if (res.ok) {
+          const apiStudent = await res.json();
+          if (apiStudent && (apiStudent.id || apiStudent.email || apiStudent.name)) {
+            student = apiStudent;
+          }
+        }
+      } catch(e) {}
+    }
+
+    // 4. If still not found, check client-side registered storage
+    if (!student) {
+      try {
+        const localReg = JSON.parse(localStorage.getItem('mnt_registered_users') || '[]');
+        if (Array.isArray(localReg)) {
+          student = localReg.find(u =>
+            (u.email && u.email.toLowerCase().trim() === cleanTarget) ||
+            (u.id && String(u.id).toLowerCase().trim() === cleanTarget) ||
+            (u.name && u.name.toLowerCase().trim() === cleanTarget)
+          );
+        }
+      } catch(e) {}
+    }
+
+    // 5. Construct fallback representation if absolutely not found
+    if (!student) {
+      student = {
+        id: cleanTarget,
+        name: cleanTarget.includes('@') ? cleanTarget.split('@')[0] : cleanTarget,
+        fullName: cleanTarget.includes('@') ? cleanTarget.split('@')[0] : cleanTarget,
+        email: cleanTarget.includes('@') ? cleanTarget : `${cleanTarget}@example.com`,
+        cohort: 'Cohort 14',
+        course: 'SQL Bootcamp',
+        solvedQuestions: [],
+        completedQuestions: [],
+        pythonCompleted: [],
+        streak: 0,
+        streakDays: 0,
+        isPaid: false,
+        isSqlPaid: false,
+        isPythonPaid: false
+      };
+    }
+
+    if (!student) return;
+
+    // 1. Populate Header
+    const rawName = student.name || student.fullName || student.studentName || 'Student';
+    const initials = rawName.trim().split(/\s+/).map(w => w[0]).join('').substring(0, 2).toUpperCase() || 'ST';
+    
+    const avatarEl = document.getElementById('insp-avatar');
+    if (avatarEl) avatarEl.textContent = initials;
+    const nameEl = document.getElementById('insp-name');
+    if (nameEl) nameEl.textContent = rawName;
+    const cohortEl = document.getElementById('insp-cohort');
+    if (cohortEl) cohortEl.textContent = student.cohort || 'Cohort 14';
+    const courseEl = document.getElementById('insp-course');
+    if (courseEl) courseEl.textContent = student.course || 'Data & Cloud Engineering';
+    const emailEl = document.getElementById('insp-email');
+    if (emailEl) emailEl.textContent = student.email || '—';
+
+    // 2. Compute Unified Metrics
+    const metrics = getStudentSolvedMetrics(student);
+    const sqlSolved = metrics.sqlSolved;
+    const pythonSolved = metrics.pythonSolved;
+    const totalSolved = metrics.totalSolved;
+    const pct = metrics.totalPct;
+    const sqlPct = metrics.sqlPct;
+    const pyPct = metrics.pyPct;
+
+    const progValEl = document.getElementById('insp-progress-val');
+    if (progValEl) progValEl.textContent = `${pct}%`;
+    const progBarEl = document.getElementById('insp-progress-bar');
+    if (progBarEl) progBarEl.style.width = `${pct}%`;
+
+    const streak = student.streak || student.streakDays || 0;
+    const streakValEl = document.getElementById('insp-streak-val');
+    if (streakValEl) streakValEl.textContent = `${streak} Days`;
+    const streakSubEl = document.getElementById('insp-streak-sub');
+    if (streakSubEl) streakSubEl.textContent = `${streak} Days (${streak > 0 ? 'Active Streak' : 'Streak Reset'})`;
+
+    const lastTopicEl = document.getElementById('insp-last-topic');
+    if (lastTopicEl) {
+      lastTopicEl.innerHTML = `Resume Topic &rarr;`;
+      lastTopicEl.style.cursor = 'pointer';
+      lastTopicEl.onclick = () => {
+        window.location.href = student.lastTopicUrl || 'sql.html';
+      };
+    }
+    const lastActiveEl = document.getElementById('insp-last-active');
+    if (lastActiveEl) lastActiveEl.textContent = student.lastActive || 'Updated Recently';
+
+    // 3. Populate Course Table with Unified Unlock Logic
+    const isSqlUnlocked = isCourseUnlockedForStudent(student, 'sql');
+    const isPythonUnlocked = isCourseUnlockedForStudent(student, 'python');
+
+    let unlockedCount = 0;
+    let lockedCount = 0;
+    if (isSqlUnlocked) unlockedCount++; else lockedCount++;
+    if (isPythonUnlocked) unlockedCount++; else lockedCount++;
+
+    const unlockedBadge = document.getElementById('insp-unlocked-badge');
+    if (unlockedBadge) unlockedBadge.textContent = `• ${unlockedCount} Unlocked`;
+    const lockedBadge = document.getElementById('insp-locked-badge');
+    if (lockedBadge) lockedBadge.textContent = `• ${lockedCount} Locked`;
+
+    const coursesTbody = document.getElementById('insp-courses-tbody');
+    if (coursesTbody) {
+      coursesTbody.innerHTML = `
+        <tr style="border-bottom:1px solid #F1F5F9;">
+          <td style="padding:10px 8px; font-weight:700; color:#0F172A;">SQL Bootcamp</td>
+          <td style="padding:10px 8px; font-family:var(--fm, monospace); color:#64748B;">145</td>
+          <td style="padding:10px 8px; font-weight:600; color:#0F172A;">${sqlSolved > 0 ? `${sqlSolved}/145 (${sqlPct}%)` : (isSqlUnlocked ? '0/145 (0%)' : '—')}</td>
+          <td style="padding:10px 8px;">
+            ${isSqlUnlocked 
+              ? '<span style="color:#059669; font-weight:700; font-size:0.78rem;">Active Access</span>' 
+              : '<span style="display:inline-flex; align-items:center; padding:3px 8px; border-radius:6px; background:#FFFBEB; color:#B45309; border:1px solid #FDE68A; font-size:0.72rem; font-weight:700;">🔒 Unlock for ₹399</span>'}
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:10px 8px; font-weight:700; color:#0F172A;">Python Fundamentals</td>
+          <td style="padding:10px 8px; font-family:var(--fm, monospace); color:#64748B;">33</td>
+          <td style="padding:10px 8px; font-weight:600; color:#0F172A;">${pythonSolved > 0 ? `${pythonSolved}/33 (${pyPct}%)` : (isPythonUnlocked ? '0/33 (0%)' : '—')}</td>
+          <td style="padding:10px 8px;">
+            ${isPythonUnlocked 
+              ? '<span style="color:#059669; font-weight:700; font-size:0.78rem;">Active Access</span>' 
+              : '<span style="display:inline-flex; align-items:center; padding:3px 8px; border-radius:6px; background:#FFFBEB; color:#B45309; border:1px solid #FDE68A; font-size:0.72rem; font-weight:700;">🔒 Unlock for ₹399</span>'}
+          </td>
+        </tr>
+      `;
+    }
+
+    // 4. Render Weekly Activity Telemetry Card
+    renderWeeklyActivityForStudent(student);
+
+    // 5. Render Solved History Drawer
+    window.currentInspectedStudent = student;
+    renderAdminStudentHistory('all');
+
+    // 6. Open Modal
+    const modal = document.getElementById('student-inspector-modal');
+    if (modal) {
+      modal.classList.remove('hidden');
+      modal.style.display = 'flex';
+    }
+  }
+
+  function renderWeeklyActivityForStudent(student) {
+    const container = document.getElementById('insp-weekly-bars-container');
+    const badge = document.getElementById('insp-weekly-count');
+    if (!container) return;
+
+    function toLocalDateStr(d) {
+      if (!d) return '';
+      const dateObj = (d instanceof Date) ? d : new Date(d);
+      if (isNaN(dateObj.getTime())) return '';
+      const year = dateObj.getFullYear();
+      const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+      const day = String(dateObj.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    const now = new Date();
+    const dayOfWeek = now.getDay(); // 0=Sun, 1=Mon …
+    const distanceToMon = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+
+    const monday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + distanceToMon, 0, 0, 0, 0);
+    const sunday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + distanceToMon + 6, 23, 59, 59, 999);
+
+    const weekStart = monday.getTime();
+    const weekEnd = sunday.getTime();
+    const nowTime = now.getTime();
+    const todayStr = toLocalDateStr(now);
+
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const weekDays = days.map((dayLabel, index) => {
+      const date = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + index);
+      const dateStr = toLocalDateStr(date);
+      return { dayLabel, dateStr, date };
+    });
+
+    let activityLog = (student && Array.isArray(student.activityLog)) ? student.activityLog : [];
+    if (activityLog.length === 0 && student && student.email) {
+      try {
+        const localLog = JSON.parse(localStorage.getItem(`activity_log_${student.email.toLowerCase().trim()}`) || '[]');
+        if (Array.isArray(localLog)) activityLog = localLog;
+      } catch(e) {}
+    }
+
+    const dailyMap = {};
+    weekDays.forEach(wd => {
+      dailyMap[wd.dateStr] = {
+        dayLabel: wd.dayLabel,
+        dateStr: wd.dateStr,
+        isToday: wd.dateStr === todayStr,
+        isFuture: wd.dateStr > todayStr,
+        sql: new Set(),
+        python: new Set(),
+        da: new Set()
+      };
+    });
+
+    // Strict Date Gating Rule: Only include logs where solvedAt >= weekStart AND solvedAt <= now
+    activityLog.forEach(entry => {
+      if (!entry) return;
+      const ts = entry.solvedAt || entry.timestamp || entry.date || entry.createdAt || entry.time || entry.lastActive;
+      const rawId = entry.itemId || entry.id || entry.questionId || entry.itemTitle || entry.title;
+      if (!ts || !rawId) return;
+
+      const dateObj = new Date(ts);
+      if (isNaN(dateObj.getTime())) return;
+      const entryTime = dateObj.getTime();
+
+      if (entryTime < weekStart || entryTime > nowTime) return;
+
+      const entryDateStr = toLocalDateStr(dateObj);
+      const dayRecord = dailyMap[entryDateStr];
+      if (!dayRecord || dayRecord.isFuture) return;
+
+      const normKey = String(rawId).toLowerCase().replace(/[^a-z0-9]/g, '');
+      const cId = String(entry.courseId || entry.course || entry.courseName || entry.labType || '').toLowerCase();
+      const title = String(entry.itemTitle || entry.title || rawId).toLowerCase();
+
+      if (cId.includes('analyst') || cId.includes('analytics') || cId.includes('powerbi') || cId.includes('excel') || normKey.startsWith('da') || title.includes('analyst') || title.includes('powerbi')) {
+        dayRecord.da.add(normKey);
+      } else if (cId === 'python' || cId.includes('python') || cId === 'pythonsandbox' || title.includes('python') || normKey.startsWith('py')) {
+        dayRecord.python.add(normKey);
+      } else {
+        dayRecord.sql.add(normKey);
+      }
+    });
+
+    // Calculate deduplicated counts per day (future days are strictly 0)
+    const dayCounts = weekDays.map(wd => {
+      const d = dailyMap[wd.dateStr];
+      const sqlCount = d.isFuture ? 0 : d.sql.size;
+      const pyCount = d.isFuture ? 0 : d.python.size;
+      const daCount = d.isFuture ? 0 : d.da.size;
+      const total = sqlCount + pyCount + daCount;
+      return {
+        dayLabel: d.dayLabel,
+        dateStr: d.dateStr,
+        isToday: d.isToday,
+        isFuture: d.isFuture,
+        sql: sqlCount,
+        py: pyCount,
+        da: daCount,
+        total: total
+      };
+    });
+
+    const weekTotalCount = dayCounts.reduce((acc, curr) => acc + curr.total, 0);
+
+    // Header Badge Sync: Exactly equals sum of the 7 daily bar values
+    if (badge) badge.textContent = `${weekTotalCount} Solved This Week`;
+
+    // Determine max scale for chart height
+    const maxBar = Math.max(5, ...dayCounts.map(d => d.total));
+
+    // Render bars with clean deduplicated numbers & 3-color breakdown
+    container.innerHTML = dayCounts.map(d => {
+      const isToday = d.isToday;
+      const isZero = d.total === 0;
+
+      const totalHeightPct = isZero ? 5 : Math.max(16, Math.round((d.total / maxBar) * 100));
+      const sqlHeight = d.total > 0 ? ((d.sql / d.total) * 100) : 0;
+      const pyHeight = d.total > 0 ? ((d.py / d.total) * 100) : 0;
+      const daHeight = d.total > 0 ? ((d.da / d.total) * 100) : 0;
+
+      const tooltipText = `${d.total} Solved (SQL: ${d.sql}, Py: ${d.py}, DA: ${d.da})`;
+
+      return `
+        <div class="bar-column group" 
+             style="flex:1; display:flex; flex-direction:column; align-items:center; height:100%; justify-content:flex-end; cursor:pointer; position:relative;"
+             onmouseenter="var t=this.querySelector('.chart-tooltip'); if(t) t.style.opacity='1';"
+             onmouseleave="var t=this.querySelector('.chart-tooltip'); if(t) t.style.opacity='0';">
+          
+          <!-- Exact Solved Breakdown Tooltip -->
+          <div class="chart-tooltip" style="position:absolute; top:-32px; background:#0F172A; color:#FFFFFF; font-size:10px; font-family:'JetBrains Mono',monospace; padding:3px 8px; border-radius:6px; white-space:nowrap; pointer-events:none; z-index:20; opacity:0; transition:opacity 0.2s; box-shadow:0 4px 6px -1px rgba(0,0,0,0.15);">
+            ${tooltipText}
+          </div>
+
+          <!-- Number Label on Top -->
+          <div style="font-size:0.68rem; font-weight:700; color:${isZero ? 'transparent' : '#0F172A'}; margin-bottom:4px; font-family:'JetBrains Mono', monospace; min-height:14px;">
+            ${d.total > 0 ? d.total : ''}
+          </div>
+
+          <!-- Stacked Column Bar (SQL #10B981, Python #3B82F6, DA #8B5CF6) -->
+          <div class="bar-pill" style="width:100%; max-width:28px; height:${totalHeightPct}%; background:${isZero ? '#E2E8F0' : 'transparent'}; border-radius:6px 6px 3px 3px; overflow:hidden; display:flex; flex-direction:column-reverse; transition:all 0.3s ease;">
+            ${d.sql > 0 ? `<div style="height:${sqlHeight}%; background:#10B981; width:100%; transition:height 0.3s ease;" title="SQL: ${d.sql}"></div>` : ''}
+            ${d.py > 0 ? `<div style="height:${pyHeight}%; background:#3B82F6; width:100%; transition:height 0.3s ease;" title="Python: ${d.py}"></div>` : ''}
+            ${d.da > 0 ? `<div style="height:${daHeight}%; background:#8B5CF6; width:100%; transition:height 0.3s ease;" title="Data Analyst: ${d.da}"></div>` : ''}
+          </div>
+
+          <!-- Day Label -->
+          <div style="font-size:0.7rem; font-weight:${isToday ? '800' : '600'}; color:${isToday ? '#059669' : '#64748B'}; margin-top:6px; font-family:'JetBrains Mono', monospace; ${isToday ? 'text-decoration:underline; text-underline-offset:3px;' : ''}">
+            ${d.dayLabel}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function filterAdminHistory(courseFilter) {
+    const filterBtns = ['all', 'sql', 'python'];
+    filterBtns.forEach(f => {
+      const btn = document.getElementById(`admin-filter-${f}`);
+      if (btn) {
+        if (f === courseFilter) {
+          btn.style.background = '#0F172A';
+          btn.style.color = '#FFFFFF';
+          btn.style.border = 'none';
+        } else {
+          btn.style.background = '#F1F5F9';
+          btn.style.color = '#334155';
+          btn.style.border = '1px solid #E2E8F0';
+        }
+      }
+    });
+    renderAdminStudentHistory(courseFilter);
+  }
+
+  function renderAdminStudentHistory(courseFilter = 'all') {
+    const tbody = document.getElementById('admin-student-history-tbody');
+    if (!tbody) return;
+
+    const student = window.currentInspectedStudent;
+    if (!student) {
+      tbody.innerHTML = `<tr><td colspan="4" style="padding:16px; text-align:center; color:#94A3B8;">No student selected</td></tr>`;
+      return;
+    }
+
+    const sqlSolves = (Array.isArray(student.solvedQuestions) ? student.solvedQuestions.length : 0) ||
+                      (Array.isArray(student.completedQuestions) ? student.completedQuestions.length : 0);
+    const pythonSolves = (Array.isArray(student.pythonCompleted) ? student.pythonCompleted.length : 0);
+    const totalSolves = sqlSolves + pythonSolves;
+
+    let list = Array.isArray(student.activityLog) ? [...student.activityLog] : [];
+
+    if (totalSolves === 0) {
+      list = [];
+      if (student.email) {
+        try {
+          localStorage.removeItem(`activity_log_${student.email.toLowerCase().trim()}`);
+        } catch(e) {}
+      }
+    } else if (list.length === 0 && student.email) {
+      try {
+        const localLog = JSON.parse(localStorage.getItem(`activity_log_${student.email.toLowerCase().trim()}`) || '[]');
+        if (Array.isArray(localLog) && localLog.length > 0) list = localLog;
+      } catch(e) {}
+    }
+
+    // Filter out corrupted/undefined entries and deduplicate by course + normalized ID
+    const seenKeys = new Set();
+    list = list.filter(item => {
+      if (!item) return false;
+      const title = item.itemTitle || item.title || item.itemId;
+      if (!title || title === 'undefined' || title === 'null') return false;
+      const isPy = item.courseId === 'python' || item.labType === 'pythonSandbox' || String(item.courseName || '').toLowerCase().includes('python');
+      const cPrefix = isPy ? 'py_' : 'sql_';
+      const normKey = cPrefix + String(item.itemId || title).toLowerCase().replace(/[^a-z0-9]/g, '');
+      if (seenKeys.has(normKey)) return false;
+      seenKeys.add(normKey);
+      return true;
+    });
+
+    if (courseFilter !== 'all') {
+      list = list.filter(item => {
+        const isPy = item.courseId === 'python' || item.labType === 'pythonSandbox' || String(item.courseName || '').toLowerCase().includes('python');
+        return courseFilter === 'python' ? isPy : !isPy;
+      });
+    }
+
+    if (list.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="4" style="padding: 24px 16px; text-align: center; color: #94A3B8; font-size: 0.82rem;">
+            No ${courseFilter === 'all' ? '' : courseFilter.toUpperCase() + ' '}activity logged for this student yet.
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    tbody.innerHTML = list.map(item => {
+      const isPython = (item.courseId === 'python' || item.labType === 'pythonSandbox' || String(item.courseName || '').toLowerCase().includes('python'));
+      const courseTitle = isPython ? 'Python Fundamentals' : 'SQL Bootcamp';
+      const itemTitle = item.itemTitle || item.title || item.lastTopic || item.name || (item.itemId ? ('Question ' + item.itemId) : 'General Practice');
+      const itemId = item.itemId || (item.lastTopicUrl ? item.lastTopicUrl.replace('.html', '').replace('#', ' - ') : '—');
+      
+      const ts = item.solvedAt || item.timestamp || item.createdAt || student.lastActive;
+      const timeFormatted = ts ? new Date(ts).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      }) : 'Recently';
+
+      const badgeStyle = !isPython
+        ? 'background: #EFF6FF; color: #1D4ED8; border: 1px solid #BFDBFE;'
+        : 'background: #ECFDF5; color: #047857; border: 1px solid #A7F3D0;';
+
+      return `
+        <tr style="border-bottom: 1px solid #F1F5F9;">
+          <td style="padding: 10px 12px;">
+            <span style="display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: 600; ${badgeStyle}">
+              ${courseTitle}
+            </span>
+          </td>
+          <td style="padding: 10px 12px; font-weight: 600; color: #0F172A;">${itemTitle}</td>
+          <td style="padding: 10px 12px; font-family: monospace; font-size: 0.75rem; color: #64748B;">${itemId}</td>
+          <td style="padding: 10px 12px; color: #64748B; font-size: 0.78rem;">${timeFormatted}</td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function closeStudentInspector() {
+    const modal = document.getElementById('student-inspector-modal');
+    if (modal) {
+      modal.classList.add('hidden');
+      modal.style.display = 'none';
+    }
+  }
+
+  // Bind close on ESC key and backdrop click
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeStudentInspector();
+  });
+  document.getElementById('student-inspector-modal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'student-inspector-modal') closeStudentInspector();
+  });
+
+  function viewStudentDetails(studentId) {
+    openStudentInspector(studentId);
+  }
+
+  function closeStudentDetail() {
+    closeStudentInspector();
+  }
+  
+  /* ── REAL-TIME ACTIVE STUDENT MONITOR ─────────────────────── */
+  function formatRelativeTime(isoString) {
+    if (!isoString) return 'Just now';
+    const diffMs = Date.now() - new Date(isoString).getTime();
+    if (isNaN(diffMs) || diffMs < 0) return 'Just now';
+    const sec = Math.floor(diffMs / 1000);
+    if (sec < 30) return 'Just now';
+    if (sec < 60) return `${sec} sec ago`;
+    const min = Math.floor(sec / 60);
+    if (min < 60) return `${min} min ago`;
+    const hrs = Math.floor(min / 60);
+    const remMins = min % 60;
+    if (hrs < 24) {
+      return remMins > 0 ? `${hrs} hr ${remMins} min ago` : `${hrs} hr ago`;
+    }
+    const days = Math.floor(hrs / 24);
+    return `${days} d ago`;
+  }
+
+  function isExcludedStudent(name, email) {
+    const e = (email || '').toLowerCase().trim();
+    return e === 'admin@marutinova.com' || e === 'admin@gmail.com' || e === 'admin' || e.includes('unregistered');
+  }
+
+  function renderActiveStudentMonitor() {
+    const tbody = document.getElementById('adminActiveMonitorTbody') || document.getElementById('amTableBody');
+    const countBadge = document.getElementById('amActiveCount');
+    const onlineMetric = document.getElementById('adminOnlineStudents');
+    if (!tbody) return;
+
+    apiFetch('/api/v1/telemetry/active')
+      .then(res => res.json())
+      .then(data => {
+        let list = Array.isArray(data.students) ? data.students : (Array.isArray(data) ? data : []);
+        list = list.filter(item => !isExcludedStudent(item.name || item.studentName, item.email));
+
+        // If no registered/enrolled students exist on platform, or student is not in roster, remove stale orphan entries
+        if (Array.isArray(window.allStudentsList)) {
+          if (window.allStudentsList.length === 0) {
+            list = [];
+          } else {
+            const knownEmails = new Set(window.allStudentsList.map(s => (s.email || '').toLowerCase().trim()));
+            list = list.filter(item => {
+              const e = (item.email || '').toLowerCase().trim();
+              return knownEmails.has(e);
+            });
+          }
+        }
+
+        const activeCount = typeof data.activeCount === 'number' 
+          ? (list.length === 0 ? 0 : data.activeCount)
+          : list.filter(s => s.online || s.status === 'Solving Now').length;
+
+        if (countBadge) countBadge.textContent = activeCount.toString();
+        if (onlineMetric) onlineMetric.textContent = activeCount + ' Active';
+
+        if (list.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="4" style="text-align:center; padding:32px 16px; color:var(--muted); font-size:0.88rem;">
+                <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+                  <span style="font-size:1.4rem; opacity:0.6;">⏱️</span>
+                  <span style="font-weight:600; color:#475569;">No active student sessions in the last 30 minutes.</span>
+                  <span style="font-size:0.75rem; color:#94A3B8;">Real-time student telemetry will dynamically appear here when students log in and practice.</span>
+                </div>
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        tbody.innerHTML = '';
+        list.forEach(item => {
+          const isOnline = item.online === true || item.status === 'Solving Now';
+          const studentName = (item.name || item.studentName || 'Student').trim();
+          const avatarInitials = item.avatar || studentName.split(/\s+/).map(w=>w[0]).join('').toUpperCase().substring(0,2) || 'ST';
+          const relTime = item.relativeTime || formatRelativeTime(item.lastActive || item.timestamp);
+          const statusText = isOnline ? '● Solving Now' : 'Idle / Away';
+          const courseTitle = item.course || item.courseName || 'SQL Bootcamp';
+          const currentActivity = item.currentQuestion || item.action || 'Practice';
+          const lookupIdentifier = item.email || item.id || studentName;
+
+          const tr = document.createElement('tr');
+          tr.style.cursor = 'pointer';
+          tr.onclick = () => openStudentInspector(lookupIdentifier);
+
+          tr.innerHTML = `
+            <td>
+              <div class="am-student-cell">
+                <span class="am-avatar">${avatarInitials}</span>
+                <div>
+                  <div style="font-weight:600; color:#0F172A;">${studentName}</div>
+                  <div style="font-size:0.78rem; color:var(--muted);">${item.email || ''}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div>
+                <span class="am-q-prefix">Solving:</span>
+                <span class="am-q-title">${currentActivity}</span>
+              </div>
+              <div style="font-size:0.72rem; color:var(--teal); font-weight:600; margin-top:2px;">${courseTitle}</div>
+            </td>
+            <td>
+              <span class="live-dot-indicator">
+                <span class="live-dot ${isOnline ? 'online' : 'idle'}"></span>
+                <span style="${isOnline ? 'color:#10B981; font-weight:700;' : 'color:var(--muted); font-weight:500;'}">${statusText}</span>
+              </span>
+            </td>
+            <td><span style="font-size:0.85rem; color:var(--muted); font-weight:500;">${relTime}</span></td>
+          `;
+          tbody.appendChild(tr);
+        });
+      })
+      .catch(err => {
+        console.error('Error fetching live student telemetry:', err);
+      });
+  }
+
+  function drawMonitorTable(telemetryList) {
+    renderActiveStudentMonitor();
+  }
+
+  function isTestAccountEmail(email) {
+    if (!email) return false;
+    const e = email.toLowerCase().trim();
+    return e.includes('auth_user_test') || e.includes('unregistered');
+  }
+
+  /* ── DYNAMIC USER DIRECTORY & STORAGE LISTENER ───────────────── */
+  function loadAdminStudentTable() {
+    apiFetch('/api/v1/students')
+      .then(res => {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return res.json();
+      })
+      .then(apiStudents => {
+        if (Array.isArray(apiStudents)) {
+          const cleanApiStudents = apiStudents.filter(s => !isTestAccountEmail(s.email));
+          populateDashboard(cleanApiStudents);
+          if (currentActiveDrawerStudentId) {
+            viewStudentDetails(currentActiveDrawerStudentId);
+          }
+        } else {
+          populateDashboard([]);
+        }
+      })
+      .catch((err) => {
+        console.warn('API fetch failed, using local roster:', err);
+        fallbackLocalRoster();
+      });
+  }
+
+  function fallbackLocalRoster() {
+    let registeredList = [];
+    try {
+      const raw1 = localStorage.getItem('registeredUsers');
+      const raw2 = localStorage.getItem('mnt_registered_users');
+      if (raw1) registeredList = JSON.parse(raw1);
+      else if (raw2) registeredList = JSON.parse(raw2);
+      if (!Array.isArray(registeredList)) registeredList = [];
+    } catch(e) {}
+
+    const allStudents = [];
+    registeredList.forEach(u => {
+      if (u && (u.fullName || u.name || u.email) && !isTestAccountEmail(u.email)) {
+        allStudents.push({
+          id: u.id || 'USER-' + Date.now(),
+          name: u.fullName || u.name || 'Student',
+          email: u.email || 'student@marutinova.com',
+          phone: u.mobile || u.phone || '+91 98765 43210',
+          course: u.course || 'Data Analytics',
+          cohort: u.cohort || 'Cohort 14',
+          status: u.status || 'Active',
+          totalStudyTimeHours: u.totalStudyTimeHours || 0,
+          todayStudyTime: u.todayStudyTime || 0,
+          lastTopic: u.lastTopic || 'Getting Started',
+          progressPercent: u.progressPercent || 0,
+          streak: u.streak || u.streakDays || 0,
+          streakDays: u.streakDays || u.streak || 0,
+          completedQuestions: u.completedQuestions || [],
+          solvedQuestions: u.solvedQuestions || [],
+          pythonCompleted: u.pythonCompleted || [],
+          enrolledCourses: u.enrolledCourses || [],
+          unlockedCourses: u.unlockedCourses || [],
+          unlockedPlaygrounds: u.unlockedPlaygrounds || [],
+          isPaid: u.isPaid || false,
+          isSqlPaid: u.isSqlPaid || false,
+          isPythonPaid: u.isPythonPaid || false,
+          isAnalyticsPaid: u.isAnalyticsPaid || false,
+          isPowerBIPaid: u.isPowerBIPaid || false,
+          activityLog: u.activityLog || [],
+          avatar: u.avatar || (u.name ? u.name.split(' ').map(w=>w[0]).join('').toUpperCase() : 'ST')
+        });
+      }
+    });
+
+    // If no students exist, keep list empty
+    if (allStudents.length === 0) {
+      // empty
+    }
+
+    populateDashboard(allStudents);
+    if (currentActiveDrawerStudentId) {
+      viewStudentDetails(currentActiveDrawerStudentId);
+    }
+  }
+
+  /* ── LIVE TOAST NOTIFICATION ──────────────────────────────── */
+  function showLiveToastNotification(message) {
+    let container = document.getElementById('adminLiveToastContainer');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'adminLiveToastContainer';
+      container.style.cssText = 'position:fixed; bottom:24px; right:24px; z-index:99999; display:flex; flex-direction:column; gap:10px; pointer-events:none;';
+      document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.style.cssText = 'background:#111827; color:#FFFFFF; border:1px solid #10B981; border-left:4px solid #10B981; padding:12px 18px; border-radius:8px; font-family:var(--fb); font-size:0.88rem; font-weight:600; box-shadow:0 10px 30px rgba(0,0,0,0.5), 0 0 15px rgba(16,185,129,0.25); opacity:0; transform:translateY(10px); transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1); pointer-events:auto; display:flex; align-items:center; gap:8px;';
+    toast.innerHTML = `<span style="width:10px; height:10px; border-radius:50%; background:#10B981; box-shadow:0 0 8px #10B981; flex-shrink:0;"></span> <span>${message}</span>`;
+    
+    container.appendChild(toast);
+    setTimeout(() => {
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateY(0)';
+    }, 10);
+
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(10px)';
+      setTimeout(() => {
+        if (toast.parentNode) toast.parentNode.removeChild(toast);
+      }, 300);
+    }, 4500);
+  }
+
+  /* ── PURGE ALL STUDENTS & DATA ────────────────────────────── */
+  function purgeAllPlatformStudentData() {
+    if (!confirm('⚠️ Are you sure you want to completely remove ALL students and telemetry data? This will clear all roster records, telemetry activity, and playground solves.')) {
+      return;
+    }
+
+    // 1. Purge LocalStorage
+    try {
+      const keysToRemove = [
+        'mnt_registered_users',
+        'registeredUsers',
+        'allStudents',
+        'students',
+        'currentUser',
+        'mnt_user',
+        'completedQuestions',
+        'solvedQuestions',
+        'sql_qb_done',
+        'pythonCompleted',
+        'mnt_solved_questions',
+        'mnt_progress'
+      ];
+      keysToRemove.forEach(k => {
+        try { localStorage.removeItem(k); } catch(e) {}
+        try { sessionStorage.removeItem(k); } catch(e) {}
+      });
+
+      // Remove any user-prefixed keys
+      const allKeys = Object.keys(localStorage);
+      allKeys.forEach(k => {
+        if (k.startsWith('activity_log_') || 
+            k.startsWith('python_done_') || 
+            k.startsWith('mnt_paid_unlocks_') || 
+            k.startsWith('mnt_solved_') ||
+            k.startsWith('user_progress_') ||
+            k.startsWith('streak_')) {
+          try { localStorage.removeItem(k); } catch(e) {}
+        }
+      });
+    } catch(e) {}
+
+    // 2. Call Server Purge Endpoint
+    apiFetch('/api/v1/admin/clear-all-data', { method: 'POST' })
+      .catch(() => {});
+
+    // 3. Broadcast to all open tabs
+    try {
+      const ch = new BroadcastChannel('student_activity_channel');
+      ch.postMessage({ type: 'CLEAR_ALL_DATA' });
+    } catch(e) {}
+
+    // 4. Update UI immediately
+    window.allStudentsList = [];
+    window.currentInspectedStudent = null;
+    closeStudentInspector();
+    populateDashboard([]);
+    renderActiveStudentMonitor();
+    showLiveToastNotification('✨ All student records and telemetry sessions have been completely removed.');
+  }
+
+  /* ── LIVE BROADCAST ENGINE & REAL-TIME EVENT SYNC ─────────── */
+  try {
+    const liveChannel = new BroadcastChannel('student_activity_channel');
+    liveChannel.onmessage = (event) => {
+      if (!event.data) return;
+      if (event.data.type === 'CLEAR_ALL_DATA') {
+        window.allStudentsList = [];
+        window.currentInspectedStudent = null;
+        closeStudentInspector();
+        populateDashboard([]);
+        renderActiveStudentMonitor();
+        return;
+      }
+      if (event.data.type === 'QUESTION_COMPLETED' || event.data.type === 'STUDENT_UNLOCKED' || event.data.type === 'STUDENT_HEARTBEAT' || event.data.type === 'PROGRESS_UPDATED') {
+        loadAdminStudentTable();
+        renderActiveStudentMonitor();
+        updateMetricsUI();
+
+        // If inspector modal is currently open for this student, immediately re-render it
+        if (window.currentInspectedStudent && event.data.email) {
+          const inspectedEmail = (window.currentInspectedStudent.email || '').toLowerCase().trim();
+          const incomingEmail = (event.data.email || '').toLowerCase().trim();
+          if (inspectedEmail === incomingEmail) {
+            openStudentInspector(inspectedEmail);
+          }
+        }
+
+        const name = event.data.studentName || event.data.name || 'Student';
+        if (event.data.type === 'STUDENT_UNLOCKED') {
+          showLiveToastNotification(`🎉 ${name} unlocked ${event.data.courseName || 'Course'}!`);
+        } else if (event.data.type === 'QUESTION_COMPLETED') {
+          const qTitle = event.data.questionTitle || event.data.itemId || 'Question';
+          showLiveToastNotification(`🟢 ${name} completed "${qTitle}"!`);
+        }
+      }
+    };
+  } catch(e) {}
+
+  window.addEventListener('storage', (e) => {
+    updateAuthHeaderState();
+    loadAdminStudentTable();
+    renderActiveStudentMonitor();
+    updateMetricsUI();
+  });
+
+  window.addEventListener('studentProgressUpdated', (e) => {
+    loadAdminStudentTable();
+    renderActiveStudentMonitor();
+    updateMetricsUI();
+  });
+
+  /* ── INIT: LOAD DATA ON PAGE READY ──────────────────────────── */
+  document.addEventListener('DOMContentLoaded', function() {
+    updateAuthHeaderState();
+    renderActiveStudentMonitor();
+    setInterval(() => {
+      renderActiveStudentMonitor();
+      loadAdminStudentTable();
+    }, 3000);
+    loadAdminStudentTable();
+    updateMetricsUI();
+  });
+  </script>
+</body>
+</html>

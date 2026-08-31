@@ -1,0 +1,18 @@
+[
+  {
+    "id": "4",
+    "title": "SQL & Database Engineering Pro",
+    "description": "Query, optimize, and architect — 145 interview questions, interactive SQL playground, and schema design.",
+    "category": "sql",
+    "categoryLabel": "SQL & Databases",
+    "level": "📊 All Levels",
+    "duration": "⏱ 6 Weeks • Live Weekend",
+    "schedule": "📅 Sat & Sun (3 PM - 5 PM)",
+    "tags": ["SQL", "Databases", "PostgreSQL", "Database Engineering", "Interactive Playground"],
+    "price": "₹399",
+    "priceLabel": "Unlock Lifetime",
+    "status": "live",
+    "action": "openSqlModal()",
+    "iconName": "database"
+  }
+]

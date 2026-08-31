@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Daily Law Docket — Govt. Law Vacancies India 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Spline+Sans:wght@400;500;600&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#16203a;--ink2:#46506b;--paper:#f3eee1;--surface:#fffdf7;
+  --rule:#d8cdb4;--brass:#9a7826;--brass2:#c9a14a;
+  --green:#1f6b46;--green-bg:#e4efe6;--green-bd:#bcd6c4;
+  --amber:#8a6a13;--amber-bg:#f3ead0;--amber-bd:#e3d3a3;
+  --red:#8f3030;--red-bg:#efe0dd;--red-bd:#e0c2bd;
+  --mute:#6c7488;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:"Spline Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 18px 60px}
+
+/* masthead */
+.mast{border:1.5px solid var(--ink);background:var(--surface);border-radius:3px;padding:20px 24px;position:relative;box-shadow:0 14px 30px -22px rgba(22,32,58,.5)}
+.mast::before{content:"";position:absolute;inset:5px;border:1px solid var(--rule);border-radius:2px;pointer-events:none}
+.eyebrow{font-family:"Spline Sans Mono",monospace;font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--brass);font-weight:500}
+h1{font-family:"Fraunces",serif;font-weight:600;font-size:clamp(26px,5vw,38px);line-height:1.05;margin:5px 0 3px}
+h1 em{font-style:italic;color:var(--brass)}
+.sub{color:var(--ink2);font-size:14px;max-width:62ch}
+.mast-foot{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:14px;padding-top:12px;border-top:1px solid var(--rule)}
+.stamp{font-family:"Spline Sans Mono",monospace;font-size:11px;color:var(--ink2)}
+.stamp b{color:var(--ink);font-weight:500}
+.actions{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:7px;border:none;cursor:pointer;font-family:"Spline Sans",sans-serif;font-weight:600;font-size:13px;padding:9px 16px;border-radius:2px;transition:transform .1s,background .2s}
+.btn-p{background:var(--ink);color:#fdf8ec}.btn-p:hover{background:#0f1730}
+.btn-g{background:transparent;color:var(--ink);border:1px solid var(--rule)}.btn-g:hover{border-color:var(--brass)}
+.btn:active{transform:translateY(1px)}.btn:disabled{opacity:.5;cursor:wait}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--brass2)}
+.spin .dot{animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.prog{margin-top:10px;font-family:"Spline Sans Mono",monospace;font-size:12px;color:var(--amber);display:none}
+.prog.show{display:block}
+.bar{height:3px;background:var(--rule);border-radius:2px;margin-top:5px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--brass);transition:width .3s}
+.stale{margin-top:8px;font-size:12px;color:var(--amber);font-family:"Spline Sans Mono",monospace;display:none}
+.stale.show{display:block}
+
+/* controls */
+.controls{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin:18px 0 6px}
+.srch{flex:1;min-width:180px;background:var(--surface);border:1px solid var(--rule);border-radius:2px;padding:8px 11px;font-size:14px;font-family:inherit;color:var(--ink)}
+.srch:focus{outline:2px solid var(--brass2);outline-offset:1px;border-color:var(--brass)}
+select.srch{flex:0 0 auto;min-width:150px;cursor:pointer}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px}
+.chip{font-size:12px;font-family:"Spline Sans Mono",monospace;padding:6px 11px;border:1px solid var(--rule);background:var(--surface);color:var(--ink2);border-radius:20px;cursor:pointer;user-select:none;transition:all .15s}
+.chip:hover{border-color:var(--brass)}
+.chip[aria-pressed="true"]{background:var(--ink);color:#fdf8ec;border-color:var(--ink)}
+.count{font-family:"Spline Sans Mono",monospace;font-size:12px;color:var(--mute);margin:6px 2px 12px}
+
+/* cards grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px}
+
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:3px;display:flex;flex-direction:column;transition:box-shadow .2s,border-color .2s;position:relative;overflow:hidden}
+.card:hover{box-shadow:0 4px 18px -8px rgba(22,32,58,.2);border-color:var(--brass2)}
+.card.isnew::after{content:"NEW";position:absolute;top:8px;right:10px;font-family:"Spline Sans Mono",monospace;font-size:9px;letter-spacing:.15em;color:var(--brass);font-weight:500}
+
+.card-head{padding:14px 16px 10px;border-bottom:1px solid var(--rule)}
+.card-badge{display:flex;align-items:center;gap:7px;margin-bottom:7px}
+.badge{font-family:"Spline Sans Mono",monospace;font-size:10.5px;font-weight:500;letter-spacing:.05em;padding:3px 8px;border-radius:2px;text-transform:uppercase;border:1px solid transparent}
+.badge.open{color:var(--green);background:var(--green-bg);border-color:var(--green-bd)}
+.badge.expected{color:var(--amber);background:var(--amber-bg);border-color:var(--amber-bd)}
+.badge.closed{color:var(--red);background:var(--red-bg);border-color:var(--red-bd)}
+.cat-pill{font-family:"Spline Sans Mono",monospace;font-size:10px;color:var(--ink2);border:1px solid var(--rule);padding:2px 7px;border-radius:2px}
+.card-title{font-family:"Fraunces",serif;font-size:16px;font-weight:600;line-height:1.2;letter-spacing:-.005em}
+.card-org{font-size:12.5px;color:var(--ink2);margin-top:3px}
+.card-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.tag{font-family:"Spline Sans Mono",monospace;font-size:10px;padding:2px 7px;border-radius:2px;border:1px solid var(--rule);color:var(--ink2);background:var(--paper)}
+.tag.fresh{color:var(--green);border-color:var(--green-bd);background:var(--green-bg)}
+.tag.women{color:#8a3d6b;border-color:#e0c4d6;background:#f4e6ee}
+
+.card-body{padding:12px 16px;flex:1;display:flex;flex-direction:column;gap:10px}
+.info-row{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.info-item{display:flex;flex-direction:column;gap:2px}
+.info-label{font-family:"Spline Sans Mono",monospace;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.info-val{font-family:"Spline Sans Mono",monospace;font-size:13px;color:var(--ink);font-weight:500}
+.deadline-val{font-size:12px;color:var(--amber);font-weight:500}
+
+/* THE APPLY PATH — the key feature */
+.apply-box{background:var(--paper);border:1px solid var(--brass2);border-left:3px solid var(--brass);border-radius:2px;padding:10px 12px}
+.apply-box-head{font-family:"Spline Sans Mono",monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--brass);font-weight:500;margin-bottom:7px}
+.apply-steps{display:flex;flex-direction:column;gap:4px}
+.step{display:flex;gap:8px;align-items:flex-start}
+.step-n{font-family:"Spline Sans Mono",monospace;font-size:10px;color:var(--brass2);font-weight:500;flex-shrink:0;margin-top:1px}
+.step-t{font-size:12px;color:var(--ink);line-height:1.4}
+.step-t a{color:var(--brass);text-decoration:underline;text-decoration-color:var(--brass2);word-break:break-all}
+.step-t a:hover{color:var(--ink)}
+.step-note{font-size:11px;color:var(--ink2);font-style:italic}
+
+.card-foot{padding:10px 16px;border-top:1px solid var(--rule);display:flex;align-items:center;justify-content:space-between;gap:8px}
+.portal-url{font-family:"Spline Sans Mono",monospace;font-size:11px;color:var(--mute);word-break:break-all}
+.copy-btn{font-family:"Spline Sans",sans-serif;font-size:11.5px;font-weight:600;padding:5px 11px;border:1px solid var(--ink);background:var(--ink);color:#fdf8ec;border-radius:2px;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.copy-btn:hover{background:#0f1730}
+.copy-btn.ok{background:var(--green);border-color:var(--green)}
+
+.empty{grid-column:1/-1;padding:40px;text-align:center;color:var(--ink2)}
+.empty b{font-family:"Fraunces",serif;font-size:18px;color:var(--ink);display:block;margin-bottom:4px;font-weight:600}
+.foot{margin-top:22px;font-size:11.5px;color:var(--mute);font-family:"Spline Sans Mono",monospace;line-height:1.7}
+.foot b{color:var(--ink2);font-weight:500}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(16px);background:var(--ink);color:#fdf8ec;font-family:"Spline Sans Mono",monospace;font-size:12px;padding:10px 15px;border-radius:3px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:99;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(max-width:600px){.grid{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+<header class="mast">
+  <div class="eyebrow">Govt. Law Vacancies · India · 2026</div>
+  <h1>The Daily <em>Law Docket</em></h1>
+  <p class="sub">Every law-domain government job in India — with the exact step-by-step apply path for each. Copy the portal link, follow the steps, done.</p>
+  <div class="mast-foot">
+    <div>
+      <div class="stamp">Last scan: <b id="updated">—</b> <span id="newJobsBadge" style="display:none;margin-left:7px;font-family:'Spline Sans Mono',monospace;font-size:11px;background:#1f6b46;color:#e4efe6;padding:2px 8px;border-radius:2px;font-weight:500"></span></div>
+      <div id="scanHistory" style="margin-top:6px;display:flex;flex-direction:column;gap:3px"></div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-g" id="quickBtn"><span class="dot"></span>Quick scan</button>
+      <button class="btn btn-p" id="fullBtn"><span class="dot"></span>Full scan · 6 sources</button>
+    </div>
+  </div>
+  <div class="prog" id="prog"><span id="progText">Scanning…</span><div class="bar"><i id="progBar"></i></div></div>
+  <div class="stale" id="stale">⚠ List is a few days old — auto-scan will run on next visit.</div>
+</header>
+
+<!-- API Key Setup Banner -->
+<div id="keyBanner" style="display:none;background:#f3ead0;border:1px solid #e3d3a3;border-radius:3px;padding:13px 18px;margin-bottom:18px;flex-wrap:wrap;align-items:center;gap:10px">
+  <span style="font-size:13px;color:#8a6a13;flex:1;min-width:220px"><b>One-time setup:</b> Enter your Anthropic API key to enable daily auto-refresh of job listings. Stored only in your browser.</span>
+  <input id="keyInput" type="password" placeholder="sk-ant-api03-…" style="flex:1;min-width:240px;padding:8px 11px;border:1px solid #e3d3a3;border-radius:2px;font-family:monospace;font-size:13px;background:#fffdf7;color:#16203a">
+  <button onclick="saveKey()" style="padding:9px 16px;background:#16203a;color:#fdf8ec;border:none;border-radius:2px;font-weight:600;font-size:13px;cursor:pointer;white-space:nowrap">Save & Scan</button>
+  <button onclick="document.getElementById('keyBanner').style.display='none'" style="padding:9px 14px;background:transparent;color:#8a6a13;border:1px solid #e3d3a3;border-radius:2px;font-size:13px;cursor:pointer">Dismiss</button>
+</div>
+
+<div class="controls">
+  <input class="srch" id="search" placeholder="Search post, organisation or state…" aria-label="Search">
+  <select class="srch" id="stateSel" aria-label="Filter by state"><option value="">All states</option></select>
+</div>
+<div class="chips" id="statusChips">
+  <span class="chip" data-f="status" data-v="Open" aria-pressed="false">Open now</span>
+  <span class="chip" data-f="status" data-v="Expected" aria-pressed="false">Expected</span>
+  <span class="chip" data-f="status" data-v="Closed" aria-pressed="false">Closed</span>
+  <span class="chip" data-f="fresh" data-v="1" aria-pressed="false">Freshers OK</span>
+</div>
+<div class="chips" id="catChips" style="margin-top:6px">
+  <span class="chip" data-f="cat" data-v="Prosecution" aria-pressed="false">Prosecution / APO</span>
+  <span class="chip" data-f="cat" data-v="Courts & Judiciary" aria-pressed="false">Courts &amp; Judiciary</span>
+  <span class="chip" data-f="cat" data-v="Bank & Regulatory" aria-pressed="false">Bank &amp; Regulatory</span>
+  <span class="chip" data-f="cat" data-v="PSU & State Corp" aria-pressed="false">PSU &amp; State Corp</span>
+  <span class="chip" data-f="cat" data-v="Central & Defence" aria-pressed="false">Central &amp; Defence</span>
+  <span class="chip" data-f="cat" data-v="Insurance" aria-pressed="false">Insurance</span>
+</div>
+<div class="count" id="count"></div>
+<div class="grid" id="grid"></div>
+
+<p class="foot">
+  <b>How it works:</b> cards show the exact step-by-step apply path. Copy the portal link → open in your browser → follow the numbered steps.<br>
+  <b>Run a scan each day</b> to pull fresh notifications. <b>Tags:</b> ♀ = reserved seats for women · Freshers OK = no practice needed · CLAT-PG = needs postgraduate CLAT score.
+</p>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ── JOBS DATA with exact apply steps ──────────────────────────────────────────
+const SEED = [
+ {
+  title:"RPSC APO (Asst. Prosecution Officer)",
+  org:"RPSC, Rajasthan",state:"Rajasthan",cat:"Prosecution",
+  vacancies:"371",status:"Open",deadline:"Apply by 07 Jul 2026 | Prelims 02 Sep 2026",
+  experience:"Freshers OK",portal:"https://sso.rajasthan.gov.in",
+  steps:[
+   {n:"1",t:'Go to <a href="https://sso.rajasthan.gov.in" target="_blank">sso.rajasthan.gov.in</a>'},
+   {n:"2",t:"Login with SSO ID — or register new SSO ID if you don't have one"},
+   {n:"3",t:'Search "Recruitment" app → click <b>RPSC Recruitment Portal</b>'},
+   {n:"4",t:"Complete OTR (One Time Registration) with Aadhaar / Jan-Aadhaar"},
+   {n:"5",t:'Find <b>APO Exam 2026 (Advt 03/EXAM/APO/EP-I/2026-27)</b> → Apply Online'},
+   {n:"6",t:"Upload photo, signature, thumb impression → pay fee → submit → print"},
+   {n:"★",t:"Deadline: 07 July 2026 midnight",note:"Pay Matrix L-11 | No interview — exam only"}
+  ]
+ },
+ {
+  title:"RJS — Civil Judge (Junior Division)",
+  org:"Rajasthan High Court",state:"Rajasthan",cat:"Courts & Judiciary",
+  vacancies:"44",status:"Closed",deadline:"Next cycle expected 2027 | ♀ 10 seats",
+  experience:"3 yrs Bar practice",portal:"https://hcraj.nic.in",
+  steps:[
+   {n:"1",t:'Watch <a href="https://hcraj.nic.in" target="_blank">hcraj.nic.in</a> → Recruitment section'},
+   {n:"2",t:"When notified, click 'Cadre of Civil Judge' recruitment link"},
+   {n:"3",t:"Register with email → fill form → upload docs → pay fee → submit"},
+   {n:"★",t:"Requires 3 yrs advocacy — start Bar enrolment now if not done"}
+  ]
+ },
+ {
+  title:"RIICO Junior Legal Officer",
+  org:"RIICO, Rajasthan",state:"Rajasthan",cat:"PSU & State Corp",
+  vacancies:"4",status:"Closed",deadline:"Closed 07 Mar 2026 | Watch for next cycle",
+  experience:"LLB required",portal:"https://riico.rajasthan.gov.in",
+  steps:[
+   {n:"1",t:'Watch <a href="https://riico.rajasthan.gov.in" target="_blank">riico.rajasthan.gov.in</a> → Careers / Recruitment'},
+   {n:"2",t:"When notified, apply via RIICO's online recruitment portal"},
+   {n:"3",t:"Fill form, upload docs, pay fee ₹1000 (General) or ₹750 (SC/ST/EWS)"}
+  ]
+ },
+ {
+  title:"RFC Asst. Manager (Law)",
+  org:"Rajasthan Financial Corporation",state:"Rajasthan",cat:"PSU & State Corp",
+  vacancies:"TBA",status:"Expected",deadline:"Expected 2026",
+  experience:"Freshers OK",portal:"https://www.rfc.rajasthan.gov.in",
+  steps:[
+   {n:"1",t:'Watch <a href="https://www.rfc.rajasthan.gov.in" target="_blank">rfc.rajasthan.gov.in</a> → Recruitment'},
+   {n:"2",t:"Apply online when notification is released — check weekly"}
+  ]
+ },
+ {
+  title:"Rajasthan District Courts / DLSA Legal Posts",
+  org:"District Courts, Rajasthan",state:"Rajasthan",cat:"Courts & Judiciary",
+  vacancies:"Varies",status:"Expected",deadline:"Rolling — new notices monthly",
+  experience:"Varies by post",portal:"https://districts.ecourts.gov.in/rajasthan",
+  steps:[
+   {n:"1",t:'Go to <a href="https://districts.ecourts.gov.in/rajasthan" target="_blank">districts.ecourts.gov.in/rajasthan</a>'},
+   {n:"2",t:"Click your district (e.g., Jaisalmer, Jodhpur, Jaipur)"},
+   {n:"3",t:"Look for Recruitment / Notifications section on that district's page"},
+   {n:"★",t:"Check this weekly — district court posts appear without advance notice"}
+  ]
+ },
+ {
+  title:"UP APO (Asst. Prosecution Officer)",
+  org:"UPPSC",state:"Uttar Pradesh",cat:"Prosecution",
+  vacancies:"182",status:"Open",deadline:"Prelims done 22 Mar | Mains ongoing | ♀ 36 seats",
+  experience:"Freshers OK",portal:"https://uppsc.up.nic.in",
+  steps:[
+   {n:"1",t:'Go to <a href="https://uppsc.up.nic.in" target="_blank">uppsc.up.nic.in</a>'},
+   {n:"2",t:"Click <b>Apply Online</b> → find APO Mains 2026 (Advt A-8/E-1/2025)"},
+   {n:"3",t:"Login with OTR credentials → fill Mains form → pay fee → submit"},
+   {n:"★",t:"Prelims done — Mains stage is now open for qualified candidates"}
+  ]
+ },
+ {
+  title:"MP ADPO (Asst. District Prosecution Officer)",
+  org:"MPPSC",state:"Madhya Pradesh",cat:"Prosecution",
+  vacancies:"17",status:"Open",deadline:"Exam date: 18 Oct 2026",
+  experience:"Freshers OK",portal:"https://mppsc.mp.gov.in",
+  steps:[
+   {n:"1",t:'Go to <a href="https://mppsc.mp.gov.in" target="_blank">mppsc.mp.gov.in</a>'},
+   {n:"2",t:"Click <b>Apply Online</b> tab on homepage"},
+   {n:"3",t:"Find <b>ADPO Recruitment 2026 (Advt 03/2026)</b> → click Apply"},
+   {n:"4",t:"Register with email/mobile → fill form → upload docs → pay fee → submit"},
+   {n:"★",t:"Exam: 18 Oct 2026 | Admit card from 08 Oct 2026"}
+  ]
+ },
+ {
+  title:"Haryana ADA (Asst. District Attorney)",
+  org:"HPSC",state:"Haryana",cat:"Prosecution",
+  vacancies:"255",status:"Open",deadline:"Notified | Exam pending",
+  experience:"Freshers OK",portal:"https://hpsc.gov.in",
+  steps:[
+   {n:"1",t:'Go to <a href="https://hpsc.gov.in" target="_blank">hpsc.gov.in</a>'},
+   {n:"2",t:"Click <b>Recruitment</b> → find ADA (Asst. District Attorney) 2025-26"},
+   {n:"3",t:"Click Apply Online → register → fill form → upload docs → pay → submit"}
+  ]
+ },
+ {
+  title:"BPSC APO (Asst. Prosecution Officer)",
+  org:"Bihar Public Service Commission",state:"Bihar",cat:"Prosecution",
+  vacancies:"300",status:"Closed",deadline:"Closed 20 Mar 2026 | Watch for next cycle",
+  experience:"Freshers OK",portal:"https://bpsconline.bihar.gov.in",
+  steps:[
+   {n:"1",t:'Watch <a href="https://bpsconline.bihar.gov.in" target="_blank">bpsconline.bihar.gov.in</a> for next APO cycle'},
+   {n:"2",t:"Complete OTR → login → find APO Recruitment → Apply"},
+   {n:"3",t:"Upload docs via Digilocker or manual → capture live webcam photo → submit"}
+  ]
+ },
+ {
+  title:"WB APP (Asst. Public Prosecutor)",
+  org:"WBPSC",state:"West Bengal",cat:"Prosecution",
+  vacancies:"71",status:"Expected",deadline:"Expected 2026",
+  experience:"Freshers OK",portal:"https://wbpsc.gov.in",
+  steps:[
+   {n:"1",t:'Watch <a href="https://wbpsc.gov.in" target="_blank">wbpsc.gov.in</a> → Recruitment Notices'},
+   {n:"2",t:"When APP notification appears, click Apply Online → register → submit"}
+  ]
+ },
+ {
+  title:"Bihar Civil Judge — 33rd Judicial Services",
+  org:"Bihar Public Service Commission",state:"Bihar",cat:"Courts & Judiciary",
+  vacancies:"173",status:"Closed",deadline:"Closed 30 Apr 2026",
+  experience:"3 yrs Bar practice",portal:"https://bpsconline.bihar.gov.in",
+  steps:[
+   {n:"1",t:'Go to <a href="https://bpsconline.bihar.gov.in" target="_blank">bpsconline.bihar.gov.in</a>'},
+   {n:"2",t:"OTR registration → Login → find 33rd Judicial Services Exam (Advt 12/2026)"},
+   {n:"★",t:"Application closed — watch for 34th cycle later in 2026"}
+  ]
+ },
+ {
+  title:"Delhi Judicial Service (DJS) — Civil Judge",
+  org:"Delhi High Court",state:"Delhi",cat:"Courts & Judiciary",
+  vacancies:"TBA",status:"Expected",deadline:"Expected mid-2026",
+  experience:"3 yrs Bar practice",portal:"https://delhihighcourt.nic.in",
+  steps:[
+   {n:"1",t:'Watch <a href="https://delhihighcourt.nic.in" target="_blank">delhihighcourt.nic.in</a> → Recruitment'},
+   {n:"2",t:"When notified, apply via Delhi HC's online recruitment portal"},
+   {n:"3",t:"Register with email → fill form → upload docs → pay fee → submit"}
+  ]
+ },
+ {
+  title:"UP PCS-J — Civil Judge (Junior Division)",
+  org:"Allahabad High Court / UPPSC",state:"Uttar Pradesh",cat:"Courts & Judiciary",
+  vacancies:"TBA",status:"Expected",deadline:"Expected 2026",
+  experience:"3 yrs Bar practice",portal:"https://uppsc.up.nic.in",
+  steps:[
+   {n:"1",t:'Watch <a href="https://uppsc.up.nic.in" target="_blank">uppsc.up.nic.in</a> → Recruitment → PCS-J'},
+   {n:"2",t:"Also check allahabadhighcourt.in for direct HC notification"},
+   {n:"3",t:"Apply online via UPPSC portal when recruitment link goes live"}
+  ]
+ },
+ {
+  title:"Punjab Civil Judge (Judicial Service)",
+  org:"PPSC / Punjab & Haryana HC",state:"Punjab",cat:"Courts & Judiciary",
+  vacancies:"~159",status:"Expected",deadline:"Expected 2026",
+  experience:"3 yrs Bar practice",portal:"https://ppsc.gov.in",
+  steps:[
+   {n:"1",t:'Watch <a href="https://ppsc.gov.in" target="_blank">ppsc.gov.in</a> → Recruitment Notices'},
+   {n:"2",t:'Also check <a href="https://highcourtchd.gov.in" target="_blank">highcourtchd.gov.in</a> for HC notifications'},
+   {n:"3",t:"Apply online via PPSC portal when link activates"}
+  ]
+ },
+ {
+  title:"Karnataka Civil Judge",
+  org:"High Court of Karnataka",state:"Karnataka",cat:"Courts & Judiciary",
+  vacancies:"TBA",status:"Expected",deadline:"Expected 2026",
+  experience:"3 yrs Bar practice",portal:"https://karnatakajudiciary.kar.nic.in",
+  steps:[
+   {n:"1",t:'Watch <a href="https://karnatakajudiciary.kar.nic.in" target="_blank">karnatakajudiciary.kar.nic.in</a> → Recruitment'},
+   {n:"2",t:"Apply online when Karnataka Judicial Services notification releases"}
+  ]
+ },
+ {
+  title:"Gujarat Civil Judge",
+  org:"High Court of Gujarat",state:"Gujarat",cat:"Courts & Judiciary",
+  vacancies:"TBA",status:"Expected",deadline:"Expected 2026",
+  experience:"3 yrs Bar practice",portal:"https://hc-ojas.gujarat.gov.in",
+  steps:[
+   {n:"1",t:'Go to <a href="https://hc-ojas.gujarat.gov.in" target="_blank">hc-ojas.gujarat.gov.in</a>'},
+   {n:"2",t:"Click Recruitment → Gujarat Judicial Services → Apply Online when live"}
+  ]
+ },
+ {
+  title:"Maharashtra Civil Judge / ADPP",
+  org:"Maharashtra PSC",state:"Maharashtra",cat:"Courts & Judiciary",
+  vacancies:"TBA",status:"Expected",deadline:"Expected 2026",
+  experience:"Varies by post",portal:"https://mpsc.gov.in",
+  steps:[
+   {n:"1",t:'Watch <a href="https://mpsc.gov.in" target="_blank">mpsc.gov.in</a> → Recruitment Notifications'},
+   {n:"2",t:"Apply online through MPSC portal when notification releases"}
+  ]
+ },
+ {
+  title:"Assam Civil Judge Grade-III",
+  org:"Gauhati High Court",state:"Assam",cat:"Courts & Judiciary",
+  vacancies:"TBA",status:"Expected",deadline:"Notified 07 Feb 2026",
+  experience:"3 yrs Bar practice",portal:"https://ghconline.gov.in",
+  steps:[
+   {n:"1",t:'Watch <a href="https://ghconline.gov.in" target="_blank">ghconline.gov.in</a> → Recruitment'},
+   {n:"2",t:"Apply online when Assam Judicial Service link activates"}
+  ]
+ },
+ {
+  title:"Supreme Court Law Clerk-cum-Research Associate",
+  org:"Supreme Court of India",state:"All-India",cat:"Courts & Judiciary",
+  vacancies:"~90",status:"Closed",deadline:"Next cycle: Jan 2027 | ₹1 lakh/month",
+  experience:"Freshers OK | Age 20-32",portal:"https://www.sci.gov.in",
+  steps:[
+   {n:"1",t:'Go to <a href="https://www.sci.gov.in" target="_blank">sci.gov.in</a> → Recruitment section'},
+   {n:"2",t:"Watch for 'Law Clerk-cum-Research Associates 2027' notification (Jan 2027)"},
+   {n:"3",t:"Apply online via SCI recruitment portal → exam in March → interview"},
+   {n:"★",t:"Exam centres in Jodhpur — no need to travel far from Rajasthan"}
+  ]
+ },
+ {
+  title:"RRB Chief Law Assistant / Public Prosecutor",
+  org:"Railway Recruitment Board",state:"All-India",cat:"Courts & Judiciary",
+  vacancies:"29",status:"Closed",deadline:"Closed 29 Jan 2026 | Watch for next CEN",
+  experience:"3-5 yrs practice",portal:"https://www.rrbapply.gov.in",
+  steps:[
+   {n:"1",t:'Watch <a href="https://www.rrbapply.gov.in" target="_blank">rrbapply.gov.in</a> → Isolated & Ministerial Category'},
+   {n:"2",t:"When next CEN releases, apply online via rrbapply.gov.in portal"}
+  ]
+ },
+ {
+  title:"IBPS SO Law Officer (Scale I)",
+  org:"IBPS — 11 public sector banks",state:"All-India",cat:"Bank & Regulatory",
+  vacancies:"56",status:"Expected",deadline:"Notification Jun-Jul 2026 | Prelims 29 Aug | Mains 01 Nov",
+  experience:"Freshers OK",portal:"https://www.ibps.in",
+  steps:[
+   {n:"1",t:'Go to <a href="https://www.ibps.in" target="_blank">ibps.in</a> when notification releases (Jun-Jul 2026)'},
+   {n:"2",t:"Click <b>CRP SPL (Specialist Officers) XV</b> → Apply Online"},
+   {n:"3",t:"Register with email/mobile → fill form → select Law Officer (Scale I)"},
+   {n:"4",t:"Upload photo + signature + thumb impression + declaration → pay ₹850 → submit"},
+   {n:"★",t:"No prior experience needed — just LLB + Bar Council enrolment"}
+  ]
+ },
+ {
+  title:"SEBI Grade A Legal — Asst. Manager",
+  org:"Securities & Exchange Board of India",state:"All-India",cat:"Bank & Regulatory",
+  vacancies:"TBA",status:"Expected",deadline:"Notification expected Oct 2026",
+  experience:"2 yrs preferred (not mandatory)",portal:"https://www.sebi.gov.in/careers.html",
+  steps:[
+   {n:"1",t:'Go to <a href="https://www.sebi.gov.in/careers.html" target="_blank">sebi.gov.in/careers.html</a>'},
+   {n:"2",t:"Find <b>Recruitment of Officer Grade A (Asst. Manager) — Legal Stream 2026</b>"},
+   {n:"3",t:"Click <b>APPLY ONLINE</b> → enter Name, contact, email → note registration number"},
+   {n:"4",t:"Upload photo, signature, left thumb, handwritten declaration → pay fee → submit"},
+   {n:"★",t:"3 phases: Phase I (online obj.) → Phase II (obj + descriptive) → Interview"}
+  ]
+ },
+ {
+  title:"RBI Legal Officer Grade B (Non-CSG)",
+  org:"Reserve Bank of India",state:"All-India",cat:"Bank & Regulatory",
+  vacancies:"6",status:"Closed",deadline:"Annual — next cycle Feb 2027",
+  experience:"2 yrs mandatory post-enrolment",portal:"https://opportunities.rbi.org.in",
+  steps:[
+   {n:"1",t:'Go to <a href="https://opportunities.rbi.org.in" target="_blank">opportunities.rbi.org.in</a> (Feb 2027)'},
+   {n:"2",t:"Click <b>Current Vacancies</b> → find <b>Legal Officer Grade B (Non-CSG)</b>"},
+   {n:"3",t:"Register → fill form → upload Bar enrolment certificate + experience proof"},
+   {n:"4",t:"Pay fee → submit → exam typically in March"},
+   {n:"★",t:"Requires 2 yrs post-enrolment experience — start building it now"}
+  ]
+ },
+ {
+  title:"SBI SO Law Officer",
+  org:"State Bank of India",state:"All-India",cat:"Bank & Regulatory",
+  vacancies:"TBA",status:"Expected",deadline:"Recurring — watch SBI careers page",
+  experience:"2 yrs mandatory practice",portal:"https://sbi.co.in/web/careers",
+  steps:[
+   {n:"1",t:'Go to <a href="https://sbi.co.in/web/careers" target="_blank">sbi.co.in/web/careers</a>'},
+   {n:"2",t:"Look under <b>Specialist Cadre Officers</b> → Law Officer notification"},
+   {n:"3",t:"Click <b>Apply Online</b> link in the notification → complete registration → submit"}
+  ]
+ },
+ {
+  title:"NABARD Grade A Legal Officer",
+  org:"NABARD",state:"All-India",cat:"Bank & Regulatory",
+  vacancies:"TBA",status:"Expected",deadline:"Annual | Last Nov 2025 | Next ~Nov 2026",
+  experience:"Freshers OK",portal:"https://www.nabard.org/careernotices.aspx",
+  steps:[
+   {n:"1",t:'Go to <a href="https://www.nabard.org/careernotices.aspx" target="_blank">nabard.org/careernotices.aspx</a>'},
+   {n:"2",t:"Find <b>Grade A (Legal Service) Recruitment 2026</b> → click Apply Online"},
+   {n:"3",t:"Registration via IBPS platform → fill form → pay ₹800 (General) → submit"},
+   {n:"★",t:"Selection: Phase I online obj. → Phase II descriptive + psychometric → Interview"}
+  ]
+ },
+ {
+  title:"ONGC Asst. Legal Adviser E1 (via CLAT-PG)",
+  org:"Oil & Natural Gas Corporation",state:"All-India",cat:"PSU & State Corp",
+  vacancies:"TBA",status:"Expected",deadline:"Application forms expected Sep 2026",
+  experience:"CLAT-PG score needed | Freshers OK",portal:"https://www.ongcindia.com",
+  steps:[
+   {n:"1",t:'Go to <a href="https://www.ongcindia.com" target="_blank">ongcindia.com</a> → Careers → Recruitment through CLAT'},
+   {n:"2",t:"Watch for <b>ALA E1 Recruitment 2026</b> notification (Sep 2026)"},
+   {n:"3",t:"Enter your CLAT-PG 2026 registration number + fill application form online"},
+   {n:"4",t:"Shortlisting based on CLAT-PG score → GD/PI for selected candidates"},
+   {n:"★",t:"Need CLAT-PG score — register for CLAT-PG (Dec 2026 exam) now at consortiumofnlus.ac.in"}
+  ]
+ },
+ {
+  title:"PSU Legal: IOCL / NTPC / BHEL / PGCIL / GAIL",
+  org:"Major PSUs via CLAT-PG 2026",state:"All-India",cat:"PSU & State Corp",
+  vacancies:"Varies",status:"Expected",deadline:"Across 2026 after CLAT-PG score",
+  experience:"CLAT-PG score needed",portal:"https://consortiumofnlus.ac.in",
+  steps:[
+   {n:"1",t:'Appear in CLAT-PG exam: <a href="https://consortiumofnlus.ac.in" target="_blank">consortiumofnlus.ac.in</a>'},
+   {n:"2",t:"Then apply to each PSU separately using your CLAT-PG score:"},
+   {n:"·",t:'IOCL: <a href="https://iocl.com/careers" target="_blank">iocl.com/careers</a>'},
+   {n:"·",t:'NTPC: <a href="https://ntpc.co.in/careers" target="_blank">ntpc.co.in/careers</a>'},
+   {n:"·",t:'BHEL: <a href="https://bhel.com/careers" target="_blank">bhel.com/careers</a>'},
+   {n:"·",t:'PGCIL: <a href="https://powergridindia.com/careers" target="_blank">powergridindia.com/careers</a>'},
+   {n:"·",t:'GAIL: <a href="https://gailonline.com/careers" target="_blank">gailonline.com/careers</a>'}
+  ]
+ },
+ {
+  title:"NIA Legal Consultant (Sr. Public Prosecutor)",
+  org:"National Investigation Agency",state:"All-India",cat:"Central & Defence",
+  vacancies:"5",status:"Open",deadline:"Notified 2026",
+  experience:"Experienced advocate required",portal:"https://www.nia.gov.in",
+  steps:[
+   {n:"1",t:'Go to <a href="https://www.nia.gov.in" target="_blank">nia.gov.in</a> → Recruitment'},
+   {n:"2",t:"Find <b>Legal Consultant (Senior Public Prosecutor) 2026</b>"},
+   {n:"3",t:"Download notification PDF → apply as per instructions (typically offline/email)"},
+   {n:"★",t:"Senior role — needs significant court experience"}
+  ]
+ },
+ {
+  title:"EPFO Advocates Empanelment 2025-28",
+  org:"Employees Provident Fund Organisation",state:"All-India",cat:"Central & Defence",
+  vacancies:"Panel",status:"Open",deadline:"2025-28 empanelment period",
+  experience:"Enrolled advocate",portal:"https://www.epfindia.gov.in",
+  steps:[
+   {n:"1",t:'Go to <a href="https://www.epfindia.gov.in" target="_blank">epfindia.gov.in</a>'},
+   {n:"2",t:"Look under <b>Empanelment of Advocates</b> section"},
+   {n:"3",t:"Apply with Bar Council enrolment certificate + court appearance proof"}
+  ]
+ },
+ {
+  title:"UPSC Civil Services (IAS/IPS — Law optional)",
+  org:"Union Public Service Commission",state:"All-India",cat:"Central & Defence",
+  vacancies:"~1000+",status:"Expected",deadline:"Age 21-32 | Notification annually",
+  experience:"Freshers OK",portal:"https://upsc.gov.in",
+  steps:[
+   {n:"1",t:'Go to <a href="https://upsc.gov.in" target="_blank">upsc.gov.in</a> → Examinations → Civil Services Exam'},
+   {n:"2",t:"Click <b>Apply Online Part I & Part II</b> during application window"},
+   {n:"3",t:"Registration → fill form → upload photo & signature → pay ₹100 → submit"},
+   {n:"★",t:"Law is one of the best optionals for UPSC Mains — 2 papers of 250 marks each"}
+  ]
+ },
+ {
+  title:"JAG Entry — Indian Army (Judge Advocate General)",
+  org:"Indian Army via CLAT-PG",state:"All-India",cat:"Central & Defence",
+  vacancies:"~8",status:"Closed",deadline:"124th Course: closed Feb 2026 | Age 27 max — verify DOB",
+  experience:"CLAT-PG | 55% in LLB | Unmarried",portal:"https://joinindianarmy.nic.in",
+  steps:[
+   {n:"1",t:'Watch <a href="https://joinindianarmy.nic.in" target="_blank">joinindianarmy.nic.in</a> → Opportunities → JAG Entry'},
+   {n:"2",t:"When 125th course notified (expected Aug 2026), click Apply Online"},
+   {n:"3",t:"Register → upload CLAT-PG score → LLB marksheet → submit within window"},
+   {n:"★",t:"Age must be 21-27 — confirm eligibility before applying"}
+  ]
+ },
+ {
+  title:"LIC AAO Legal — Asst. Administrative Officer",
+  org:"Life Insurance Corporation of India",state:"All-India",cat:"Insurance",
+  vacancies:"TBA",status:"Expected",deadline:"Annual — watch LIC careers",
+  experience:"Freshers OK",portal:"https://licindia.in/careers",
+  steps:[
+   {n:"1",t:'Go to <a href="https://licindia.in/careers" target="_blank">licindia.in/careers</a>'},
+   {n:"2",t:"Find <b>AAO (Legal) Recruitment 2026</b> when notified"},
+   {n:"3",t:"Click Apply Online → IBPS-style registration → fill form → pay fee → submit"}
+  ]
+ },
+ {
+  title:"NIACL AO Legal — Administrative Officer",
+  org:"New India Assurance Company",state:"All-India",cat:"Insurance",
+  vacancies:"TBA",status:"Expected",deadline:"Annual — watch NIACL careers",
+  experience:"Freshers OK",portal:"https://www.newindia.co.in",
+  steps:[
+   {n:"1",t:'Go to <a href="https://www.newindia.co.in" target="_blank">newindia.co.in</a> → Careers'},
+   {n:"2",t:"Find <b>Administrative Officer (Legal) 2026</b> recruitment notice"},
+   {n:"3",t:"Click Apply Online → register → fill form → pay fee → submit"}
+  ]
+ }
+];
+
+// ── Constants ────────────────────────────────────────────────────────────────
+const KEY="ldocket:v2", TKEY="ldocket:ts", AKEY="ldocket:apikey", HKEY="ldocket:history";
+const DAY_MS=864e5;
+const $=s=>document.querySelector(s);
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function norm(t){return String(t||"").toLowerCase().replace(/[^a-z0-9]/g,"")}
+function nowStr(){return new Date().toLocaleString("en-IN",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"})}
+function lsGet(k){try{return localStorage.getItem(k)}catch(_){return null}}
+function lsSet(k,v){try{localStorage.setItem(k,v)}catch(_){}}
+
+// ── API key management ───────────────────────────────────────────────────────
+function getKey(){return lsGet(AKEY)||""}
+function saveKey(){
+  const v=($("#keyInput").value||"").trim();
+  if(!v.startsWith("sk-ant-")){toast("Key must start with sk-ant-…");return}
+  lsSet(AKEY,v);
+  $("#keyBanner").style.display="none";
+  toast("API key saved — starting scan…");
+  fullScan();
+}
+function showKeyBanner(){
+  const b=$("#keyBanner");
+  b.style.display="flex";b.style.flexWrap="wrap";
+  $("#keyInput").value=getKey();
+}
+
+// ── State ────────────────────────────────────────────────────────────────────
+let jobs=[], filters={status:null,cat:null,fresh:false,state:"",q:""};
+
+let toastT;
+function toast(m){const e=$("#toast");e.textContent=m;e.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>e.classList.remove("show"),3800)}
+
+function copyURL(url,btn){
+  const fallback=()=>{const ta=document.createElement("textarea");ta.value=url;ta.style.cssText="position:fixed;opacity:0";document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove()};
+  (navigator.clipboard?navigator.clipboard.writeText(url).catch(fallback):Promise.resolve(fallback())).then(()=>{
+    btn.textContent="Copied ✓";btn.classList.add("ok");setTimeout(()=>{btn.textContent="Copy portal link";btn.classList.remove("ok")},2200);
+    toast("Portal link copied — paste in your browser");
+  });
+}
+
+function refreshStates(){
+  const sel=$("#stateSel"),cur=sel.value;
+  const states=[...new Set(jobs.map(j=>j.state||"").filter(Boolean))].sort((a,b)=>a==="All-India"?-1:b==="All-India"?1:a.localeCompare(b));
+  sel.innerHTML='<option value="">All states</option>'+states.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join("");
+  sel.value=cur;
+}
+
+function render(){
+  const {status,cat,fresh,state,q}=filters;
+  const qn=q.trim().toLowerCase();
+  const list=jobs.filter(j=>{
+    if(status&&j.status!==status)return false;
+    if(cat&&j.cat!==cat)return false;
+    if(state&&j.state!==state)return false;
+    if(fresh&&!/fresher/i.test(j.experience||""))return false;
+    if(qn&&!((j.title+" "+j.org+" "+(j.state||"")).toLowerCase().includes(qn)))return false;
+    return true;
+  });
+  const ord={Open:0,Expected:1,Closed:2};
+  list.sort((a,b)=>(ord[a.status]??3)-(ord[b.status]??3));
+  $("#count").textContent=list.length+" of "+jobs.length+" vacancies";
+  if(!list.length){$("#grid").innerHTML='<div class="empty"><b>Nothing matches.</b>Clear a filter or run a scan.</div>';return}
+  $("#grid").innerHTML=list.map(j=>{
+    const bc=j.status==="Open"?"open":j.status==="Expected"?"expected":"closed";
+    const women=/♀/.test(j.deadline||"");
+    const fresh2=/fresher/i.test(j.experience||"");
+    const clat=/clat/i.test(j.experience||"");
+    const tags=[
+      fresh2?'<span class="tag fresh">Freshers OK</span>':"",
+      clat?'<span class="tag">CLAT-PG needed</span>':"",
+      women?'<span class="tag women">♀ reserved seats</span>':"",
+      (!fresh2&&!clat&&j.experience)?`<span class="tag">${esc(j.experience)}</span>`:"",
+    ].filter(Boolean).join("");
+    const steps=(j.steps||[]).map(s=>`<div class="step"><span class="step-n">${esc(s.n)}</span><span class="step-t">${s.t||""}${s.note?`<br><span class="step-note">${esc(s.note)}</span>`:""}</span></div>`).join("");
+    return `<div class="card${j._new?' isnew':''}">
+      <div class="card-head">
+        <div class="card-badge"><span class="badge ${bc}">${esc(j.status)}</span><span class="cat-pill">${esc(j.cat)}</span></div>
+        <div class="card-title">${esc(j.title)}</div>
+        <div class="card-org">${esc(j.org)} · ${esc(j.state||"All-India")}</div>
+        <div class="card-tags">${tags}</div>
+      </div>
+      <div class="card-body">
+        <div class="info-row">
+          <div class="info-item"><span class="info-label">Vacancies</span><span class="info-val">${esc(j.vacancies||"TBA")}</span></div>
+          <div class="info-item"><span class="info-label">Deadline / Dates</span><span class="deadline-val">${esc((j.deadline||"").replace(/♀ \d+ seats ?[·|]? ?/g,""))}</span></div>
+        </div>
+        <div class="apply-box">
+          <div class="apply-box-head">▶ Exact apply path</div>
+          <div class="apply-steps">${steps}</div>
+        </div>
+      </div>
+      <div class="card-foot">
+        <span class="portal-url">${esc(j.portal||"")}</span>
+        <button class="copy-btn" data-url="${esc(j.portal||"")}">Copy portal link</button>
+      </div>
+    </div>`;
+  }).join("");
+  document.querySelectorAll(".copy-btn").forEach(btn=>btn.addEventListener("click",()=>copyURL(btn.dataset.url,btn)));
+}
+
+function setUpdated(ts){
+  const d=ts?new Date(ts):null;
+  $("#updated").textContent=d?d.toLocaleString("en-IN",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}):"not yet";
+  $("#stale").classList.toggle("show",!d||(Date.now()-d.getTime()>2*DAY_MS));
+}
+
+function renderHistory(){
+  let hist=[];try{hist=JSON.parse(lsGet(HKEY)||"[]")}catch(_){}
+  const el=$("#scanHistory");
+  if(!hist.length){el.innerHTML="";return}
+  el.innerHTML=hist.slice(-5).reverse().map((h,i)=>{
+    const d=new Date(h.ts).toLocaleString("en-IN",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
+    const typeLabel=h.type==="auto"?"Auto":h.type==="quick"?"Quick":"Full";
+    const newTxt=h.added>0?`<span style="color:#1f6b46;font-weight:600">+${h.added} new</span>`:`<span style="color:#6c7488">no new</span>`;
+    return `<div style="font-family:'Spline Sans Mono',monospace;font-size:10.5px;color:${i===0?"#46506b":"#9aa0b0"}">${i===0?"▶ ":"  "}${d} · ${typeLabel} scan · ${newTxt} · ${h.total} total</div>`;
+  }).join("");
+}
+
+function pushHistory(added,total,type){
+  let hist=[];try{hist=JSON.parse(lsGet(HKEY)||"[]")}catch(_){}
+  const today=new Date().toDateString();
+  const last=hist[hist.length-1];
+  if(last&&new Date(last.ts).toDateString()===today){
+    // Same day — update the existing entry, accumulate new jobs found
+    hist[hist.length-1]={ts:Date.now(),added:(last.added||0)+added,total,type};
+  }else{
+    hist.push({ts:Date.now(),added,total,type});
+  }
+  if(hist.length>30)hist=hist.slice(-30);
+  lsSet(HKEY,JSON.stringify(hist));
+}
+
+function load(){
+  const saved=lsGet(KEY);
+  if(saved){try{jobs=JSON.parse(saved)}catch(_){}}
+  if(!jobs.length)jobs=SEED.map(j=>({...j}));
+  const ts=lsGet(TKEY);
+  setUpdated(ts?Number(ts):null);
+  // Deduplicate history: keep only one entry per calendar day
+  try{
+    let hist=JSON.parse(lsGet(HKEY)||"[]");
+    const seen=new Map();
+    hist.forEach(h=>{const d=new Date(h.ts).toDateString();if(!seen.has(d)||h.ts>seen.get(d).ts)seen.set(d,h)});
+    hist=[...seen.values()].sort((a,b)=>a.ts-b.ts);
+    lsSet(HKEY,JSON.stringify(hist));
+  }catch(_){}
+  renderHistory();refreshStates();render();
+}
+
+function save(added,type){
+  lsSet(KEY,JSON.stringify(jobs.map(({_new,...j})=>j)));
+  const now=Date.now();lsSet(TKEY,String(now));setUpdated(now);
+  if(added!=null){
+    const badge=$("#newJobsBadge");
+    if(added>0){badge.textContent="+"+added+" new jobs";badge.style.display="inline"}
+    else{badge.style.display="none"}
+    pushHistory(added,jobs.length,type||"full");
+    renderHistory();
+  }
+}
+
+function mergeIn(arr){
+  let added=0;
+  (arr||[]).forEach(n=>{
+    if(!n?.title)return;
+    const idx=jobs.findIndex(j=>norm(j.title)===norm(n.title));
+    const cats=["Prosecution","Courts & Judiciary","Bank & Regulatory","PSU & State Corp","Central & Defence","Insurance"];
+    const clean={
+      title:String(n.title),org:String(n.org||""),state:String(n.state||"All-India"),
+      cat:cats.includes(n.cat)?n.cat:"Central & Defence",
+      vacancies:String(n.vacancies||"TBA"),
+      status:["Open","Expected","Closed"].includes(n.status)?n.status:"Expected",
+      deadline:String(n.deadline||""),experience:String(n.experience||""),
+      portal:String(n.portal||n.link||"#"),
+      steps:Array.isArray(n.steps)?n.steps:[{n:"1",t:String(n.applyPath||n.applyNote||"Check official portal")}],
+      _new:true
+    };
+    if(idx>=0)jobs[idx]={...jobs[idx],...clean};else{jobs.unshift(clean);added++}
+  });
+  return added;
+}
+
+// ── Scan queries — covers Adda247 / SarkariResult sources via web_search ─────
+const SCANS=[
+  {label:"Rajasthan law vacancies",q:"site:sso.rajasthan.gov.in OR site:rpsc.rajasthan.gov.in OR site:hcraj.nic.in latest 2026 law vacancies APO legal officer — return JSON with portal URL and apply steps"},
+  {label:"All-state judiciary",q:"2026 India civil judge PCS-J judicial service exam recruitment notification — check sarkariresult.com adda247.com — return JSON with official portal URL and apply steps"},
+  {label:"Prosecution APO/ADA",q:"2026 India APO ADA APP assistant prosecution officer all states uppsc mppsc hpsc bpsc — check adda247 sarkariresult — return JSON with portal URL and steps"},
+  {label:"Banks & regulators",q:"2026 India IBPS SO law officer SEBI grade A legal RBI legal officer SBI NABARD recruitment notification — return JSON with apply portal URL"},
+  {label:"PSU legal (CLAT-PG)",q:"2026 India PSU legal officer ONGC IOCL NTPC BHEL GAIL via CLAT-PG recruitment — return JSON with official portal and steps"},
+  {label:"Central & defence",q:"2026 India central government law jobs UPSC NIA EPFO Supreme Court law clerk railway — check adda247 sarkariresult freshersworld — return JSON with apply portal"}
+];
+
+async function runScan(targets){
+  const apiKey=getKey();
+  if(!apiKey){showKeyBanner();return 0}
+  let totalAdded=0;
+  for(let i=0;i<targets.length;i++){
+    const t=targets[i];
+    $("#progText").textContent=`${t.label} — ${i+1}/${targets.length}`;
+    $("#progBar").style.width=Math.round((i/targets.length)*100)+"%";
+    try{
+      const prompt=`Use web search to find the most RECENT 2026 Indian GOVERNMENT law-domain job notifications for: ${t.q}.
+Return ONLY a JSON array (no prose, no markdown) of up to 6 objects, each with keys:
+"title","org","state","cat","vacancies","status","deadline","experience","portal","steps"
+where "steps" is an array of {n,t} objects (n=step number, t=step text with the actual URL).
+"cat" must be one of: Prosecution | Courts & Judiciary | Bank & Regulatory | PSU & State Corp | Central & Defence | Insurance
+"status" must be one of: Open | Expected | Closed`;
+      const res=await fetch("https://api.anthropic.com/v1/messages",{
+        method:"POST",
+        headers:{"Content-Type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+        body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:1500,messages:[{role:"user",content:prompt}],tools:[{type:"web_search_20250305",name:"web_search"}]})
+      });
+      if(res.status===401){toast("API key invalid — check your key in settings");showKeyBanner();return 0}
+      const data=await res.json();
+      const txt=(data.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("\n");
+      const a=txt.indexOf("["),z=txt.lastIndexOf("]");
+      if(a>=0&&z>a){totalAdded+=mergeIn(JSON.parse(txt.slice(a,z+1)));render();}
+    }catch(_){}
+  }
+  return totalAdded;
+}
+
+function setBusy(on,btn){document.querySelectorAll(".btn").forEach(b=>b.disabled=on);btn?.classList.toggle("spin",on)}
+
+async function quickScan(){
+  const btn=$("#quickBtn");setBusy(true,btn);btn.lastChild.textContent="Searching…";
+  $("#prog").classList.add("show");$("#progText").textContent="Quick scan — searching…";$("#progBar").style.width="30%";
+  const added=await runScan([{label:"all law jobs",q:"all recent 2026 Indian government law domain vacancies judiciary prosecution banking PSU — check adda247 sarkariresult — return JSON with portal URL and steps"}]);
+  $("#progBar").style.width="100%";
+  const stamp=nowStr();
+  const summary=added>0?`+${added} new job${added>1?"s":""}`:` no new jobs`;
+  $("#progText").textContent=`Done · ${stamp} · ${summary}`;
+  save(added,"quick");refreshStates();render();
+  toast(`Quick scan done · ${stamp} · ${summary}`);
+  setBusy(false,btn);btn.lastChild.textContent="Quick scan";
+  setTimeout(()=>{$("#prog").classList.remove("show");$("#progBar").style.width="0"},5000);
+}
+
+async function fullScan(){
+  const btn=$("#fullBtn");setBusy(true,btn);btn.lastChild.textContent="Scanning…";
+  $("#prog").classList.add("show");
+  const added=await runScan(SCANS);
+  $("#progBar").style.width="100%";
+  const stamp=nowStr();
+  const summary=added>0?`+${added} new job${added>1?"s":""}`:` no new jobs`;
+  $("#progText").textContent=`Full scan complete · ${stamp} · ${summary}`;
+  save(added,"full");refreshStates();render();
+  toast(`Scan done · ${stamp} · ${summary}`);
+  setBusy(false,btn);btn.lastChild.textContent="Full scan · 6 sources";
+  setTimeout(()=>{$("#prog").classList.remove("show");$("#progBar").style.width="0"},5000);
+}
+
+// ── Auto daily scan on page load ─────────────────────────────────────────────
+async function autoScanIfStale(){
+  if(!getKey())return;
+  const ts=lsGet(TKEY);
+  const age=ts?Date.now()-Number(ts):Infinity;
+  if(age>DAY_MS){
+    toast("Auto-scan started — data is over 24h old…");
+    const btn=$("#fullBtn");setBusy(true,btn);btn.lastChild.textContent="Scanning…";
+    $("#prog").classList.add("show");
+    const added=await runScan(SCANS);
+    $("#progBar").style.width="100%";
+    const stamp=nowStr();
+    const summary=added>0?`+${added} new job${added>1?"s":""}`:` no new jobs`;
+    $("#progText").textContent=`Auto-scan · ${stamp} · ${summary}`;
+    save(added,"auto");refreshStates();render();
+    toast(`Auto-scan done · ${stamp} · ${summary}`);
+    setBusy(false,btn);btn.lastChild.textContent="Full scan · 6 sources";
+    setTimeout(()=>{$("#prog").classList.remove("show");$("#progBar").style.width="0"},5000);
+  }
+}
+
+// ── Filters ──────────────────────────────────────────────────────────────────
+$("#search").addEventListener("input",e=>{filters.q=e.target.value;render()});
+$("#stateSel").addEventListener("change",e=>{filters.state=e.target.value;render()});
+document.querySelectorAll(".chip").forEach(c=>c.addEventListener("click",()=>{
+  const {f,v}=c.dataset;
+  if(f==="fresh"){filters.fresh=!filters.fresh;c.setAttribute("aria-pressed",filters.fresh)}
+  else if(f==="status"){filters.status=filters.status===v?null:v;document.querySelectorAll("[data-f='status']").forEach(x=>x.setAttribute("aria-pressed",x.dataset.v===filters.status))}
+  else if(f==="cat"){filters.cat=filters.cat===v?null:v;document.querySelectorAll("[data-f='cat']").forEach(x=>x.setAttribute("aria-pressed",x.dataset.v===filters.cat))}
+  render();
+}));
+$("#quickBtn").addEventListener("click",quickScan);
+$("#fullBtn").addEventListener("click",fullScan);
+
+// Show settings icon in masthead footer to re-enter API key
+const settingsBtn=document.createElement("button");
+settingsBtn.className="btn btn-g";settingsBtn.style.cssText="font-size:12px;padding:7px 12px";
+settingsBtn.innerHTML='⚙ API key';settingsBtn.onclick=showKeyBanner;
+$(".actions").appendChild(settingsBtn);
+
+// Init
+load();
+if(!getKey()){showKeyBanner();}
+else{autoScanIfStale();}
+</script>
+</body>
+</html>

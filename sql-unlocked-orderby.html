@@ -1,0 +1,2910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SQL Unlocked — ORDER BY | MarutiNovaTech</title>
+  <meta name="description" content="Master SQL ORDER BY — sort results ascending, descending, multi-column, with expressions and LIMIT. Story-driven, visual, beginner-friendly. 35 questions, inline playground.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="SQL Unlocked — ORDER BY | MarutiNovaTech">
+  <meta property="og:description" content="Master SQL ORDER BY — sort results ASC, DESC, multi-column, with expressions. 35 questions, inline SQL playground.">
+  <meta property="og:site_name" content="MarutiNovaTech">
+  <meta property="og:url" content="https://marutinovatech.com/sql-unlocked-orderby">
+  <meta property="og:image" content="https://marutinovatech.com/sql-unlocked-og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SQL Unlocked — ORDER BY | MarutiNovaTech">
+  <meta name="twitter:description" content="Master SQL ORDER BY — sort results ascending, descending, multi-column. 35 questions.">
+  <meta name="twitter:image" content="https://marutinovatech.com/sql-unlocked-og.png">
+  <link rel="canonical" href="https://marutinovatech.com/sql-unlocked-orderby">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230D1117'/%3E%3Ctext x='16' y='22' font-family='monospace' font-size='10' font-weight='700' fill='%2363b3ed' text-anchor='middle'%3ESQL%3C/text%3E%3C/svg%3E">
+  <link rel="preload" href="https://cdn.jsdelivr.net/npm/sql.js@1.10.2/dist/sql-wasm.min.js" as="script">
+  <link rel="preload" href="https://cdn.jsdelivr.net/npm/sql.js@1.10.2/dist/sql-wasm.wasm" as="fetch" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#0D1117; --surface:#161B22; --elevated:#21262D; --card:#161B22;
+      --text:#E6EDF3; --muted:#8B949E; --border:#30363D; --border2:#484F58;
+      --teal:#3FB950; --coral:#F85149; --gold:#D29922; --purple:#BC8CFF;
+      --blue:#63b3ed; --blue-dim:rgba(99,179,237,.1); --blue-border:rgba(99,179,237,.3);
+      --green:#68d391; --green-dim:rgba(104,211,145,.1);
+      --ob:#4ec9b0;
+      --fh:'Space Grotesk',sans-serif; --fb:'Inter',sans-serif; --fm:'JetBrains Mono',monospace;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{background:var(--bg);color:var(--text);font-family:var(--fb);font-size:16px;line-height:1.7;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+    ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+    a{color:inherit;text-decoration:none}
+    button{font-family:var(--fb);cursor:pointer;border:none;outline:none}
+    code{font-family:var(--fm);background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-size:.88em;color:var(--blue)}
+    strong{color:var(--text);font-weight:600}
+
+    /* ── SCROLL PROGRESS ── */
+    #scroll-progress{position:fixed;top:0;left:0;height:3px;width:100%;background:linear-gradient(90deg,var(--ob) 0%,var(--blue) 100%);z-index:999;pointer-events:none;transform:scaleX(0);transform-origin:left;transition:transform .08s linear;border-radius:0 2px 2px 0;will-change:transform}
+
+    /* ── NAV ── */
+    .nav{position:sticky;top:0;z-index:200;background:rgba(13,17,23,.88);backdrop-filter:blur(28px);border-bottom:1px solid rgba(255,255,255,.07);padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between}
+    .nav::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent 0%,rgba(78,201,176,.4) 40%,rgba(99,179,237,.3) 60%,transparent 100%)}
+    .nav-left{display:flex;align-items:center;gap:16px}
+    .nav-back{display:flex;align-items:center;gap:6px;font-size:.8rem;color:var(--muted);padding:5px 12px;border-radius:7px;border:1px solid var(--border);transition:.2s}
+    .nav-back:hover{color:var(--blue);border-color:var(--blue-border);background:var(--blue-dim)}
+    .nav-back svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5;pointer-events:none}
+    .nav-brand{font-family:var(--fh);font-weight:700;font-size:1rem;letter-spacing:-.02em}
+    .nav-brand span{color:var(--blue)}
+    .nav-badge{font-size:.68rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;background:rgba(78,201,176,.1);border:1px solid rgba(78,201,176,.25);color:var(--ob);padding:3px 10px;border-radius:20px}
+    .nav-chapter-dots{display:flex;gap:6px;align-items:center}
+    .nav-dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.28);transition:.3s;cursor:pointer}
+    .nav-dot:hover{background:rgba(255,255,255,.55);transform:scale(1.25)}
+    .nav-dot.active{background:var(--ob);box-shadow:0 0 8px rgba(78,201,176,.6);transform:scale(1.15)}
+    .nav-dot.done{background:var(--green);box-shadow:0 0 6px rgba(104,211,145,.4)}
+
+    /* ── HERO ── */
+    .hero{position:relative;padding:64px 0 56px;overflow-x:clip}
+    .hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 70% 70% at 65% 40%,rgba(78,201,176,.08) 0%,rgba(99,179,237,.05) 50%,transparent 75%);pointer-events:none}
+    .hero-grid{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,.05) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;-webkit-mask-image:radial-gradient(ellipse 80% 100% at 60% 50%,black 10%,transparent 70%);mask-image:radial-gradient(ellipse 80% 100% at 60% 50%,black 10%,transparent 70%)}
+    .hero-inner{max-width:1080px;margin:0 auto;padding:0 40px;position:relative;z-index:1}
+    .hero-split{display:grid;grid-template-columns:1fr 400px;gap:56px;align-items:center}
+    .hero-left{display:flex;flex-direction:column;align-items:flex-start;min-width:0}
+    .hero-right{min-width:0}
+    .hero-tag{display:inline-flex;align-items:center;gap:8px;font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ob);background:rgba(78,201,176,.1);border:1px solid rgba(78,201,176,.25);border-radius:4px;padding:5px 14px;margin-bottom:20px;font-family:var(--fh)}
+    .hero-tag-dot{width:6px;height:6px;border-radius:50%;background:var(--ob);animation:pulse 1.8s ease-in-out infinite;flex-shrink:0}
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
+    .hero h1{font-family:var(--fh);font-size:clamp(2rem,4vw,3.2rem);font-weight:700;line-height:1.12;letter-spacing:-.03em;margin-bottom:18px}
+    .hero h1 .highlight{background:linear-gradient(135deg,var(--ob) 0%,var(--blue) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .hero-sub{font-size:.97rem;color:var(--muted);max-width:460px;margin:0 0 24px;line-height:1.75}
+    .hero-sub strong{color:var(--text)}
+    .hero-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px;max-width:100%}
+    .hero-pill{display:inline-flex;align-items:center;gap:6px;font-size:.7rem;font-weight:600;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:5px 12px;white-space:nowrap;letter-spacing:.03em;font-family:var(--fh)}
+    .hero-pill svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.5;flex-shrink:0;opacity:.7;pointer-events:none}
+    .chapter-steps{display:flex;align-items:flex-start;gap:0;width:100%;margin-top:24px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:4px}
+    .chapter-steps::-webkit-scrollbar{display:none}
+    .ch-step{display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0;cursor:default}
+    .ch-step-circle{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--border);background:var(--elevated);display:flex;align-items:center;justify-content:center;font-family:var(--fm);font-size:.68rem;font-weight:700;color:var(--muted);transition:.3s;line-height:1}
+    .ch-step.active .ch-step-circle{border-color:var(--ob);background:rgba(78,201,176,.1);color:var(--ob);box-shadow:0 0 0 4px rgba(78,201,176,.1)}
+    .ch-step.done .ch-step-circle{border-color:var(--teal);background:rgba(63,185,80,.1);color:var(--teal)}
+    .ch-step-label{font-size:.65rem;font-weight:600;color:var(--muted);white-space:nowrap;letter-spacing:.05em;text-transform:uppercase;text-align:center;max-width:58px;line-height:1.3}
+    .ch-step.active .ch-step-label{color:var(--ob)}
+    .ch-step.done .ch-step-label{color:var(--teal)}
+    .ch-step-line{flex:1;height:1.5px;background:var(--border);margin-bottom:21px;min-width:14px;max-width:52px;transition:.3s}
+    .ch-step-line.done{background:var(--teal)}
+    .tw-cursor{display:inline-block;width:2px;height:1em;background:var(--ob);margin-left:1px;vertical-align:middle;animation:blink .8s step-start infinite}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+    /* ── HERO CODE CARD ── */
+    .hero-right{position:relative}
+    .hero-right::before{content:'';position:absolute;inset:-20px;background:radial-gradient(ellipse 80% 70% at 50% 50%,rgba(78,201,176,.06) 0%,transparent 70%);border-radius:24px;pointer-events:none}
+    .hero-preview{background:var(--surface);border:1px solid rgba(255,255,255,.1);border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.05),inset 0 1px 0 rgba(255,255,255,.08);position:relative}
+    .hero-preview-bar{display:flex;align-items:center;padding:10px 14px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.025);gap:8px}
+    .hero-preview-dots{display:flex;gap:5px}
+    .hero-preview-dots span{width:9px;height:9px;border-radius:50%;display:block}
+    .hero-preview-dots span:nth-child(1){background:#ff5f57}
+    .hero-preview-dots span:nth-child(2){background:#febc2e}
+    .hero-preview-dots span:nth-child(3){background:#28c840}
+    .hero-preview-filename{font-family:var(--fm);font-size:.7rem;color:var(--muted);letter-spacing:.03em}
+    .hero-preview-run{margin-left:auto;font-size:.65rem;background:rgba(63,185,80,.15);color:var(--teal);border:1px solid rgba(63,185,80,.3);border-radius:4px;padding:2px 8px;cursor:default}
+    .hero-preview-sql{display:block;padding:14px 16px;font-family:var(--fm);font-size:.86rem;line-height:1.7;background:#0d1117;border-bottom:1px solid var(--border)}
+    .hero-preview-sql .kw2{color:#63b3ed;font-weight:600}
+    .hero-preview-sql .col2{color:#e2b714}
+    .hero-preview-sql .tbl2{color:#68d391}
+    .hero-preview-sql .ob2{color:#4ec9b0;font-weight:600}
+    .hero-preview-sql .dc2{color:#f7c948;font-weight:600}
+    .hero-preview-sql .num2{color:#b5cea8}
+    .hero-preview-result-label{font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:8px 16px 4px;display:flex;align-items:center;gap:6px;opacity:0;transition:opacity .35s ease}
+    .hero-preview-result-label.r-in{opacity:1}
+    .hero-preview-result-label::before{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--teal)}
+    .hero-preview-table{width:100%;border-collapse:collapse;font-family:var(--fm);font-size:.8rem}
+    .hero-preview-table th{padding:6px 16px;background:rgba(255,255,255,.04);color:var(--muted);text-align:left;font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,.06)}
+    .hero-preview-table td{padding:6px 16px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--text)}
+    .hero-preview-table tr:last-child td{border-bottom:none}
+    .hero-preview-table tr:hover td{background:rgba(255,255,255,.03)}
+    .hero-preview-table tbody tr:first-child td{color:var(--ob);font-weight:600}
+    @keyframes rowIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+    .hero-preview-table tbody tr{opacity:0}
+    .hero-preview-table tbody tr.r-in{animation:rowIn .32s ease-out forwards}
+    .hero-preview-run.running{background:rgba(78,201,176,.15);color:var(--ob);border-color:rgba(78,201,176,.3)}
+
+    /* ── CONTENT ── */
+    .content{max-width:860px;margin:0 auto;padding:0 32px 120px}
+    .section{margin-bottom:80px;padding-top:8px}
+    .section+.section{border-top:1px solid rgba(255,255,255,.05);padding-top:72px;margin-top:-8px}
+    .section-eyebrow{display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.05)}
+    .section-num{font-family:var(--fh);font-size:3rem;font-weight:700;color:rgba(78,201,176,.1);line-height:1;letter-spacing:-.04em;user-select:none;flex-shrink:0}
+    .section-tag{font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ob);border-left:2px solid var(--ob);padding-left:8px;line-height:1.3}
+    .section-readtime{font-size:.6rem;font-weight:600;letter-spacing:.05em;color:var(--muted);margin-left:auto;background:var(--elevated);border:1px solid var(--border);border-radius:3px;padding:2px 7px;white-space:nowrap;flex-shrink:0}
+    .section h2{font-family:var(--fh);font-size:1.75rem;font-weight:700;letter-spacing:-.025em;margin-bottom:16px;line-height:1.25}
+    .section p{color:rgba(230,237,243,.82);margin-bottom:16px;line-height:1.78}
+    .section p:last-of-type{margin-bottom:0}
+
+    /* ── KEY CONCEPT ── */
+    .key-concept{background:rgba(78,201,176,.06);border:1px solid rgba(78,201,176,.18);border-left:3px solid var(--ob);border-radius:0 12px 12px 0;padding:14px 18px;margin:20px 0;display:flex;gap:12px;align-items:flex-start}
+    .key-concept-badge{font-size:.62rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ob);background:rgba(78,201,176,.12);border:1px solid rgba(78,201,176,.25);border-radius:3px;padding:2px 6px;flex-shrink:0;margin-top:3px;font-family:var(--fh);white-space:nowrap}
+    .key-concept-body{font-size:.87rem;color:rgba(230,237,243,.85);line-height:1.7}
+    .key-concept-body strong{color:var(--ob)}
+
+    /* ── STORY CARD ── */
+    .story-card{background:rgba(78,201,176,.03);border:1px solid rgba(78,201,176,.12);border-left:3px solid var(--ob);border-radius:0 14px 14px 0;padding:22px 26px;margin:24px 0}
+    .story-card p{color:rgba(230,237,243,.88);font-size:.95rem;line-height:1.82;margin-bottom:14px}
+    .story-card p:last-child{margin-bottom:0}
+    .story-highlight{background:rgba(78,201,176,.07);border-left:3px solid var(--ob);border-radius:0 8px 8px 0;padding:10px 16px;margin:14px 0;font-style:italic;color:var(--text);font-size:.93rem}
+
+    /* ── SKETCH ── */
+    .sketch-wrap{margin:28px 0}
+    .sketch-label{font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+    .sketch-box{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:28px 20px 20px;position:relative;overflow:visible}
+    .sketch-box::before{content:attr(data-label);position:absolute;top:-10px;left:20px;background:var(--bg);padding:0 8px;font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+    /* ── ANATOMY DIAGRAM ── */
+    .anatomy-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:4px 4px 8px}
+    .anatomy-wrap::-webkit-scrollbar{display:none}
+    .anatomy-row{display:flex;align-items:flex-start;gap:0;min-width:max-content;padding:8px 0 0}
+    .ap{display:flex;flex-direction:column;align-items:center;position:relative}
+    .ap-token{font-family:var(--fm);font-size:1.05rem;font-weight:600;padding:0 4px;line-height:1.4;white-space:nowrap}
+    .ap-sep{display:flex;align-items:flex-start;padding:0 4px}
+    .ap-sep .ap-token{color:var(--muted);padding-top:0}
+    .ap-line{height:2px;width:calc(100% + 2px);margin:8px 0 0;border-radius:2px}
+    .ap.ab .ap-line{background:rgba(99,179,237,.55)}
+    .ap.ag .ap-line{background:rgba(226,183,20,.55)}
+    .ap.ac .ap-line{background:rgba(104,211,145,.55)}
+    .ap.ao .ap-line{background:rgba(78,201,176,.55)}
+    .ap.ar .ap-line{background:rgba(248,81,73,.55)}
+    .ap-arrow{width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;margin:0 auto}
+    .ap.ab .ap-arrow{border-top:6px solid rgba(99,179,237,.4)}
+    .ap.ag .ap-arrow{border-top:6px solid rgba(226,183,20,.4)}
+    .ap.ac .ap-arrow{border-top:6px solid rgba(104,211,145,.4)}
+    .ap.ao .ap-arrow{border-top:6px solid rgba(78,201,176,.4)}
+    .ap.ar .ap-arrow{border-top:6px solid rgba(248,81,73,.4)}
+    .ap-stem{width:1.5px;height:18px;margin:0 auto}
+    .ap.ab .ap-stem{background:rgba(99,179,237,.3)}
+    .ap.ag .ap-stem{background:rgba(226,183,20,.3)}
+    .ap.ac .ap-stem{background:rgba(104,211,145,.3)}
+    .ap.ao .ap-stem{background:rgba(78,201,176,.3)}
+    .ap.ar .ap-stem{background:rgba(248,81,73,.3)}
+    .ap-card{border-radius:7px;padding:6px 12px;text-align:center;border:1px solid transparent;min-width:80px}
+    .ap.ab .ap-card{background:rgba(99,179,237,.08);border-color:rgba(99,179,237,.2)}
+    .ap.ag .ap-card{background:rgba(226,183,20,.07);border-color:rgba(226,183,20,.2)}
+    .ap.ac .ap-card{background:rgba(104,211,145,.08);border-color:rgba(104,211,145,.2)}
+    .ap.ao .ap-card{background:rgba(78,201,176,.08);border-color:rgba(78,201,176,.22)}
+    .ap.ar .ap-card{background:rgba(248,81,73,.07);border-color:rgba(248,81,73,.22)}
+    .ap-card-title{font-family:var(--fh);font-size:.75rem;font-weight:600;margin-bottom:2px}
+    .ap.ab .ap-card-title{color:var(--blue)}
+    .ap.ag .ap-card-title{color:#e2b714}
+    .ap.ac .ap-card-title{color:var(--green)}
+    .ap.ao .ap-card-title{color:var(--ob)}
+    .ap.ar .ap-card-title{color:#f87171}
+    .ap-card-sub{font-size:.62rem;color:var(--muted);white-space:nowrap}
+    .apt-b{color:var(--blue)}
+    .apt-g{color:#e2b714}
+    .apt-c{color:#68d391}
+    .apt-o{color:var(--ob)}
+    .apt-r{color:#f87171}
+    .apt-n{color:#b5cea8}
+
+    /* ── EXECUTION PIPELINE ── */
+    .pipeline-flow{display:flex;align-items:center;overflow-x:auto;padding:12px 4px 16px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+    .pipeline-flow::-webkit-scrollbar{display:none}
+    .pipeline-step{display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0}
+    .pipeline-box{border:1px solid var(--border);border-radius:10px;padding:10px 14px;text-align:center;min-width:88px;background:var(--elevated);transition:.15s}
+    .pipeline-box.cur{border-color:rgba(78,201,176,.45);background:rgba(78,201,176,.07);box-shadow:0 0 0 3px rgba(78,201,176,.07)}
+    .pipeline-num{font-family:var(--fm);font-size:.58rem;font-weight:700;color:rgba(139,148,158,.45);letter-spacing:.05em;margin-bottom:4px}
+    .pipeline-kw{font-family:var(--fm);font-size:.82rem;font-weight:700}
+    .pk-from{color:var(--green)}
+    .pk-where{color:var(--purple)}
+    .pk-select{color:var(--blue)}
+    .pk-orderby{color:var(--ob)}
+    .pk-limit{color:#e2b714}
+    .pipeline-sub{font-size:.64rem;color:var(--muted);margin-top:3px;white-space:nowrap}
+    .pipeline-arrow{color:rgba(255,255,255,.18);font-size:1rem;padding:0 8px;margin-bottom:26px;flex-shrink:0}
+    .pipeline-insight{font-size:.82rem;color:rgba(230,237,243,.75);line-height:1.65;margin-top:14px;padding:12px 16px;background:rgba(78,201,176,.04);border:1px solid rgba(78,201,176,.13);border-left:2px solid var(--ob);border-radius:0 8px 8px 0}
+    .pipeline-insight code{color:var(--ob)}
+
+    /* ── SORT COMPARE (ASC vs DESC) ── */
+    .sort-compare{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:24px 0}
+    .sort-side-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+    .sort-side-head{font-family:var(--fm);font-size:.72rem;font-weight:700;padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px}
+    .sort-side-head.asc{color:var(--blue);background:rgba(99,179,237,.07)}
+    .sort-side-head.desc{color:var(--ob);background:rgba(78,201,176,.07)}
+    .sort-side-note{font-size:.68rem;color:var(--muted);padding:7px 14px;background:rgba(255,255,255,.015);border-top:1px solid rgba(255,255,255,.04)}
+    .sort-result-table{width:100%;border-collapse:collapse;font-family:var(--fm);font-size:.8rem}
+    .sort-result-table th{padding:6px 14px;background:rgba(255,255,255,.03);color:var(--muted);font-size:.64rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,.05);text-align:left}
+    .sort-result-table td{padding:6px 14px;border-bottom:1px solid rgba(255,255,255,.03);color:var(--text)}
+    .sort-result-table tr:last-child td{border-bottom:none}
+    .sort-result-table tr.sort-top td{color:var(--ob);font-weight:600;background:rgba(78,201,176,.05)}
+    .sort-result-table tr.sort-bot td{color:var(--muted)}
+
+    /* ── MULTI-COLUMN SORT DEMO ── */
+    .msort-wrap{margin:24px 0;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+    .msort-head{padding:12px 18px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.02);font-family:var(--fm);font-size:.78rem;color:var(--text)}
+    .msort-head .ob{color:var(--ob);font-weight:700}
+    .msort-head .bl{color:var(--blue);font-weight:700}
+    .msort-body{padding:16px 18px}
+    .msort-table{width:100%;border-collapse:collapse;font-family:var(--fm);font-size:.8rem}
+    .msort-table th{padding:6px 12px;background:rgba(255,255,255,.04);color:var(--muted);font-size:.64rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid var(--border);text-align:left}
+    .msort-table td{padding:7px 12px;border-bottom:1px solid rgba(255,255,255,.03);color:var(--text)}
+    .msort-table tr:last-child td{border-bottom:none}
+    .msort-table .pri{color:var(--blue);font-weight:600}
+    .msort-table .tie-top{color:var(--ob)}
+    .msort-sep{display:flex;align-items:center;gap:10px;margin:12px 0}
+    .msort-sep-line{flex:1;height:1px;background:rgba(255,255,255,.06)}
+    .msort-sep-txt{font-size:.63rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+    .msort-tip{font-size:.82rem;color:rgba(230,237,243,.72);line-height:1.6;margin-top:12px;padding:10px 14px;background:rgba(255,255,255,.02);border-radius:6px;border:1px solid rgba(255,255,255,.04)}
+
+    /* ── NULL SORT COMPARE ── */
+    .null-sort-compare{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0}
+    .null-sort-side{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+    .null-sort-head{padding:8px 14px;font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px}
+    .null-sort-head.asc{color:var(--blue);background:rgba(99,179,237,.07)}
+    .null-sort-head.desc{color:var(--ob);background:rgba(78,201,176,.07)}
+    .null-sort-body{padding:10px 14px;font-family:var(--fm);font-size:.8rem;line-height:1.9}
+    .ns-row{display:flex;align-items:center;gap:8px;padding:1px 0}
+    .ns-val{flex:1;color:var(--text)}
+    .ns-row.ns-null .ns-val{color:#f87171;font-style:italic}
+    .ns-badge{font-size:.58rem;font-weight:700;letter-spacing:.05em;padding:1px 5px;border-radius:3px;white-space:nowrap}
+    .ns-badge.nb-null{background:rgba(248,81,73,.12);color:#f87171;border:1px solid rgba(248,81,73,.2)}
+    .ns-badge.nb-top{background:rgba(78,201,176,.12);color:var(--ob);border:1px solid rgba(78,201,176,.2)}
+
+    /* ── EDGE CASE TABLE ── */
+    .edge-table{width:100%;border-collapse:collapse;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:20px 0;font-size:.84rem}
+    .edge-table thead{background:rgba(255,255,255,.04)}
+    .edge-table th{padding:9px 16px;text-align:left;color:var(--muted);font-size:.66rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;border-bottom:1px solid var(--border);font-family:var(--fh)}
+    .edge-table td{padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.04);color:rgba(230,237,243,.82);line-height:1.55;vertical-align:top}
+    .edge-table tr:last-child td{border-bottom:none}
+    .edge-table tr:hover td{background:rgba(255,255,255,.02)}
+    .edge-table .ok{color:var(--teal);font-weight:700}
+    .edge-table .warn{color:var(--gold);font-weight:700}
+
+    /* ── EXAMPLE BLOCK ── */
+    .example-block{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin:24px 0}
+    .example-header{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.02)}
+    .example-num{font-family:var(--fm);font-size:.68rem;font-weight:700;color:var(--ob);background:rgba(78,201,176,.1);border:1px solid rgba(78,201,176,.25);border-radius:3px;padding:2px 8px;letter-spacing:.04em;flex-shrink:0}
+    .example-title{font-family:var(--fh);font-size:.9rem;font-weight:600;color:var(--text)}
+    .example-body{padding:16px 20px}
+    .example-desc{font-size:.88rem;color:var(--muted);margin-bottom:12px}
+
+    /* ── CODE BLOCK ── */
+    .code-block{background:#0d1117;border:1px solid var(--border);border-radius:12px;overflow:hidden;margin:20px 0}
+    .code-block-head{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.03)}
+    .code-block-lang{font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+    .code-block pre{padding:16px 20px;font-family:var(--fm);font-size:.87rem;line-height:1.7;overflow-x:auto;margin:0}
+    .kw{color:#63b3ed;font-weight:600}.col{color:#e2b714}.tbl{color:#68d391}.str{color:#ce9178}.fn{color:#dcdcaa}.cm{color:#6a737d;font-style:italic}.op{color:#e06c75}.num{color:#b5cea8}
+    .code-block-actions{display:flex;align-items:center;gap:6px}
+    .cb-copy-btn{font-size:.68rem;font-weight:600;color:var(--muted);background:transparent;border:1px solid var(--border);border-radius:5px;padding:2px 9px;cursor:pointer;transition:.2s;font-family:var(--fh)}
+    .cb-copy-btn:hover{color:var(--text);border-color:var(--border2)}
+    .cb-try-btn{font-size:.68rem;font-weight:600;color:var(--ob);background:rgba(78,201,176,.08);border:1px solid rgba(78,201,176,.25);border-radius:5px;padding:2px 9px;cursor:pointer;transition:.2s;font-family:var(--fh);display:inline-flex;align-items:center;gap:4px}
+    .cb-try-btn:hover{background:rgba(78,201,176,.16)}
+    .cb-try-btn svg{width:9px;height:9px;fill:currentColor;pointer-events:none}
+
+    /* ── OUTPUT TABLE ── */
+    .output-wrap{margin:16px 0 20px;overflow-x:auto}
+    .output-label{font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+    .output-label::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green)}
+    .output-table{width:100%;border-collapse:collapse;font-family:var(--fm);font-size:.82rem;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+    .output-table thead{background:rgba(255,255,255,.05)}
+    .output-table th{padding:8px 14px;text-align:left;color:var(--muted);font-weight:600;font-size:.75rem;letter-spacing:.05em;text-transform:uppercase;border-bottom:1px solid var(--border)}
+    .output-table td{padding:8px 14px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--text)}
+    .output-table tr:last-child td{border-bottom:none}
+    .output-table tr:hover td{background:rgba(255,255,255,.03)}
+    .output-table tr.rank-1 td{color:var(--ob);font-weight:600}
+
+    /* ── GOTCHA CARD ── */
+    .gotcha-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}
+    .gotcha{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start;transition:.15s}
+    .gotcha:hover{border-color:var(--border2)}
+    .gotcha.bad{border-left:2px solid rgba(248,81,73,.4)}
+    .gotcha.good{border-left:2px solid rgba(104,211,145,.4)}
+    .gotcha.tip{border-left:2px solid rgba(210,153,34,.4)}
+    .gotcha-svg-icon{width:18px;height:18px;flex-shrink:0;margin-top:1px;pointer-events:none}
+    .gotcha.bad .gotcha-svg-icon{color:var(--coral)}
+    .gotcha.good .gotcha-svg-icon{color:var(--green)}
+    .gotcha.tip .gotcha-svg-icon{color:var(--gold)}
+    .gotcha-body{flex:1;min-width:0}
+    .gotcha-title{font-family:var(--fh);font-size:.87rem;font-weight:600;color:var(--text);margin-bottom:3px}
+    .gotcha-text{font-size:.81rem;color:var(--muted);line-height:1.55}
+
+    /* ── SUMMARY BOX ── */
+    .summary-box{background:var(--surface);border:1px solid rgba(78,201,176,.18);border-top:2px solid var(--ob);border-radius:0 0 14px 14px;overflow:hidden}
+    .summary-box-head{background:rgba(78,201,176,.06);padding:14px 22px;border-bottom:1px solid rgba(78,201,176,.12);display:flex;align-items:center;gap:10px}
+    .summary-box-badge{font-family:var(--fh);font-size:.57rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ob);background:rgba(78,201,176,.12);border:1px solid rgba(78,201,176,.25);border-radius:3px;padding:2px 7px;flex-shrink:0}
+    .summary-box-title{font-family:var(--fh);font-size:.95rem;font-weight:700;color:var(--text);letter-spacing:-.01em}
+    .summary-list{list-style:none;display:flex;flex-direction:column;gap:0;padding:0}
+    .summary-list li{display:flex;align-items:flex-start;gap:12px;padding:12px 22px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.88rem;color:rgba(230,237,243,.82);line-height:1.75;transition:.15s}
+    .summary-list li:last-child{border-bottom:none;padding-bottom:16px}
+    .summary-list li:hover{background:rgba(255,255,255,.02)}
+    .summary-list li>:not(.summary-check){min-width:0;flex:1}
+    .summary-check{width:16px;height:16px;flex-shrink:0;margin-top:3px;color:var(--green)}
+    .summary-list code{font-size:.82em;vertical-align:middle}
+    .summary-code-block{display:block;font-family:var(--fm);font-size:.79rem;background:#0d1117;border:1px solid var(--border);border-radius:6px;padding:7px 12px;margin-top:8px;color:var(--ob);white-space:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+    /* ── PRACTICE ── */
+    .practice-header{background:linear-gradient(135deg,rgba(78,201,176,.08),rgba(99,179,237,.06));border:1px solid rgba(78,201,176,.2);border-radius:16px;padding:24px 28px;margin-bottom:24px}
+    .practice-header h2{font-family:var(--fh);font-size:1.5rem;font-weight:700;margin-bottom:6px}
+    .practice-sub{font-size:.88rem;color:var(--muted)}
+    .practice-progress-wrap{margin-top:16px}
+    .practice-progress-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;font-size:.8rem}
+    .practice-progress-count{font-family:var(--fm);color:var(--ob);font-weight:600}
+    .practice-progress-label{color:var(--muted)}
+    .practice-track{height:5px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden}
+    .practice-fill{height:100%;background:linear-gradient(90deg,var(--ob),var(--blue));border-radius:3px;transition:width .5s cubic-bezier(.4,0,.2,1);width:0%}
+    .practice-type-row{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+    .pt-badge{font-size:.65rem;font-weight:700;letter-spacing:.05em;padding:3px 9px;border-radius:4px;font-family:var(--fh);white-space:nowrap}
+    .pt-badge.mcq{background:rgba(99,179,237,.1);color:var(--blue);border:1px solid rgba(99,179,237,.2)}
+    .pt-badge.fix{background:rgba(248,81,73,.08);color:#f87171;border:1px solid rgba(248,81,73,.2)}
+    .pt-badge.write{background:rgba(104,211,145,.08);color:var(--green);border:1px solid rgba(104,211,145,.2)}
+
+    /* ── QUESTION CARDS ── */
+    @keyframes done-pulse{0%{box-shadow:0 0 0 0 rgba(63,185,80,.5)}100%{box-shadow:0 0 0 14px rgba(63,185,80,0)}}
+    .q-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:9px;transition:border-color .2s,box-shadow .2s}
+    .q-card:hover{border-color:var(--border2)}
+    .q-card.done{border-color:rgba(104,211,145,.28);background:rgba(104,211,145,.02)}
+    .q-card.done-anim{animation:done-pulse .7s ease-out}
+    .q-head{display:flex;align-items:center;gap:12px;padding:13px 16px;cursor:pointer;user-select:none}
+    .q-head:focus{outline:none}
+    .q-head:focus-visible{box-shadow:inset 0 0 0 2px rgba(78,201,176,.5);border-radius:4px}
+    .q-num{font-family:var(--fm);font-size:.68rem;font-weight:700;color:rgba(78,201,176,.3);min-width:32px;letter-spacing:.03em}
+    .q-card.done .q-num{color:rgba(104,211,145,.45)}
+    .q-type-badge{font-size:.57rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:2px 7px;border-radius:3px;flex-shrink:0;font-family:var(--fh)}
+    .q-type-badge.mcq{background:rgba(99,179,237,.1);color:var(--blue);border:1px solid rgba(99,179,237,.2)}
+    .q-type-badge.fix{background:rgba(248,81,73,.08);color:#f87171;border:1px solid rgba(248,81,73,.2)}
+    .q-type-badge.write{background:rgba(104,211,145,.08);color:var(--green);border:1px solid rgba(104,211,145,.2)}
+    .q-title{flex:1;font-size:.9rem;font-weight:500;color:var(--text);min-width:0}
+    .q-done-icon{width:15px;height:15px;opacity:0;transition:.2s;flex-shrink:0;color:var(--green);pointer-events:none}
+    .q-card.done .q-done-icon{opacity:1}
+    .q-chevron-icon{width:15px;height:15px;transition:transform .25s;flex-shrink:0;color:var(--muted);pointer-events:none}
+    .q-card.open .q-chevron-icon{transform:rotate(180deg)}
+    .q-body{max-height:0;overflow:hidden;transition:max-height .32s cubic-bezier(.4,0,.2,1)}
+    .q-card.open .q-body{max-height:2400px}
+    .q-body-inner{padding:0 16px 14px;border-top:1px solid rgba(255,255,255,.05)}
+    .q-desc{font-size:.84rem;color:rgba(230,237,243,.78);line-height:1.68;padding-top:12px;margin-bottom:12px}
+    .mcq-opts{display:flex;flex-direction:column;gap:3px;margin-bottom:12px}
+    .mcq-btn{background:transparent;border:none;border-radius:6px;padding:7px 10px;text-align:left;font-size:.81rem;color:rgba(230,237,243,.75);transition:.15s;cursor:pointer;font-family:var(--fb);display:flex;align-items:center;gap:9px;line-height:1.5;width:100%;position:relative}
+    .mcq-btn::before{content:'';position:absolute;inset:0;border-radius:6px;border:1px solid transparent;transition:.15s;pointer-events:none}
+    .mcq-btn:hover:not(:disabled){background:rgba(255,255,255,.04);color:var(--text)}
+    .mcq-btn:hover:not(:disabled)::before{border-color:var(--border)}
+    .mcq-btn-letter{font-family:var(--fm);font-size:.6rem;font-weight:700;color:rgba(139,148,158,.6);flex-shrink:0;width:19px;height:19px;border-radius:4px;border:1px solid rgba(48,54,61,.8);background:rgba(33,38,45,.7);display:flex;align-items:center;justify-content:center;transition:.15s;letter-spacing:.02em}
+    .mcq-btn:hover:not(:disabled) .mcq-btn-letter{color:var(--muted);border-color:var(--border2)}
+    .mcq-btn.correct{background:rgba(104,211,145,.08);color:rgba(104,211,145,.9)}
+    .mcq-btn.correct::before{border-color:rgba(104,211,145,.3)}
+    .mcq-btn.correct .mcq-btn-letter{background:rgba(104,211,145,.15);border-color:rgba(104,211,145,.35);color:var(--green)}
+    .mcq-btn.wrong{background:rgba(248,81,73,.06);color:rgba(248,81,73,.8)}
+    .mcq-btn.wrong::before{border-color:rgba(248,81,73,.25)}
+    .mcq-btn.wrong .mcq-btn-letter{background:rgba(248,81,73,.1);border-color:rgba(248,81,73,.3);color:#f87171}
+    .mcq-btn:disabled{cursor:default}
+    .mcq-expl{background:rgba(255,255,255,.03);border:1px solid var(--border);border-left:2px solid var(--ob);border-radius:0 8px 8px 0;padding:12px 14px;font-size:.83rem;color:rgba(230,237,243,.8);line-height:1.65;display:none}
+    .mcq-expl.show{display:block}
+    .mcq-expl code{color:var(--ob)}
+    .sol-label{font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between}
+    .sol-copy{font-size:.72rem;color:var(--muted);background:var(--elevated);border:1px solid var(--border);border-radius:5px;padding:2px 9px;cursor:pointer;transition:.2s}
+    .sol-copy:hover{color:var(--text)}
+    .q-solution{background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-family:var(--fm);font-size:.83rem;line-height:1.7;overflow-x:auto;display:none;white-space:pre}
+    .q-solution.show{display:block}
+    .sol-notes{font-size:.8rem;color:var(--muted);font-style:italic;margin-top:8px;line-height:1.55;display:none}
+    .sol-notes.show{display:block}
+    .broken-query{display:block;padding:10px 14px;background:rgba(248,81,73,.06);border:1px solid rgba(248,81,73,.2);border-radius:8px;font-family:var(--fm);font-size:.85rem;color:#f87171;margin:10px 0;white-space:pre;overflow-x:auto;-webkit-overflow-scrolling:touch}
+    .q-actions{display:flex;align-items:center;gap:8px;margin-top:14px;flex-wrap:wrap}
+    .q-show-sol{font-size:.77rem;color:var(--muted);background:var(--elevated);border:1px solid var(--border);border-radius:6px;padding:5px 12px;transition:.2s;font-family:var(--fh);font-weight:500}
+    .q-show-sol:hover{color:var(--text);border-color:var(--border2)}
+    .q-mark-done{font-size:.77rem;color:var(--green);background:rgba(104,211,145,.08);border:1px solid rgba(104,211,145,.25);border-radius:6px;padding:5px 12px;transition:.2s;font-family:var(--fh);font-weight:500}
+    .q-mark-done:hover{background:rgba(104,211,145,.15)}
+    .q-mark-done:disabled{opacity:.5;cursor:default}
+    .q-try-link{font-size:.77rem;color:var(--ob);background:rgba(78,201,176,.1);border:1px solid rgba(78,201,176,.25);border-radius:6px;padding:5px 12px;transition:.2s;display:inline-flex;align-items:center;gap:6px;font-family:var(--fh);font-weight:500}
+    .q-try-link:hover{background:rgba(78,201,176,.18)}
+    .q-try-link svg{width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2.5;pointer-events:none}
+    .schema-wrap{margin:10px 0 14px;overflow-x:auto}
+    .schema-label{font-size:.68rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+    .schema-table{font-family:var(--fm);font-size:.78rem;border-collapse:collapse;border:1px solid var(--border);border-radius:6px;overflow:hidden}
+    .schema-table th{background:rgba(255,255,255,.05);padding:5px 10px;text-align:left;color:var(--muted);font-weight:600;border-bottom:1px solid var(--border);font-size:.72rem;letter-spacing:.05em;text-transform:uppercase}
+    .schema-table td{padding:5px 10px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--text)}
+    .schema-table tr:last-child td{border-bottom:none}
+
+    /* ── NEXT CHAPTER BANNER ── */
+    .next-chapter-wrap{margin:60px 0 0;padding:28px 32px;background:linear-gradient(135deg,rgba(78,201,176,.06),rgba(99,179,237,.04));border:1px solid rgba(78,201,176,.18);border-radius:16px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+    .next-chapter-left{display:flex;flex-direction:column;gap:4px}
+    .next-chapter-eyebrow{font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ob);font-family:var(--fh)}
+    .next-chapter-title{font-family:var(--fh);font-size:1.1rem;font-weight:700;color:var(--text);letter-spacing:-.02em}
+    .next-chapter-sub{font-size:.82rem;color:var(--muted);margin-top:2px}
+    .next-chapter-btn{display:inline-flex;align-items:center;gap:8px;background:var(--ob);color:#0d1117;font-weight:700;font-family:var(--fh);font-size:.85rem;border:none;border-radius:8px;padding:10px 20px;cursor:default;opacity:.5;pointer-events:none;white-space:nowrap;transition:.2s;text-decoration:none}
+    .next-chapter-btn.active{opacity:1;pointer-events:auto;cursor:pointer}
+    .next-chapter-btn.active:hover{opacity:.88}
+    .next-chapter-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5;pointer-events:none}
+    .mobile-chapter-label{display:none;font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ob);background:rgba(78,201,176,.1);border:1px solid rgba(78,201,176,.25);border-radius:3px;padding:2px 7px}
+
+    /* ── TOAST ── */
+    #done-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--surface);border:1px solid rgba(104,211,145,.35);border-radius:10px;padding:12px 18px;display:flex;align-items:center;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,.5);opacity:0;transition:.3s cubic-bezier(.4,0,.2,1);z-index:600;pointer-events:none;min-width:200px}
+    #done-toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+    .toast-icon-svg{width:17px;height:17px;flex-shrink:0;color:var(--green);pointer-events:none}
+    .toast-text{font-size:.84rem;font-weight:600;color:var(--text);font-family:var(--fh)}
+    .toast-sub{font-size:.72rem;color:var(--muted)}
+
+    /* ── PROGRESS RING ── */
+    .progress-ring-wrap{position:fixed;bottom:80px;right:26px;z-index:290;width:44px;height:44px;opacity:0;transform:scale(.6);transition:.3s;pointer-events:none;will-change:transform,opacity}
+    .progress-ring-wrap.show{opacity:1;transform:scale(1)}
+    .progress-ring-wrap svg{transform:rotate(-90deg);display:block}
+    .ring-track{fill:none;stroke:var(--border);stroke-width:3}
+    .ring-fill{fill:none;stroke:url(#ringGrad);stroke-width:3;stroke-linecap:round;stroke-dasharray:113;stroke-dashoffset:113;transition:stroke-dashoffset .15s linear}
+    .ring-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--fm);font-size:.62rem;font-weight:700;color:var(--ob)}
+
+    /* ── BACK TO TOP ── */
+    #btt{position:fixed;bottom:26px;right:26px;width:40px;height:40px;border-radius:10px;background:var(--elevated);border:1px solid var(--border2);color:var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:300;opacity:0;transform:translateY(14px);transition:.3s;pointer-events:none;will-change:transform,opacity}
+    #btt.show{opacity:1;transform:translateY(0);pointer-events:auto}
+    #btt:hover{border-color:rgba(78,201,176,.4);color:var(--ob)}
+    #btt svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.5;pointer-events:none}
+
+    /* ── CHAPTER TABS ── */
+    .ch-tabs-wrap{background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;position:sticky;top:60px;z-index:100}
+    .ch-tabs-wrap::-webkit-scrollbar{display:none}
+    .ch-tabs{display:flex;padding:7px 16px;gap:3px;min-width:max-content;align-items:center}
+    .ch-tab{display:inline-flex;align-items:center;gap:6px;padding:6px 13px;font-size:.81rem;font-weight:600;color:rgba(230,237,243,.62);border-radius:8px;border:1.5px solid transparent;background:transparent;transition:color .15s,background .15s,border-color .15s;white-space:nowrap;text-decoration:none;letter-spacing:.01em}
+    .ch-tab:hover:not(.active):not(.ch-soon){color:rgba(230,237,243,.9);background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.08)}
+    .ch-tab.active{color:var(--ob);background:rgba(78,201,176,.1);border-color:rgba(78,201,176,.25);font-weight:700}
+    .ch-tab.ch-soon{opacity:.35;pointer-events:none;cursor:default}
+    .ch-tab-badge{font-size:.54rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);color:rgba(139,148,158,.7);padding:2px 5px;border-radius:3px;line-height:1.3}
+
+    /* ── PLAYGROUND ── */
+    .pg-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:499;opacity:0;pointer-events:none;transition:opacity .3s;touch-action:none;overscroll-behavior:none}
+    .pg-overlay.show{opacity:1;pointer-events:all}
+    .pg-panel{position:fixed;bottom:0;left:0;right:0;z-index:500;background:var(--surface);border-top:1px solid rgba(255,255,255,.1);box-shadow:0 -12px 48px rgba(0,0,0,.6);transform:translateY(100%);transition:.35s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;max-height:58vh}
+    .pg-panel.open{transform:translateY(0)}
+    .pg-drag{height:32px;display:flex;align-items:center;justify-content:center;cursor:ns-resize;flex-shrink:0;touch-action:none;user-select:none;position:relative}
+    .pg-drag-bar{width:36px;height:4px;background:var(--border);border-radius:2px;transition:.15s}
+    .pg-drag:hover .pg-drag-bar{background:var(--muted)}
+    .pg-drag-x{position:absolute;right:12px;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;background:var(--elevated);border:1px solid var(--border);color:var(--muted);font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;touch-action:manipulation;line-height:1;padding:0;font-family:var(--fb)}
+    .pg-drag-x:hover{color:var(--text);border-color:var(--border2)}
+    .pg-topbar{display:flex;align-items:center;justify-content:space-between;padding:0 14px 10px;flex-shrink:0;gap:10px}
+    .pg-topbar-left{display:flex;align-items:center;gap:8px;min-width:0;flex:1}
+    .pg-label{font-family:var(--fh);font-size:.85rem;font-weight:600;color:var(--text);display:flex;align-items:center;gap:6px;white-space:nowrap;flex-shrink:0}
+    .pg-label svg{width:13px;height:13px;color:var(--ob);stroke:currentColor;fill:none;stroke-width:2;pointer-events:none}
+    .pg-q-label{font-size:.7rem;font-weight:600;letter-spacing:.03em;color:var(--ob);background:rgba(78,201,176,.1);border:1px solid rgba(78,201,176,.25);border-radius:4px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px;flex-shrink:1}
+    .pg-status{font-size:.72rem;color:var(--muted);white-space:nowrap}
+    .pg-topbar-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
+    .pg-close-btn{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:4px 10px;font-size:.74rem;font-family:var(--fh);cursor:pointer;transition:.15s;display:flex;align-items:center;gap:5px}
+    .pg-close-btn svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.5;pointer-events:none}
+    .pg-close-btn:hover{color:var(--text);border-color:var(--border2)}
+    .pg-body{display:flex;flex-direction:column;flex:1;overflow:hidden;padding:0 14px 10px;gap:8px}
+    .pg-editor{width:100%;background:#0d1117;border:1px solid var(--border);border-radius:7px;padding:9px 12px;font-family:var(--fm);font-size:.84rem;color:var(--text);resize:none;height:72px;outline:none;line-height:1.6;flex-shrink:0;transition:border-color .15s;tab-size:2}
+    .pg-editor:focus{border-color:rgba(78,201,176,.4);box-shadow:0 0 0 3px rgba(78,201,176,.07)}
+    .pg-run-row{display:flex;align-items:center;gap:8px;flex-shrink:0}
+    .pg-run-btn{background:var(--teal);color:#0d1117;font-weight:700;font-family:var(--fh);font-size:.82rem;border:none;border-radius:6px;padding:7px 16px;cursor:pointer;transition:opacity .15s,transform .1s;display:flex;align-items:center;gap:6px;touch-action:manipulation}
+    .pg-run-btn:hover{opacity:.85}
+    .pg-run-btn:active{transform:scale(.97)}
+    .pg-run-btn svg{width:11px;height:11px;fill:currentColor;pointer-events:none}
+    .pg-reset-btn{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:5px 10px;font-size:.74rem;font-family:var(--fh);cursor:pointer;transition:.15s}
+    .pg-reset-btn:hover{color:var(--text);border-color:var(--border2)}
+    .pg-kbd-hint{display:flex;align-items:center;gap:4px;font-size:.7rem;color:var(--muted);margin-left:auto}
+    .pg-kbd{display:inline-block;font-family:var(--fm);font-size:.64rem;color:var(--muted);background:var(--elevated);border:1px solid var(--border2);border-radius:3px;padding:1px 5px;border-bottom-width:2px;letter-spacing:.02em}
+    .pg-results{overflow:auto;flex:1;border-top:1px solid rgba(255,255,255,.06);-webkit-overflow-scrolling:touch}
+    .pg-results table{border-collapse:collapse;font-family:var(--fm);font-size:.78rem;min-width:100%;white-space:nowrap}
+    .pg-results th{padding:5px 12px;background:rgba(255,255,255,.05);color:var(--muted);text-align:left;font-weight:600;font-size:.7rem;letter-spacing:.05em;text-transform:uppercase;border-bottom:1px solid var(--border);position:sticky;top:0;white-space:nowrap}
+    .pg-results td{padding:5px 12px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--text)}
+    .pg-results tr:last-child td{border-bottom:none}
+    .pg-results tr:hover td{background:rgba(255,255,255,.025)}
+    .pg-msg{padding:12px 14px;font-size:.78rem;color:var(--muted);font-style:italic}
+    .pg-err{padding:10px 14px;font-size:.78rem;color:#f87171;font-family:var(--fm);line-height:1.6;word-break:break-word}
+    .pg-correct-banner{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:rgba(63,185,80,.1);border-bottom:1px solid rgba(63,185,80,.25);animation:pg-correct-in .3s ease-out}
+    @keyframes pg-correct-in{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+    .pg-correct-icon{width:17px;height:17px;flex-shrink:0;color:var(--teal);margin-top:1px;pointer-events:none}
+    .pg-correct-title{font-size:.8rem;font-weight:700;color:var(--teal);font-family:var(--fh);margin-bottom:2px}
+    .pg-correct-notes{font-size:.77rem;color:rgba(230,237,243,.72);line-height:1.55;margin:0}
+    .pg-feedback{padding:12px 14px;font-size:.8rem;line-height:1.6;animation:pg-correct-in .3s ease-out}
+    .pg-feedback.pg-fb-success{background:rgba(63,185,80,.07);border-top:1px solid rgba(63,185,80,.2)}
+    .pg-feedback.pg-fb-error{background:rgba(248,113,113,.07);border-top:1px solid rgba(248,113,113,.2)}
+    .pg-feedback.pg-fb-experiment{background:rgba(255,255,255,.03);border-top:1px solid rgba(255,255,255,.07);padding:9px 14px}
+    .pg-fb-head{display:flex;align-items:center;gap:7px;font-weight:700;font-size:.78rem;font-family:var(--fh);margin-bottom:8px}
+    .pg-fb-success .pg-fb-head{color:#3fb950}
+    .pg-fb-error .pg-fb-head{color:#f87171}
+    .pg-fb-why{color:var(--text);margin-bottom:10px}
+    .pg-fb-avoid{background:rgba(255,255,255,.04);border-radius:7px;padding:9px 12px;color:rgba(230,237,243,.7)}
+    .pg-fb-avoid strong{color:#e3a946;font-weight:600}
+    .pg-fb-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px}
+    .pg-fb-chip{background:rgba(78,201,176,.08);border:1px solid rgba(78,201,176,.2);color:var(--ob);font-size:.72rem;font-family:var(--fm);border-radius:5px;padding:3px 9px;cursor:pointer;transition:.15s;white-space:nowrap}
+    .pg-fb-chip:hover{background:rgba(78,201,176,.15);border-color:rgba(78,201,176,.4)}
+    .pg-fb-reset-note{font-size:.75rem;color:var(--muted)}
+    .pg-fb-reset-note button{background:none;border:none;color:var(--ob);font-size:.75rem;font-family:var(--fh);cursor:pointer;padding:0;text-decoration:underline}
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:900px){
+      .hero{padding:56px 0 48px}
+      .hero-inner{padding:0 28px}
+      .hero-split{grid-template-columns:1fr;gap:28px}
+      .hero-left{align-items:center}
+      .hero h1{font-size:clamp(1.9rem,5vw,2.8rem);text-align:center}
+      .hero-sub{text-align:center;max-width:500px;margin-left:auto;margin-right:auto;margin-bottom:20px}
+      .hero-pills{justify-content:center}
+      .hero-right{max-width:460px;margin:0 auto;width:100%}
+      .hero-right::before{display:none}
+      .chapter-steps{justify-content:center}
+      .sort-compare{grid-template-columns:1fr 1fr}
+      .null-sort-compare{grid-template-columns:1fr 1fr}
+      .gotcha-grid{grid-template-columns:1fr 1fr}
+    }
+    @media(max-width:640px){
+      .nav{padding:0 16px}
+      .nav-badge,.nav-chapter-dots{display:none}
+      .mobile-chapter-label{display:inline-block}
+      .next-chapter-wrap{padding:20px 18px;flex-direction:column;align-items:flex-start;gap:14px}
+      .next-chapter-btn{width:100%;justify-content:center}
+      .hero{padding:40px 0 36px}
+      .hero-inner{padding:0 18px}
+      .hero h1{font-size:1.75rem;font-weight:600}
+      .hero-sub{font-size:.88rem;margin-bottom:16px;line-height:1.7}
+      .hero-pills{gap:6px;justify-content:center}
+      .hero-pill{font-size:.67rem;padding:4px 10px;font-weight:500}
+      .hero-right{max-width:100%}
+      .content{padding:0 16px 100px}
+      .section{margin-bottom:32px;padding-top:6px}
+      .section+.section{padding-top:36px;margin-top:-4px}
+      .section h2{font-size:1.28rem;font-weight:600;letter-spacing:-.015em}
+      .section-num{font-size:1.8rem}
+      .section-eyebrow{padding-bottom:12px;margin-bottom:16px}
+      .story-card{padding:16px 18px}
+      .sort-compare{grid-template-columns:1fr}
+      .null-sort-compare{grid-template-columns:1fr}
+      .gotcha-grid{grid-template-columns:1fr}
+      .key-concept{padding:12px 14px}
+      .key-concept-body{font-size:.84rem}
+      .example-body{padding:12px 14px}
+      .code-block pre{font-size:.81rem;overflow-x:auto;-webkit-overflow-scrolling:touch}
+      .q-head{padding:11px 14px;gap:10px}
+      .q-title{font-size:.86rem}
+      .q-body-inner{padding:0 14px 14px}
+      .q-actions{gap:6px;flex-wrap:wrap}
+      .q-show-sol,.q-mark-done{font-size:.74rem;padding:6px 12px;flex:1;text-align:center}
+      .q-try-link{font-size:.74rem;padding:6px 12px;width:100%;justify-content:center}
+      .mcq-btn{font-size:.79rem;padding:6px 9px}
+      .summary-box-head{padding:12px 16px}
+      .summary-list li{padding:12px 16px;font-size:.88rem;line-height:1.78;gap:10px}
+      .progress-ring-wrap{display:none}
+      #btt{width:36px;height:36px;bottom:20px;right:16px;border-radius:8px}
+      .pg-panel{max-height:56vh}
+      .pg-editor{height:80px;font-size:1rem}
+      .pg-kbd-hint{display:none}
+      .pg-run-btn{padding:9px 20px;font-size:.86rem}
+      .pg-q-label{max-width:130px}
+      .cb-copy-btn{padding:7px 12px;font-size:.73rem;min-height:36px}
+      .cb-try-btn{padding:7px 12px;font-size:.73rem;min-height:36px}
+      .sketch-box::after{content:'← swipe to explore →';display:block;text-align:center;font-size:.6rem;color:var(--muted);margin-top:10px;letter-spacing:.06em;opacity:.75}
+    }
+    @media(max-width:400px){
+      .hero-inner{padding:0 14px}
+      .hero h1{font-size:1.5rem}
+      .hero-preview{display:none}
+      .content{padding:0 13px 80px}
+      .section-readtime{display:none}
+      .section-eyebrow{gap:8px}
+    }
+    /* ── DIFFICULTY BADGES ── */
+    .diff-badge{display:inline-flex;align-items:center;font-size:.58rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:2px 7px;border-radius:3px;flex-shrink:0;font-family:var(--fh)}
+    .diff-easy{background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.25)}
+    .diff-medium{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.25)}
+    .diff-hard{background:rgba(248,113,113,.1);color:#f87171;border:1px solid rgba(248,113,113,.25)}
+    /* ── FILTER BAR ── */
+    .pq-filter-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:20px;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px}
+    .pq-filter-label{font-size:.65rem;font-weight:700;color:var(--muted);letter-spacing:.07em;text-transform:uppercase}
+    .pq-filter-btn{font-size:.72rem;font-weight:600;padding:4px 12px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:.15s}
+    .pq-filter-btn:hover{border-color:var(--border2);color:var(--text)}
+    .pq-filter-btn.pq-active{border-color:rgba(78,201,176,.35);background:rgba(78,201,176,.1);color:var(--ob)}
+    .pq-filter-btn.t-mcq.pq-active{border-color:rgba(99,102,241,.35);background:rgba(99,102,241,.1);color:#818cf8}
+    .pq-filter-btn.t-fix.pq-active{border-color:rgba(248,113,113,.35);background:rgba(248,113,113,.1);color:#f87171}
+    .pq-filter-btn.t-write.pq-active{border-color:rgba(74,222,128,.35);background:rgba(74,222,128,.1);color:#4ade80}
+    .pq-filter-btn.d-easy.pq-active{border-color:rgba(74,222,128,.35);background:rgba(74,222,128,.1);color:#4ade80}
+    .pq-filter-btn.d-medium.pq-active{border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.1);color:#fbbf24}
+    .pq-filter-btn.d-hard.pq-active{border-color:rgba(248,113,113,.35);background:rgba(248,113,113,.1);color:#f87171}
+    .pq-filter-sep{width:1px;height:20px;background:var(--border);flex-shrink:0}
+    .pq-search{font-size:.78rem;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--elevated);color:var(--text);font-family:var(--fb);width:160px}
+    .pq-search:focus{outline:none;border-color:rgba(78,201,176,.4)}
+    .pq-count{font-size:.7rem;color:var(--muted);margin-left:auto}
+    .pq-no-results{display:none;padding:24px;text-align:center;color:var(--muted);font-size:.85rem}
+    /* ── INTERVIEW PREP ── */
+    .iv-grid{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+    .iv-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color .15s}
+    .iv-card:hover{border-color:var(--border2)}
+    .iv-head{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;cursor:pointer;user-select:none}
+    .iv-q-wrap{display:flex;flex-direction:column;gap:5px;flex:1}
+    .iv-tag{display:inline-flex;font-size:.6rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:3px;width:fit-content;font-family:var(--fh)}
+    .iv-tag.concept{background:rgba(129,140,248,.1);color:#818cf8;border:1px solid rgba(129,140,248,.25)}
+    .iv-tag.trap{background:rgba(248,113,113,.1);color:#f87171;border:1px solid rgba(248,113,113,.25)}
+    .iv-tag.pattern{background:rgba(74,222,128,.08);color:#4ade80;border:1px solid rgba(74,222,128,.2)}
+    .iv-tag.advanced{background:rgba(251,191,36,.08);color:#fbbf24;border:1px solid rgba(251,191,36,.2)}
+    .iv-q{font-size:.88rem;font-weight:500;color:var(--text);line-height:1.5}
+    .iv-chevron{width:14px;height:14px;flex-shrink:0;color:var(--muted);transition:transform .25s;pointer-events:none;margin-top:4px}
+    .iv-card.open .iv-chevron{transform:rotate(180deg)}
+    .iv-body{max-height:0;overflow:hidden;transition:max-height .32s cubic-bezier(.4,0,.2,1)}
+    .iv-card.open .iv-body{max-height:1200px}
+    .iv-body-inner{padding:4px 16px 16px 16px;border-top:1px solid rgba(255,255,255,.05)}
+    .iv-a{font-size:.85rem;color:var(--text);line-height:1.65;margin:10px 0 8px;font-weight:500}
+    .iv-code{font-family:var(--fm);font-size:.76rem;background:var(--elevated);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:rgba(230,237,243,.85);line-height:1.7;margin:8px 0;white-space:pre-wrap}
+    .iv-gotcha{font-size:.78rem;color:rgba(230,237,243,.7);line-height:1.65;padding:8px 12px;background:rgba(248,113,113,.05);border-left:2px solid rgba(248,113,113,.3);border-radius:0 6px 6px 0;margin:8px 0}
+    .iv-tip{font-size:.78rem;color:rgba(230,237,243,.65);line-height:1.6;padding:8px 12px;background:rgba(74,222,128,.04);border-left:2px solid rgba(74,222,128,.25);border-radius:0 6px 6px 0;margin-top:8px}
+    /* ── PERF TIPS + DIALECT ── */
+    .perf-tip-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin:18px 0}
+    .perf-tip-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px}
+    .perf-tip-op{font-family:var(--fm);font-size:1rem;font-weight:700;margin-bottom:6px}
+    .perf-speed{font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:3px;display:inline-block;margin-bottom:8px;font-family:var(--fh)}
+    .spd-fast{background:rgba(74,222,128,.08);color:#4ade80;border:1px solid rgba(74,222,128,.2)}
+    .spd-medium{background:rgba(251,191,36,.08);color:#fbbf24;border:1px solid rgba(251,191,36,.2)}
+    .spd-slow{background:rgba(248,113,113,.08);color:#f87171;border:1px solid rgba(248,113,113,.2)}
+    .perf-tip-text{font-size:.76rem;color:rgba(230,237,243,.7);line-height:1.6}
+    .perf-tip-when{font-size:.72rem;color:var(--muted);margin-top:6px;font-style:italic;line-height:1.5}
+    .dialect-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.8rem;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+    .dialect-table thead{background:rgba(255,255,255,.05)}
+    .dialect-table th{padding:9px 12px;text-align:left;color:var(--muted);font-size:.67rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;border-bottom:1px solid var(--border)}
+    .dialect-table td{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:top}
+    .dialect-table tr:last-child td{border-bottom:none}
+    .dialect-table tr:hover td{background:rgba(255,255,255,.02)}
+    .d-op{font-family:var(--fm);font-weight:700;color:var(--text)}
+    .d-yes{color:#4ade80}.d-no{color:#f87171}.d-alt{color:#fbbf24}
+    /* ── CHEAT SHEET ── */
+    .cheat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-top:16px}
+    .cheat-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+    .cheat-card-title{font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+    .cheat-card-code{font-family:var(--fm);font-size:.8rem;color:var(--ob);line-height:1.7;white-space:pre}
+    .cheat-card-note{font-size:.72rem;color:rgba(230,237,243,.6);margin-top:6px;line-height:1.5}
+  </style>
+</head>
+<body>
+
+<div id="scroll-progress"></div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-left">
+    <a href="sql.html" class="nav-back">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      SQL Lab
+    </a>
+    <div class="nav-brand">SQL <span>Unlocked</span></div>
+    <span class="nav-badge">Chapter 3</span>
+    <span class="mobile-chapter-label">Ch 3 · ORDER BY</span>
+  </div>
+  <div class="nav-chapter-dots" id="chapter-dots">
+    <span class="nav-dot active" data-sec="intro" title="Story"></span>
+    <span class="nav-dot" data-sec="anatomy" title="Anatomy"></span>
+    <span class="nav-dot" data-sec="examples" title="Examples"></span>
+    <span class="nav-dot" data-sec="gotchas" title="Gotchas"></span>
+    <span class="nav-dot" data-sec="practice" title="Practice"></span>
+  </div>
+</nav>
+
+<!-- CHAPTER TABS -->
+<div class="ch-tabs-wrap" role="tablist" aria-label="SQL Topics">
+  <div class="ch-tabs">
+    <a href="sql-unlocked.html" class="ch-tab" role="tab">SELECT</a>
+    <a href="sql-unlocked-where.html" class="ch-tab" role="tab">WHERE</a>
+    <a href="sql-unlocked-orderby.html" class="ch-tab active" role="tab" aria-selected="true">ORDER BY</a>
+    <span class="ch-tab ch-soon">Aggregates <span class="ch-tab-badge">soon</span></span>
+    <span class="ch-tab ch-soon">GROUP BY <span class="ch-tab-badge">soon</span></span>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div class="hero-split">
+      <div class="hero-left">
+        <div class="hero-tag">
+          <span class="hero-tag-dot"></span>
+          Chapter 3 — Sort Results
+        </div>
+        <h1>ORDER BY: <span class="highlight">control what comes first.</span></h1>
+        <p class="hero-sub">SELECT picks columns. WHERE filters rows. <strong>ORDER BY decides the sequence.</strong> Without it, your results arrive in whatever order the database feels like — unpredictable, inconsistent, and useless for ranking.</p>
+        <div class="hero-pills">
+          <span class="hero-pill">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+            Chapter 3
+          </span>
+          <span class="hero-pill">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            30+ min practice
+          </span>
+          <span class="hero-pill">
+            <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+            35 Questions
+          </span>
+          <span class="hero-pill">
+            <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            Inline Playground
+          </span>
+        </div>
+        <div class="chapter-steps">
+          <div class="ch-step done" id="cstep-0">
+            <div class="ch-step-circle">01</div>
+            <div class="ch-step-label">Story</div>
+          </div>
+          <div class="ch-step-line done" id="cline-0"></div>
+          <div class="ch-step active" id="cstep-1">
+            <div class="ch-step-circle">02</div>
+            <div class="ch-step-label">Anatomy</div>
+          </div>
+          <div class="ch-step-line" id="cline-1"></div>
+          <div class="ch-step" id="cstep-2">
+            <div class="ch-step-circle">03</div>
+            <div class="ch-step-label">Examples</div>
+          </div>
+          <div class="ch-step-line" id="cline-2"></div>
+          <div class="ch-step" id="cstep-3">
+            <div class="ch-step-circle">04</div>
+            <div class="ch-step-label">Gotchas</div>
+          </div>
+          <div class="ch-step-line" id="cline-3"></div>
+          <div class="ch-step" id="cstep-4">
+            <div class="ch-step-circle">05</div>
+            <div class="ch-step-label">Practice</div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="hero-preview">
+          <div class="hero-preview-bar">
+            <div class="hero-preview-dots"><span></span><span></span><span></span></div>
+            <span class="hero-preview-filename">sort_students.sql</span>
+            <span class="hero-preview-run" id="hero-run-btn">▶ Run</span>
+          </div>
+          <code class="hero-preview-sql" id="hero-sql"></code>
+          <div class="hero-preview-result-label" id="hero-result-label">5 rows · highest score first</div>
+          <table class="hero-preview-table">
+            <thead><tr><th>name</th><th>score</th></tr></thead>
+            <tbody>
+              <tr><td>Raj</td><td>95</td></tr>
+              <tr><td>Arjun</td><td>88</td></tr>
+              <tr><td>Karan</td><td>80</td></tr>
+              <tr><td>Priya</td><td>72</td></tr>
+              <tr><td>Simran</td><td>61</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MAIN CONTENT -->
+<div class="content">
+
+  <!-- ─── SECTION 01: STORY ─── -->
+  <div class="section" id="intro">
+    <div class="section-eyebrow">
+      <span class="section-num">01</span>
+      <span class="section-tag">The Story</span>
+      <span class="section-readtime">4 min read</span>
+    </div>
+    <h2>Results in chaos. ORDER BY fixes that.</h2>
+
+    <div class="story-card">
+      <p>You're a data analyst. Your manager asks: <em>"Who are our top 5 students by score?"</em> You run <code>SELECT name, score FROM students;</code> — five rows appear. But not in any meaningful order. Raj (95) is third. Simran (61) is fourth. Your eyes have to do the ranking manually.</p>
+      <p>Now scale that up. Imagine 10,000 students. Or 500,000 orders. Or 2 million transactions. The database hands them back in the order it stored them — which changes every time someone inserts or deletes a row.</p>
+      <div class="story-highlight">ORDER BY is one line that turns a dump of data into a ranked, meaningful list. It's the difference between raw data and an answer.</div>
+    </div>
+
+    <div class="key-concept">
+      <span class="key-concept-badge">Key rule</span>
+      <div class="key-concept-body">
+        Without <code>ORDER BY</code>, SQL makes <strong>no guarantee about row order</strong>. The same query can return rows in completely different sequences on two separate runs. If your report needs a specific order, you must always specify it explicitly.
+      </div>
+    </div>
+
+    <p style="margin-top:20px">Compare the same table with and without ORDER BY:</p>
+
+    <div class="sort-compare">
+      <div class="sort-side-wrap">
+        <div class="sort-side-head asc">Without ORDER BY — storage order</div>
+        <table class="sort-result-table">
+          <thead><tr><th>name</th><th>score</th></tr></thead>
+          <tbody>
+            <tr><td>Arjun</td><td>88</td></tr>
+            <tr><td>Priya</td><td>72</td></tr>
+            <tr><td>Raj</td><td>95</td></tr>
+            <tr><td>Simran</td><td>61</td></tr>
+            <tr><td>Karan</td><td>80</td></tr>
+          </tbody>
+        </table>
+        <div class="sort-side-note">⚠ Raj (95) is row 3 — not obvious who's top</div>
+      </div>
+      <div class="sort-side-wrap">
+        <div class="sort-side-head desc">ORDER BY score DESC</div>
+        <table class="sort-result-table">
+          <thead><tr><th>name</th><th>score</th></tr></thead>
+          <tbody>
+            <tr class="sort-top"><td>Raj</td><td>95</td></tr>
+            <tr><td>Arjun</td><td>88</td></tr>
+            <tr><td>Karan</td><td>80</td></tr>
+            <tr><td>Priya</td><td>72</td></tr>
+            <tr class="sort-bot"><td>Simran</td><td>61</td></tr>
+          </tbody>
+        </table>
+        <div class="sort-side-note">✓ Raj is instantly row 1 — no scanning needed</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SECTION 02: ANATOMY ─── -->
+  <div class="section" id="anatomy">
+    <div class="section-eyebrow">
+      <span class="section-num">02</span>
+      <span class="section-tag">Anatomy</span>
+      <span class="section-readtime">5 min read</span>
+    </div>
+    <h2>ORDER BY: column + direction.</h2>
+
+    <p>Every ORDER BY has two parts: <strong>what to sort by</strong> (the column) and <strong>which way</strong> (ASC or DESC). The direction is optional — if you omit it, SQL defaults to ASC.</p>
+
+    <div class="sketch-wrap">
+      <div class="sketch-label">Diagram 1 — Full query anatomy</div>
+      <div class="sketch-box" data-label="Query Structure">
+        <div class="anatomy-wrap">
+          <div class="anatomy-row">
+            <div class="ap ab">
+              <div class="ap-token apt-b">SELECT name, score</div>
+              <div class="ap-line"></div><div class="ap-arrow"></div><div class="ap-stem"></div>
+              <div class="ap-card"><div class="ap-card-title">Columns</div><div class="ap-card-sub">what to show</div></div>
+            </div>
+            <div class="ap-sep"><div class="ap-token">&nbsp;&nbsp;</div></div>
+            <div class="ap ac">
+              <div class="ap-token apt-c">FROM students</div>
+              <div class="ap-line"></div><div class="ap-arrow"></div><div class="ap-stem"></div>
+              <div class="ap-card"><div class="ap-card-title">Table</div><div class="ap-card-sub">where data lives</div></div>
+            </div>
+            <div class="ap-sep"><div class="ap-token">&nbsp;&nbsp;</div></div>
+            <div class="ap ao">
+              <div class="ap-token apt-o">ORDER BY score DESC</div>
+              <div class="ap-line"></div><div class="ap-arrow"></div><div class="ap-stem"></div>
+              <div class="ap-card"><div class="ap-card-title">Sort</div><div class="ap-card-sub">column + direction</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p style="margin-top:24px">When you add WHERE, the clause order must be exactly: FROM → WHERE → ORDER BY → TOP/LIMIT. ORDER BY always comes last. In SQL Server, <code>TOP n</code> goes at the very beginning right after SELECT — not at the end like LIMIT.</p>
+
+    <div class="code-block">
+      <div class="code-block-head"><span class="code-block-lang">SQL Server — full clause order</span></div>
+      <pre><span class="kw">SELECT TOP</span> <span class="num">5</span> <span class="col">name</span>, <span class="col">score</span>    <span class="cm">-- TOP n right after SELECT</span>
+<span class="kw">FROM</span>     <span class="tbl">students</span>             <span class="cm">-- choose table</span>
+<span class="kw">WHERE</span>    <span class="col">score</span> &gt; <span class="num">50</span>           <span class="cm">-- filter rows (optional)</span>
+<span class="kw">ORDER BY</span> <span class="col">score</span> <span class="kw">DESC</span>;         <span class="cm">-- sort (optional)</span></pre>
+    </div>
+    <div style="margin-top:8px;padding:8px 12px;background:rgba(99,179,237,.06);border:1px solid rgba(99,179,237,.2);border-radius:8px;font-size:.78rem;color:rgba(230,237,243,.75)">
+      <strong style="color:#63b3ed">Playground note:</strong> The Try It buttons use <code>LIMIT</code> at the end (SQLite syntax). In SQL Server, write <code>SELECT TOP n ...</code> instead.
+    </div>
+
+    <div class="sketch-wrap" style="margin-top:28px">
+      <div class="sketch-label">Diagram 2 — SQL execution pipeline</div>
+      <div class="sketch-box" data-label="Execution Order">
+        <div class="pipeline-flow">
+          <div class="pipeline-step">
+            <div class="pipeline-box">
+              <div class="pipeline-num">STEP 1</div>
+              <div class="pipeline-kw pk-from">FROM</div>
+              <div class="pipeline-sub">load table</div>
+            </div>
+          </div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-step">
+            <div class="pipeline-box">
+              <div class="pipeline-num">STEP 2</div>
+              <div class="pipeline-kw pk-where">WHERE</div>
+              <div class="pipeline-sub">filter rows</div>
+            </div>
+          </div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-step">
+            <div class="pipeline-box">
+              <div class="pipeline-num">STEP 3</div>
+              <div class="pipeline-kw pk-select">SELECT</div>
+              <div class="pipeline-sub">pick columns</div>
+            </div>
+          </div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-step">
+            <div class="pipeline-box cur">
+              <div class="pipeline-num">STEP 4</div>
+              <div class="pipeline-kw pk-orderby">ORDER BY</div>
+              <div class="pipeline-sub">sort rows</div>
+            </div>
+          </div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-step">
+            <div class="pipeline-box">
+              <div class="pipeline-num">STEP 5</div>
+              <div class="pipeline-kw pk-limit">TOP / LIMIT</div>
+              <div class="pipeline-sub">cap output</div>
+            </div>
+          </div>
+        </div>
+        <div class="pipeline-insight">
+          You <em>write</em> SELECT first, but SQL <em>runs</em> ORDER BY almost last — after all filtering and column selection. This means <code>ORDER BY</code> can reference columns not in your SELECT list (it sees the full row). TOP/LIMIT runs after ORDER BY, so "top 3" always means top 3 of the sorted list. In SQL Server, write <code>SELECT TOP 3 ...</code>; in SQLite/MySQL, write <code>LIMIT 3</code> at the end.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SECTION 03: EXAMPLES ─── -->
+  <div class="section" id="examples">
+    <div class="section-eyebrow">
+      <span class="section-num">03</span>
+      <span class="section-tag">Sort Directions &amp; Live Examples</span>
+      <span class="section-readtime">8 min read</span>
+    </div>
+    <h2>ASC, DESC, and everything in between.</h2>
+
+    <h3 style="font-family:var(--fh);font-size:1.1rem;font-weight:600;margin:0 0 14px;color:var(--text)">ASC vs DESC — side by side</h3>
+
+    <div class="sort-compare">
+      <div class="sort-side-wrap">
+        <div class="sort-side-head asc">ORDER BY score ASC &nbsp;<span style="font-size:.65rem;font-weight:400;color:var(--muted)">(default)</span></div>
+        <table class="sort-result-table">
+          <thead><tr><th>#</th><th>name</th><th>score</th></tr></thead>
+          <tbody>
+            <tr class="sort-bot"><td>1</td><td>Simran</td><td>61</td></tr>
+            <tr><td>2</td><td>Priya</td><td>72</td></tr>
+            <tr><td>3</td><td>Karan</td><td>80</td></tr>
+            <tr><td>4</td><td>Arjun</td><td>88</td></tr>
+            <tr class="sort-top"><td>5</td><td>Raj</td><td>95</td></tr>
+          </tbody>
+        </table>
+        <div class="sort-side-note">Smallest value first → largest last</div>
+      </div>
+      <div class="sort-side-wrap">
+        <div class="sort-side-head desc">ORDER BY score DESC</div>
+        <table class="sort-result-table">
+          <thead><tr><th>#</th><th>name</th><th>score</th></tr></thead>
+          <tbody>
+            <tr class="sort-top"><td>1</td><td>Raj</td><td>95</td></tr>
+            <tr><td>2</td><td>Arjun</td><td>88</td></tr>
+            <tr><td>3</td><td>Karan</td><td>80</td></tr>
+            <tr><td>4</td><td>Priya</td><td>72</td></tr>
+            <tr class="sort-bot"><td>5</td><td>Simran</td><td>61</td></tr>
+          </tbody>
+        </table>
+        <div class="sort-side-note">Largest value first → smallest last</div>
+      </div>
+    </div>
+
+    <p style="margin-top:8px">Text columns sort alphabetically (A→Z for ASC, Z→A for DESC). Dates sort earliest-first for ASC.</p>
+
+    <h3 style="font-family:var(--fh);font-size:1.1rem;font-weight:600;margin:28px 0 14px;color:var(--text)">Multi-column sort: tie-breaking</h3>
+
+    <div class="msort-wrap">
+      <div class="msort-head"><span class="ob">ORDER BY</span> <span class="bl">city ASC</span>, <span style="color:#f7c948;font-weight:700">score DESC</span></div>
+      <div class="msort-body">
+        <div class="msort-sep"><div class="msort-sep-line"></div><div class="msort-sep-txt">Primary sort: city A→Z</div><div class="msort-sep-line"></div></div>
+        <table class="msort-table">
+          <thead><tr><th>city</th><th>name</th><th>score</th><th>note</th></tr></thead>
+          <tbody>
+            <tr><td class="pri">Chennai</td><td>Karan</td><td>80</td><td style="color:var(--muted);font-size:.73rem">only 1 in Chennai</td></tr>
+            <tr><td class="pri">Delhi</td><td class="tie-top">Arjun</td><td class="tie-top">88</td><td style="color:var(--muted);font-size:.73rem">← higher score wins</td></tr>
+            <tr><td class="pri">Delhi</td><td>Simran</td><td>61</td><td style="color:var(--muted);font-size:.73rem">← secondary sort kicks in</td></tr>
+            <tr><td class="pri">Mumbai</td><td>Priya</td><td>72</td><td style="color:var(--muted);font-size:.73rem">only 1 in Mumbai</td></tr>
+            <tr><td class="pri">Pune</td><td>Raj</td><td>95</td><td style="color:var(--muted);font-size:.73rem">only 1 in Pune</td></tr>
+          </tbody>
+        </table>
+        <div class="msort-tip">The <strong>first column</strong> is the primary key — rows are grouped by city first. The <strong>second column</strong> only decides order within rows that share the same city. Delhi has two students, so <code>score DESC</code> puts Arjun (88) before Simran (61).</div>
+      </div>
+    </div>
+
+    <h3 style="font-family:var(--fh);font-size:1.1rem;font-weight:600;margin:32px 0 14px;color:var(--text)">Live examples — try them in the playground</h3>
+
+    <!-- E1 -->
+    <div class="example-block">
+      <div class="example-header">
+        <span class="example-num">E01</span>
+        <span class="example-title">Basic DESC — highest first</span>
+      </div>
+      <div class="example-body">
+        <div class="example-desc">Sort all students by score, highest to lowest.</div>
+        <div class="code-block" style="margin-top:0">
+          <div class="code-block-head">
+            <span class="code-block-lang">SQL</span>
+            <div class="code-block-actions">
+              <button class="cb-copy-btn" onclick="cbCopy(this,'SELECT * FROM students ORDER BY score DESC;')">Copy</button>
+              <button class="cb-try-btn" onclick="cbTry('SELECT * FROM students ORDER BY score DESC;')"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>Try</button>
+            </div>
+          </div>
+          <pre><span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">students</span> <span class="kw">ORDER BY</span> <span class="col">score</span> <span class="kw">DESC</span>;</pre>
+        </div>
+        <div class="output-wrap">
+          <div class="output-label">Result (5 rows)</div>
+          <table class="output-table">
+            <thead><tr><th>id</th><th>name</th><th>city</th><th>score</th></tr></thead>
+            <tbody>
+              <tr class="rank-1"><td>3</td><td>Raj</td><td>Pune</td><td>95</td></tr>
+              <tr><td>1</td><td>Arjun</td><td>Delhi</td><td>88</td></tr>
+              <tr><td>5</td><td>Karan</td><td>Chennai</td><td>80</td></tr>
+              <tr><td>2</td><td>Priya</td><td>Mumbai</td><td>72</td></tr>
+              <tr><td>4</td><td>Simran</td><td>Delhi</td><td>61</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- E2 -->
+    <div class="example-block">
+      <div class="example-header">
+        <span class="example-num">E02</span>
+        <span class="example-title">Basic ASC — lowest first (default)</span>
+      </div>
+      <div class="example-body">
+        <div class="example-desc">Select only name and score, sorted lowest score first.</div>
+        <div class="code-block" style="margin-top:0">
+          <div class="code-block-head">
+            <span class="code-block-lang">SQL</span>
+            <div class="code-block-actions">
+              <button class="cb-copy-btn" onclick="cbCopy(this,'SELECT name, score FROM students ORDER BY score ASC;')">Copy</button>
+              <button class="cb-try-btn" onclick="cbTry('SELECT name, score FROM students ORDER BY score ASC;')"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>Try</button>
+            </div>
+          </div>
+          <pre><span class="kw">SELECT</span> <span class="col">name</span>, <span class="col">score</span> <span class="kw">FROM</span> <span class="tbl">students</span> <span class="kw">ORDER BY</span> <span class="col">score</span> <span class="kw">ASC</span>;</pre>
+        </div>
+        <div class="output-wrap">
+          <div class="output-label">Result (5 rows)</div>
+          <table class="output-table">
+            <thead><tr><th>name</th><th>score</th></tr></thead>
+            <tbody>
+              <tr><td>Simran</td><td>61</td></tr>
+              <tr><td>Priya</td><td>72</td></tr>
+              <tr><td>Karan</td><td>80</td></tr>
+              <tr><td>Arjun</td><td>88</td></tr>
+              <tr class="rank-1"><td>Raj</td><td>95</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- E3 -->
+    <div class="example-block">
+      <div class="example-header">
+        <span class="example-num">E03</span>
+        <span class="example-title">Multi-column — city A→Z, then score high→low</span>
+      </div>
+      <div class="example-body">
+        <div class="example-desc">Sort by city alphabetically. Within each city, put the highest scorer first.</div>
+        <div class="code-block" style="margin-top:0">
+          <div class="code-block-head">
+            <span class="code-block-lang">SQL</span>
+            <div class="code-block-actions">
+              <button class="cb-copy-btn" onclick="cbCopy(this,&quot;SELECT name, city, score FROM students\nORDER BY city ASC, score DESC;&quot;)">Copy</button>
+              <button class="cb-try-btn" onclick="cbTry('SELECT name, city, score FROM students ORDER BY city ASC, score DESC;')"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>Try</button>
+            </div>
+          </div>
+          <pre><span class="kw">SELECT</span> <span class="col">name</span>, <span class="col">city</span>, <span class="col">score</span> <span class="kw">FROM</span> <span class="tbl">students</span>
+<span class="kw">ORDER BY</span> <span class="col">city</span> <span class="kw">ASC</span>, <span class="col">score</span> <span class="kw">DESC</span>;</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- E4 -->
+    <div class="example-block">
+      <div class="example-header">
+        <span class="example-num">E04</span>
+        <span class="example-title">Top-N pattern — ORDER BY + TOP (SQL Server)</span>
+      </div>
+      <div class="example-body">
+        <div class="example-desc">Get only the top 3 highest-scoring students. In SQL Server, <code>TOP n</code> goes right after SELECT — before the column list. This Top-N pattern appears in almost every real-world query.</div>
+        <div class="code-block" style="margin-top:0">
+          <div class="code-block-head">
+            <span class="code-block-lang">SQL Server</span>
+            <div class="code-block-actions">
+              <button class="cb-copy-btn" onclick="cbCopy(this,'SELECT TOP 3 name, score FROM students ORDER BY score DESC;')">Copy</button>
+              <button class="cb-try-btn" onclick="cbTry('SELECT name, score FROM students ORDER BY score DESC LIMIT 3;')"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>Try</button>
+            </div>
+          </div>
+          <pre><span class="kw">SELECT TOP</span> <span class="num">3</span> <span class="col">name</span>, <span class="col">score</span>
+<span class="kw">FROM</span> <span class="tbl">students</span>
+<span class="kw">ORDER BY</span> <span class="col">score</span> <span class="kw">DESC</span>;</pre>
+        </div>
+        <div class="output-wrap">
+          <div class="output-label">Result (3 rows)</div>
+          <table class="output-table">
+            <thead><tr><th>name</th><th>score</th></tr></thead>
+            <tbody>
+              <tr class="rank-1"><td>Raj</td><td>95</td></tr>
+              <tr><td>Arjun</td><td>88</td></tr>
+              <tr><td>Karan</td><td>80</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- OFFSET-FETCH callout -->
+    <div style="margin:20px 0 28px;padding:14px 18px;background:rgba(78,201,176,.05);border:1px solid rgba(78,201,176,.22);border-radius:12px">
+      <div style="font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ob);margin-bottom:8px">SQL Server — Paging with OFFSET-FETCH</div>
+      <p style="font-size:.82rem;color:rgba(230,237,243,.85);line-height:1.7;margin:0 0 10px">For skipping rows and returning a "page" of results, SQL Server uses <code>OFFSET … ROWS FETCH NEXT … ROWS ONLY</code> — not LIMIT. ORDER BY is <strong>required</strong> when using OFFSET-FETCH.</p>
+      <div class="code-block" style="margin:0">
+        <div class="code-block-head">
+          <span class="code-block-lang">SQL Server — page 2 of results (rows 6–10)</span>
+          <div class="code-block-actions">
+            <button class="cb-copy-btn" onclick="cbCopy(this,'SELECT name, score\nFROM students\nORDER BY score DESC\nOFFSET 5 ROWS FETCH NEXT 5 ROWS ONLY;')">Copy</button>
+          </div>
+        </div>
+        <pre><span class="kw">SELECT</span> <span class="col">name</span>, <span class="col">score</span>
+<span class="kw">FROM</span> <span class="tbl">students</span>
+<span class="kw">ORDER BY</span> <span class="col">score</span> <span class="kw">DESC</span>
+<span class="kw">OFFSET</span> <span class="num">5</span> <span class="kw">ROWS FETCH NEXT</span> <span class="num">5</span> <span class="kw">ROWS ONLY</span>;</pre>
+      </div>
+      <div style="margin-top:8px;font-size:.78rem;color:rgba(230,237,243,.7);line-height:1.6"><code>OFFSET 5 ROWS</code> — skip the first 5 rows &nbsp;·&nbsp; <code>FETCH NEXT 5 ROWS ONLY</code> — return the next 5. Use <code>OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY</code> for page 1.</div>
+    </div>
+
+    <!-- E5 -->
+    <div class="example-block">
+      <div class="example-header">
+        <span class="example-num">E05</span>
+        <span class="example-title">Expression sort — ORDER BY LEN(name) — SQL Server</span>
+      </div>
+      <div class="example-body">
+        <div class="example-desc">You can use any expression inside ORDER BY — not just column names. Sort students from shortest name to longest. In SQL Server, use <code>LEN()</code> for character count; this playground (SQLite) uses <code>LENGTH()</code>.</div>
+        <div class="code-block" style="margin-top:0">
+          <div class="code-block-head">
+            <span class="code-block-lang">SQL</span>
+            <div class="code-block-actions">
+              <button class="cb-copy-btn" onclick="cbCopy(this,'SELECT name FROM students ORDER BY LEN(name) ASC;')">Copy</button>
+              <button class="cb-try-btn" onclick="cbTry('SELECT name FROM students ORDER BY LENGTH(name) ASC;')"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>Try</button>
+            </div>
+          </div>
+          <pre><span class="kw">SELECT</span> <span class="col">name</span> <span class="kw">FROM</span> <span class="tbl">students</span>
+<span class="kw">ORDER BY</span> <span class="kw">LEN</span>(<span class="col">name</span>) <span class="kw">ASC</span>;</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- E6 -->
+    <div class="example-block">
+      <div class="example-header">
+        <span class="example-num">E06</span>
+        <span class="example-title">WHERE + ORDER BY combined</span>
+      </div>
+      <div class="example-body">
+        <div class="example-desc">Filter Delhi students first, then sort by score. WHERE always comes before ORDER BY.</div>
+        <div class="code-block" style="margin-top:0">
+          <div class="code-block-head">
+            <span class="code-block-lang">SQL</span>
+            <div class="code-block-actions">
+              <button class="cb-copy-btn" onclick="cbCopy(this,&quot;SELECT name, score FROM students WHERE city = 'Delhi' ORDER BY score DESC;&quot;)">Copy</button>
+              <button class="cb-try-btn" onclick="cbTry(&quot;SELECT name, score FROM students WHERE city = 'Delhi' ORDER BY score DESC;&quot;)"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>Try</button>
+            </div>
+          </div>
+          <pre><span class="kw">SELECT</span> <span class="col">name</span>, <span class="col">score</span> <span class="kw">FROM</span> <span class="tbl">students</span>
+<span class="kw">WHERE</span>  <span class="col">city</span> = <span class="str">'Delhi'</span>
+<span class="kw">ORDER BY</span> <span class="col">score</span> <span class="kw">DESC</span>;</pre>
+        </div>
+        <div class="output-wrap">
+          <div class="output-label">Result (2 rows)</div>
+          <table class="output-table">
+            <thead><tr><th>name</th><th>score</th></tr></thead>
+            <tbody>
+              <tr class="rank-1"><td>Arjun</td><td>88</td></tr>
+              <tr><td>Simran</td><td>61</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SECTION 04: GOTCHAS ─── -->
+  <div class="section" id="gotchas">
+    <div class="section-eyebrow">
+      <span class="section-num">04</span>
+      <span class="section-tag">Edge Cases &amp; Gotchas</span>
+      <span class="section-readtime">6 min read</span>
+    </div>
+    <h2>Four things that trip people up.</h2>
+
+    <h3 style="font-family:var(--fh);font-size:1.05rem;font-weight:600;margin:0 0 12px;color:var(--text)">Edge case reference</h3>
+
+    <table class="edge-table">
+      <thead>
+        <tr><th>Situation</th><th>Works?</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>ORDER BY</code> a column not in <code>SELECT</code></td>
+          <td><span class="ok">✓ Yes</span></td>
+          <td>SQL sees the full row when sorting — the column doesn't need to appear in your output</td>
+        </tr>
+        <tr>
+          <td><code>ORDER BY 2</code> (column position)</td>
+          <td><span class="ok">✓ Yes</span></td>
+          <td>Refers to the 2nd column in the <code>SELECT</code> list — useful shorthand, but reduces readability</td>
+        </tr>
+        <tr>
+          <td><code>ORDER BY LENGTH(name)</code> (expressions)</td>
+          <td><span class="ok">✓ Yes</span></td>
+          <td>Any valid expression works — functions, arithmetic, string ops</td>
+        </tr>
+        <tr>
+          <td><code>ORDER BY</code> an alias defined in <code>SELECT</code></td>
+          <td><span class="ok">✓ Yes</span></td>
+          <td><code>SELECT score AS total ... ORDER BY total</code> — works in SQL Server and most modern databases</td>
+        </tr>
+        <tr>
+          <td><code>NULL</code> values in ASC sort</td>
+          <td><span class="warn">⚠ NULLs first</span></td>
+          <td>SQL Server treats NULL as less than any non-NULL — NULLs appear at the top of ASC, bottom of DESC</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-family:var(--fh);font-size:1.05rem;font-weight:600;margin:28px 0 12px;color:var(--text)">NULL behavior in ORDER BY</h3>
+
+    <p>If your table has NULL scores, their position in the sort depends on the direction. SQL Server (and SQLite) treat NULL as lower than any real value:</p>
+
+    <div class="null-sort-compare">
+      <div class="null-sort-side">
+        <div class="null-sort-head asc">ORDER BY score ASC</div>
+        <div class="null-sort-body">
+          <div class="ns-row ns-null"><span class="ns-val">NULL</span><span class="ns-badge nb-null nb-top">first ↑</span></div>
+          <div class="ns-row ns-null"><span class="ns-val">NULL</span></div>
+          <div class="ns-row"><span class="ns-val">61</span></div>
+          <div class="ns-row"><span class="ns-val">72</span></div>
+          <div class="ns-row"><span class="ns-val">80</span></div>
+          <div class="ns-row"><span class="ns-val">88</span></div>
+          <div class="ns-row"><span class="ns-val">95</span></div>
+        </div>
+      </div>
+      <div class="null-sort-side">
+        <div class="null-sort-head desc">ORDER BY score DESC</div>
+        <div class="null-sort-body">
+          <div class="ns-row"><span class="ns-val">95</span><span class="ns-badge nb-top">first ↑</span></div>
+          <div class="ns-row"><span class="ns-val">88</span></div>
+          <div class="ns-row"><span class="ns-val">80</span></div>
+          <div class="ns-row"><span class="ns-val">72</span></div>
+          <div class="ns-row"><span class="ns-val">61</span></div>
+          <div class="ns-row ns-null"><span class="ns-val">NULL</span><span class="ns-badge nb-null">last ↓</span></div>
+          <div class="ns-row ns-null"><span class="ns-val">NULL</span></div>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-family:var(--fh);font-size:1.05rem;font-weight:600;margin:28px 0 16px;color:var(--text)">Common mistakes</h3>
+
+    <div class="gotcha-grid">
+      <div class="gotcha bad">
+        <svg class="gotcha-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        <div class="gotcha-body">
+          <div class="gotcha-title">Missing BY keyword</div>
+          <div class="gotcha-text"><code>ORDER name</code> is a syntax error. The keyword is always two words: <code>ORDER BY</code>.</div>
+        </div>
+      </div>
+      <div class="gotcha bad">
+        <svg class="gotcha-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        <div class="gotcha-body">
+          <div class="gotcha-title">DSC instead of DESC</div>
+          <div class="gotcha-text"><code>DSC</code> is not valid SQL. The abbreviation for descending is always <code>DESC</code> (four letters).</div>
+        </div>
+      </div>
+      <div class="gotcha bad">
+        <svg class="gotcha-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        <div class="gotcha-body">
+          <div class="gotcha-title">SORT BY instead of ORDER BY</div>
+          <div class="gotcha-text">SQL does not have a <code>SORT BY</code> clause. It's always <code>ORDER BY</code>. SORT BY exists in Hive SQL, not standard SQL.</div>
+        </div>
+      </div>
+      <div class="gotcha bad">
+        <svg class="gotcha-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        <div class="gotcha-body">
+          <div class="gotcha-title">ORDER BY before WHERE</div>
+          <div class="gotcha-text">Writing <code>ORDER BY score WHERE score &gt; 70</code> is a syntax error. WHERE always comes before ORDER BY.</div>
+        </div>
+      </div>
+      <div class="gotcha bad">
+        <svg class="gotcha-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        <div class="gotcha-body">
+          <div class="gotcha-title">LIMIT before DESC</div>
+          <div class="gotcha-text"><code>ORDER BY score LIMIT 3 DESC</code> is wrong. Direction goes right after the column: <code>ORDER BY score DESC LIMIT 3</code>.</div>
+        </div>
+      </div>
+      <div class="gotcha tip">
+        <svg class="gotcha-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <div class="gotcha-body">
+          <div class="gotcha-title">Multi-column needs a comma</div>
+          <div class="gotcha-text"><code>ORDER BY city score</code> is ambiguous. Always use a comma: <code>ORDER BY city ASC, score DESC</code>.</div>
+        </div>
+      </div>
+      <div class="gotcha good">
+        <svg class="gotcha-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg>
+        <div class="gotcha-body">
+          <div class="gotcha-title">ASC is optional but explicit is better</div>
+          <div class="gotcha-text"><code>ORDER BY score</code> and <code>ORDER BY score ASC</code> are identical. Writing ASC explicitly makes your intent clear to anyone reading the query.</div>
+        </div>
+      </div>
+      <div class="gotcha good">
+        <svg class="gotcha-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg>
+        <div class="gotcha-body">
+          <div class="gotcha-title">Each column can have its own direction</div>
+          <div class="gotcha-text"><code>ORDER BY city ASC, score DESC</code> is valid. Each column in a multi-sort can independently be ASC or DESC.</div>
+        </div>
+      </div>
+      <div class="gotcha bad">
+        <svg class="gotcha-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        <div class="gotcha-body">
+          <div class="gotcha-title">Ties are non-deterministic — always add a tiebreaker</div>
+          <div class="gotcha-text">When two rows share the same sort key, SQL Server does <strong>not</strong> guarantee their order. Run the same query twice and you may get different sequences. Fix: add a unique column as the final sort key — <code>ORDER BY score DESC, id ASC</code> — so every row has a unique sort position.</div>
+        </div>
+      </div>
+      <div class="gotcha tip">
+        <svg class="gotcha-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <div class="gotcha-body">
+          <div class="gotcha-title">Custom sort order — use CASE WHEN inside ORDER BY</div>
+          <div class="gotcha-text">To sort by a custom priority (e.g., Delhi first, then others): <code>ORDER BY CASE WHEN city='Delhi' THEN 0 ELSE 1 END ASC, score DESC</code>. No multiple queries or client-side sorting needed.</div>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-family:var(--fh);font-size:1.05rem;font-weight:600;margin:32px 0 14px;color:var(--text)">Quick reference</h3>
+
+    <div class="summary-box">
+      <div class="summary-box-head">
+        <span class="summary-box-badge">ORDER BY</span>
+        <span class="summary-box-title">Everything you now know</span>
+      </div>
+      <ul class="summary-list">
+        <li>
+          <svg class="summary-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg>
+          <div><strong>Default is ASC</strong> — <code>ORDER BY score</code> and <code>ORDER BY score ASC</code> are identical. If you need descending, always write <code>DESC</code> explicitly.<span class="summary-code-block">ORDER BY score DESC</span></div>
+        </li>
+        <li>
+          <svg class="summary-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg>
+          <div><strong>Always after WHERE</strong> — the fixed clause order is <code>FROM → WHERE → ORDER BY</code>. Putting ORDER BY before WHERE is a syntax error. In SQL Server, <code>TOP n</code> goes at the start: <code>SELECT TOP n ... ORDER BY col</code>.<span class="summary-code-block">WHERE score > 70 ORDER BY score DESC</span></div>
+        </li>
+        <li>
+          <svg class="summary-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg>
+          <div><strong>Multi-column with comma</strong> — first column is primary sort; subsequent columns break ties within equal values.<span class="summary-code-block">ORDER BY city ASC, score DESC</span></div>
+        </li>
+        <li>
+          <svg class="summary-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg>
+          <div><strong>Top-N pattern</strong> — SQL Server: <code>SELECT TOP n ... ORDER BY col</code>. TOP runs after ORDER BY is applied, so you always get the correctly ranked top/bottom.<span class="summary-code-block">SELECT TOP 3 name, score FROM students ORDER BY score DESC</span></div>
+        </li>
+        <li>
+          <svg class="summary-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg>
+          <div><strong>Expressions work</strong> — any expression is valid: <code>LENGTH(name)</code>, <code>price * stock</code>, aliases defined in SELECT.<span class="summary-code-block">ORDER BY LENGTH(name) ASC</span></div>
+        </li>
+        <li>
+          <svg class="summary-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg>
+          <div><strong>NULLs sort first in ASC, last in DESC</strong> — true in SQL Server and SQLite. NULL is treated as lower than any real value. Be aware if your data has missing values.</div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SECTION 04b: CHEAT SHEET + PERF TIPS -->
+  <div class="section" id="cheatsheet">
+    <div class="section-eyebrow">
+      <span class="section-num" style="background:rgba(78,201,176,.12);color:var(--ob)">04b</span>
+      <span class="section-tag">Reference</span>
+    </div>
+    <h2>ORDER BY quick reference — patterns and performance</h2>
+    <p style="color:rgba(230,237,243,.7);margin-bottom:24px">All ORDER BY patterns at a glance. The dialect table shows SQL Server's TOP/OFFSET-FETCH vs other databases.</p>
+
+    <div style="font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:8px">ORDER BY Cheat Sheet<span style="flex:1;height:1px;background:var(--border);display:inline-block"></span></div>
+    <div class="cheat-grid">
+      <div class="cheat-card">
+        <div class="cheat-card-title">Basic ascending (default)</div>
+        <div class="cheat-card-code">SELECT name, score
+FROM students
+ORDER BY score;</div>
+        <div class="cheat-card-note">ASC is the default. Writing it is optional but explicit is clearer.</div>
+      </div>
+      <div class="cheat-card">
+        <div class="cheat-card-title">Descending</div>
+        <div class="cheat-card-code">SELECT name, score
+FROM students
+ORDER BY score DESC;</div>
+        <div class="cheat-card-note">Highest value first. Always write DESC explicitly.</div>
+      </div>
+      <div class="cheat-card">
+        <div class="cheat-card-title">Multi-column with tiebreaker</div>
+        <div class="cheat-card-code">SELECT name, city, score
+FROM students
+ORDER BY city ASC,
+         score DESC;</div>
+        <div class="cheat-card-note">Primary sort: city. Tiebreaker: score. Each column has its own direction.</div>
+      </div>
+      <div class="cheat-card">
+        <div class="cheat-card-title">Top-N — SQL Server</div>
+        <div class="cheat-card-code">SELECT TOP 3 name, score
+FROM students
+ORDER BY score DESC;</div>
+        <div class="cheat-card-note">TOP goes right after SELECT. Always combine with ORDER BY for meaningful results.</div>
+      </div>
+      <div class="cheat-card">
+        <div class="cheat-card-title">Paging — OFFSET-FETCH (SQL Server)</div>
+        <div class="cheat-card-code">SELECT name, score
+FROM students
+ORDER BY score DESC
+OFFSET 10 ROWS
+FETCH NEXT 10 ROWS ONLY;</div>
+        <div class="cheat-card-note">Skip first 10, return next 10. ORDER BY is required.</div>
+      </div>
+      <div class="cheat-card">
+        <div class="cheat-card-title">Sort by expression</div>
+        <div class="cheat-card-code">SELECT name
+FROM students
+ORDER BY LEN(name) ASC;</div>
+        <div class="cheat-card-note">Any expression is valid. LEN() is SQL Server; LENGTH() is SQLite/PostgreSQL.</div>
+      </div>
+      <div class="cheat-card">
+        <div class="cheat-card-title">Sort by alias</div>
+        <div class="cheat-card-code">SELECT name,
+  score * 2 AS bonus
+FROM students
+ORDER BY bonus DESC;</div>
+        <div class="cheat-card-note">SQL Server allows ORDER BY to reference SELECT aliases.</div>
+      </div>
+      <div class="cheat-card">
+        <div class="cheat-card-title">Custom sort (CASE in ORDER BY)</div>
+        <div class="cheat-card-code">SELECT name, city
+FROM students
+ORDER BY
+  CASE WHEN city='Delhi'
+    THEN 0 ELSE 1
+  END ASC, score DESC;</div>
+        <div class="cheat-card-note">Assign numeric priorities per row. Delhi rows get 0 (first), others 1.</div>
+      </div>
+      <div class="cheat-card">
+        <div class="cheat-card-title">Deterministic sort (add tiebreaker)</div>
+        <div class="cheat-card-code">SELECT name, score
+FROM students
+ORDER BY score DESC,
+         id ASC;</div>
+        <div class="cheat-card-note">Ties are non-deterministic. Always add a unique column (id) as final tiebreaker.</div>
+      </div>
+      <div class="cheat-card">
+        <div class="cheat-card-title">WHERE + ORDER BY combined</div>
+        <div class="cheat-card-code">SELECT name, score
+FROM students
+WHERE score > 70
+ORDER BY score DESC;</div>
+        <div class="cheat-card-note">WHERE always before ORDER BY. Clause order: FROM → WHERE → ORDER BY.</div>
+      </div>
+    </div>
+
+    <div style="font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:32px 0 12px;display:flex;align-items:center;gap:8px">Performance Tips<span style="flex:1;height:1px;background:var(--border);display:inline-block"></span></div>
+    <div class="perf-tip-grid">
+      <div class="perf-tip-card" style="border-left:2px solid #4ade80">
+        <div class="perf-tip-op" style="color:#4ade80">ORDER BY indexed col</div>
+        <div class="perf-speed spd-fast">Fastest</div>
+        <div class="perf-tip-text">When the sort column has an index, SQL Server reads rows in already-sorted order — no sort operation needed.</div>
+        <div class="perf-tip-when">Put an index on columns you sort most often: date, status, score.</div>
+      </div>
+      <div class="perf-tip-card" style="border-left:2px solid #fbbf24">
+        <div class="perf-tip-op" style="color:#fbbf24">ORDER BY expression</div>
+        <div class="perf-speed spd-medium">Sort cost</div>
+        <div class="perf-tip-text">ORDER BY LEN(name) or ORDER BY price * qty can't use a plain index — SQL must compute per row, then sort.</div>
+        <div class="perf-tip-when">For repeated expression sorts, use a computed column with an index.</div>
+      </div>
+      <div class="perf-tip-card" style="border-left:2px solid #4ade80">
+        <div class="perf-tip-op" style="color:#4ade80">TOP 1 with index</div>
+        <div class="perf-speed spd-fast">Near-instant</div>
+        <div class="perf-tip-text">SQL Server stops scanning as soon as it finds the top row when the sort column is indexed.</div>
+        <div class="perf-tip-when">Common pattern: SELECT TOP 1 * FROM orders ORDER BY order_date DESC</div>
+      </div>
+      <div class="perf-tip-card" style="border-left:2px solid #4ade80">
+        <div class="perf-tip-op" style="color:#4ade80">OFFSET-FETCH</div>
+        <div class="perf-speed spd-fast">Better than ROW_NUMBER</div>
+        <div class="perf-tip-text">OFFSET-FETCH is optimized by SQL Server's query engine. Prefer it over ROW_NUMBER() workarounds for simple paging.</div>
+        <div class="perf-tip-when">Page 1 = OFFSET 0, page 2 = OFFSET 10, page N = OFFSET (N-1)*pageSize.</div>
+      </div>
+      <div class="perf-tip-card" style="border-left:2px solid #f87171">
+        <div class="perf-tip-op" style="color:#f87171">No ORDER BY = no guarantee</div>
+        <div class="perf-speed spd-slow">Danger zone</div>
+        <div class="perf-tip-text">Without ORDER BY, SQL Server returns rows in whatever order is most convenient — which can change between runs.</div>
+        <div class="perf-tip-when">Never rely on "default" row order. Always use ORDER BY when sequence matters.</div>
+      </div>
+      <div class="perf-tip-card" style="border-left:2px solid #fbbf24">
+        <div class="perf-tip-op" style="color:#fbbf24">DISTINCT + ORDER BY</div>
+        <div class="perf-speed spd-medium">Extra cost</div>
+        <div class="perf-tip-text">DISTINCT requires de-duplication (sort/hash), then ORDER BY sorts again — two operations on large tables.</div>
+        <div class="perf-tip-when">Filter duplicates upstream when possible rather than at query time.</div>
+      </div>
+    </div>
+
+    <div style="font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:32px 0 12px;display:flex;align-items:center;gap:8px">SQL Dialect Comparison — ORDER BY<span style="flex:1;height:1px;background:var(--border);display:inline-block"></span></div>
+    <p style="font-size:.82rem;color:rgba(230,237,243,.7);margin-bottom:14px">How row limiting and paging differs across databases.</p>
+    <div style="overflow-x:auto">
+      <table class="dialect-table">
+        <thead><tr><th>Feature</th><th>SQL Server</th><th>MySQL / MariaDB</th><th>PostgreSQL</th><th>SQLite</th></tr></thead>
+        <tbody>
+          <tr><td class="d-op">Top-N rows</td><td class="d-yes">&#10003; <code>SELECT TOP n ...</code></td><td class="d-alt">&#9889; <code>LIMIT n</code></td><td class="d-alt">&#9889; <code>LIMIT n</code></td><td class="d-alt">&#9889; <code>LIMIT n</code></td></tr>
+          <tr><td class="d-op">Paging (skip N)</td><td class="d-yes">&#10003; <code>ORDER BY col OFFSET n ROWS FETCH NEXT n ROWS ONLY</code></td><td class="d-alt">&#9889; <code>LIMIT n OFFSET n</code></td><td class="d-alt">&#9889; <code>LIMIT n OFFSET n</code></td><td class="d-alt">&#9889; <code>LIMIT n OFFSET n</code></td></tr>
+          <tr><td class="d-op">NULL sort (ASC)</td><td class="d-yes">&#10003; NULLs first (lowest)</td><td class="d-alt">&#9889; NULLs last</td><td class="d-alt">&#9889; NULLs last (use NULLS FIRST)</td><td class="d-yes">&#10003; NULLs first</td></tr>
+          <tr><td class="d-op">NULLS FIRST/LAST</td><td class="d-no">&#10007; Not supported — use CASE in ORDER BY</td><td class="d-no">&#10007; Not supported</td><td class="d-yes">&#10003; <code>ORDER BY col NULLS LAST</code></td><td class="d-no">&#10007; Not supported</td></tr>
+          <tr><td class="d-op">ORDER BY alias</td><td class="d-yes">&#10003; Supported</td><td class="d-yes">&#10003; Supported</td><td class="d-yes">&#10003; Supported</td><td class="d-yes">&#10003; Supported</td></tr>
+          <tr><td class="d-op">ORDER BY position</td><td class="d-yes">&#10003; <code>ORDER BY 2</code></td><td class="d-yes">&#10003; Supported</td><td class="d-yes">&#10003; Supported</td><td class="d-yes">&#10003; Supported</td></tr>
+          <tr><td class="d-op">CASE in ORDER BY</td><td class="d-yes">&#10003; Supported</td><td class="d-yes">&#10003; Supported</td><td class="d-yes">&#10003; Supported</td><td class="d-yes">&#10003; Supported</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="font-size:.72rem;color:var(--muted);margin-top:8px">&#10003; fully supported &nbsp;&middot;&nbsp; &#9889; alternative syntax &nbsp;&middot;&nbsp; &#10007; not natively supported</div>
+  </div>
+
+  <!-- ─── SECTION 05: PRACTICE ─── -->
+  <div class="section" id="practice">
+    <div class="practice-header">
+      <h2 style="margin-bottom:6px">Practice — <span id="done-count">0</span> / <span id="q-total">35</span> done</h2>
+      <div class="practice-sub">Work through MCQ → Fix-It → Write in order. Use the playground on every Write question.</div>
+      <div class="practice-type-row">
+        <span class="pt-badge mcq">10 MCQ — concept checks</span>
+        <span class="pt-badge fix">10 Fix-It — spot the bug</span>
+        <span class="pt-badge write">15 Write — build from scratch</span>
+      </div>
+      <div class="practice-progress-wrap">
+        <div class="practice-progress-row">
+          <span class="practice-progress-count"><span id="done-count2">0</span> / 35</span>
+          <span class="practice-progress-label" id="progress-msg">Start with Q01</span>
+        </div>
+        <div class="practice-track"><div class="practice-fill" id="practice-fill"></div></div>
+      </div>
+    </div>
+    <!-- Filter bar -->
+    <div class="pq-filter-bar" id="pq-filter-bar">
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+        <span class="pq-filter-label">Type</span>
+        <button class="pq-filter-btn pq-active" data-filter="type" data-val="all" onclick="pqFilter(this)">All</button>
+        <button class="pq-filter-btn t-mcq" data-filter="type" data-val="mcq" onclick="pqFilter(this)" ondblclick="pqDeselect(this)">MCQ</button>
+        <button class="pq-filter-btn t-fix" data-filter="type" data-val="fix" onclick="pqFilter(this)" ondblclick="pqDeselect(this)">Fix-It</button>
+        <button class="pq-filter-btn t-write" data-filter="type" data-val="write" onclick="pqFilter(this)" ondblclick="pqDeselect(this)">Write</button>
+      </div>
+      <div class="pq-filter-sep"></div>
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+        <span class="pq-filter-label">Difficulty</span>
+        <button class="pq-filter-btn pq-active" data-filter="diff" data-val="all" onclick="pqFilter(this)">All</button>
+        <button class="pq-filter-btn d-easy" data-filter="diff" data-val="easy" onclick="pqFilter(this)" ondblclick="pqDeselect(this)">Easy</button>
+        <button class="pq-filter-btn d-medium" data-filter="diff" data-val="medium" onclick="pqFilter(this)" ondblclick="pqDeselect(this)">Medium</button>
+        <button class="pq-filter-btn d-hard" data-filter="diff" data-val="hard" onclick="pqFilter(this)" ondblclick="pqDeselect(this)">Hard</button>
+      </div>
+      <div class="pq-filter-sep"></div>
+      <input class="pq-search" id="pq-search" type="text" placeholder="Search questions…" oninput="pqSearch(this.value)">
+      <span class="pq-count" id="pq-count">38 questions</span>
+    </div>
+    <div class="pq-no-results" id="pq-no-results">No questions match your filter. <button style="background:none;border:none;color:var(--ob);cursor:pointer;font-size:.9rem;text-decoration:underline" onclick="pqReset()">Reset filters</button></div>
+    <div id="q-list"></div>
+  </div>
+
+  <!-- SECTION 06: INTERVIEW PREP -->
+  <div class="section" id="interview">
+    <div class="section-eyebrow">
+      <span class="section-num">06</span>
+      <span class="section-tag">Interview Prep</span>
+      <span class="section-readtime">5 min read</span>
+    </div>
+    <h2>8 questions interviewers ask about ORDER BY.</h2>
+    <p style="color:rgba(230,237,243,.7);margin-bottom:8px">Click any card to reveal the answer. These surface the <em>why</em> behind the syntax.</p>
+    <p style="font-size:.78rem;color:var(--muted);margin-bottom:28px">
+      <span style="display:inline-flex;align-items:center;gap:5px;margin-right:12px"><span style="width:8px;height:8px;border-radius:50%;background:#818cf8;display:inline-block"></span>Concept</span>
+      <span style="display:inline-flex;align-items:center;gap:5px;margin-right:12px"><span style="width:8px;height:8px;border-radius:50%;background:#f87171;display:inline-block"></span>Trap</span>
+      <span style="display:inline-flex;align-items:center;gap:5px;margin-right:12px"><span style="width:8px;height:8px;border-radius:50%;background:#4ade80;display:inline-block"></span>Pattern</span>
+      <span style="display:inline-flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:50%;background:#fbbf24;display:inline-block"></span>Advanced</span>
+    </p>
+    <div class="iv-grid">
+
+    <div class="iv-card" onclick="this.classList.toggle('open')">
+      <div class="iv-head">
+        <div class="iv-q-wrap">
+          <span class="iv-tag trap">Trap</span>
+          <span class="iv-q">If you don't use ORDER BY, can you rely on any default row order?</span>
+        </div>
+        <svg class="iv-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="iv-body"><div class="iv-body-inner">
+        <div class="iv-a"><strong>No.</strong> Without ORDER BY, SQL Server returns rows in whatever order it finds most efficient — which can change between runs depending on query plan, index state, and parallelism.</div>
+        <div class="iv-code">-- No ORDER BY: order is unpredictable
+SELECT name, score FROM students;
+
+-- Safe: always specify the order you need
+SELECT name, score FROM students ORDER BY score DESC;</div>
+        <div class="iv-gotcha"><strong>Common trap:</strong> "It always came back in id order." That's coincidence — typically the physical storage order on a small table. After updates, deletes, and page splits, row order is truly unpredictable.</div>
+      </div></div>
+    </div>
+
+    <div class="iv-card" onclick="this.classList.toggle('open')">
+      <div class="iv-head">
+        <div class="iv-q-wrap">
+          <span class="iv-tag concept">Concept</span>
+          <span class="iv-q">What is a non-deterministic sort, and how do you fix it?</span>
+        </div>
+        <svg class="iv-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="iv-body"><div class="iv-body-inner">
+        <div class="iv-a">A sort is non-deterministic when two rows share the same sort key — SQL Server doesn't guarantee which one comes first. Fix: add a unique tiebreaker column as the final sort key.</div>
+        <div class="iv-code">-- Non-deterministic: if two students have score 80, they may swap
+SELECT name, score FROM students ORDER BY score DESC;
+
+-- Deterministic: id is unique, so every row has a distinct position
+SELECT name, score FROM students ORDER BY score DESC, id ASC;</div>
+        <div class="iv-tip"><strong>Best practice:</strong> Always end your ORDER BY with a unique column (typically the primary key) for stable, reproducible results — especially in pagination.</div>
+      </div></div>
+    </div>
+
+    <div class="iv-card" onclick="this.classList.toggle('open')">
+      <div class="iv-head">
+        <div class="iv-q-wrap">
+          <span class="iv-tag pattern">Pattern</span>
+          <span class="iv-q">What is the SQL Server syntax for pagination (skipping N rows)?</span>
+        </div>
+        <svg class="iv-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="iv-body"><div class="iv-body-inner">
+        <div class="iv-a">Use <code>OFFSET n ROWS FETCH NEXT n ROWS ONLY</code> after ORDER BY. ORDER BY is required — you can't use OFFSET-FETCH without it.</div>
+        <div class="iv-code">-- Page 1 (rows 1-10)
+SELECT name, score FROM students
+ORDER BY score DESC
+OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY;
+
+-- Page 2 (rows 11-20)
+SELECT name, score FROM students
+ORDER BY score DESC
+OFFSET 10 ROWS FETCH NEXT 10 ROWS ONLY;</div>
+        <div class="iv-gotcha"><strong>Not LIMIT/OFFSET:</strong> SQL Server does not support LIMIT. Always use the full OFFSET n ROWS FETCH NEXT n ROWS ONLY syntax.</div>
+      </div></div>
+    </div>
+
+    <div class="iv-card" onclick="this.classList.toggle('open')">
+      <div class="iv-head">
+        <div class="iv-q-wrap">
+          <span class="iv-tag concept">Concept</span>
+          <span class="iv-q">Where do NULLs appear when you ORDER BY a nullable column in SQL Server?</span>
+        </div>
+        <svg class="iv-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="iv-body"><div class="iv-body-inner">
+        <div class="iv-a">SQL Server treats NULL as lower than any non-NULL value. In ASC order NULLs appear <strong>first</strong>; in DESC order NULLs appear <strong>last</strong>.</div>
+        <div class="iv-code">-- ASC: NULLs appear at the top (first)
+SELECT name, score FROM students ORDER BY score ASC;
+
+-- DESC: NULLs appear at the bottom (last)
+SELECT name, score FROM students ORDER BY score DESC;</div>
+        <div class="iv-gotcha"><strong>PostgreSQL difference:</strong> PostgreSQL sorts NULLs last in ASC by default and supports ORDER BY score ASC NULLS FIRST. SQL Server does not support NULLS FIRST/LAST — use CASE WHEN score IS NULL THEN 1 ELSE 0 END as a workaround.</div>
+      </div></div>
+    </div>
+
+    <div class="iv-card" onclick="this.classList.toggle('open')">
+      <div class="iv-head">
+        <div class="iv-q-wrap">
+          <span class="iv-tag advanced">Advanced</span>
+          <span class="iv-q">Can you use ORDER BY inside a subquery in SQL Server?</span>
+        </div>
+        <svg class="iv-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="iv-body"><div class="iv-body-inner">
+        <div class="iv-a"><strong>Not directly.</strong> ORDER BY in a subquery requires TOP or OFFSET-FETCH to be present. Without them it's a syntax error.</div>
+        <div class="iv-code">-- ERROR: ORDER BY in subquery without TOP
+SELECT * FROM (
+  SELECT name, score FROM students
+  ORDER BY score DESC    -- Error!
+) AS ranked;
+
+-- VALID: add TOP to enable ORDER BY
+SELECT * FROM (
+  SELECT TOP 100 PERCENT name, score
+  FROM students ORDER BY score DESC
+) AS ranked;</div>
+        <div class="iv-gotcha"><strong>Important:</strong> SQL Server does NOT guarantee the subquery result is sorted after the outer query processes it. For reliable sorted output, always use ORDER BY on the outermost query.</div>
+      </div></div>
+    </div>
+
+    <div class="iv-card" onclick="this.classList.toggle('open')">
+      <div class="iv-head">
+        <div class="iv-q-wrap">
+          <span class="iv-tag pattern">Pattern</span>
+          <span class="iv-q">How do you sort NULL values last in SQL Server when ordering ASC?</span>
+        </div>
+        <svg class="iv-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="iv-body"><div class="iv-body-inner">
+        <div class="iv-a">SQL Server doesn't support NULLS LAST. Use a CASE expression to assign NULLs a high sort priority, pushing them to the end.</div>
+        <div class="iv-code">-- Push NULLs to the end in ASC order
+SELECT name, score FROM students
+ORDER BY
+  CASE WHEN score IS NULL THEN 1 ELSE 0 END ASC,
+  score ASC;</div>
+        <div class="iv-tip"><strong>Memory hook:</strong> CASE in ORDER BY = custom priority lane. Give NULLs the lane you don't want them in by default.</div>
+      </div></div>
+    </div>
+
+    <div class="iv-card" onclick="this.classList.toggle('open')">
+      <div class="iv-head">
+        <div class="iv-q-wrap">
+          <span class="iv-tag trap">Trap</span>
+          <span class="iv-q">What is the difference between <code>SELECT TOP 3</code> without ORDER BY and with ORDER BY?</span>
+        </div>
+        <svg class="iv-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="iv-body"><div class="iv-body-inner">
+        <div class="iv-a"><code>SELECT TOP 3</code> without ORDER BY returns 3 arbitrary rows. With ORDER BY, TOP 3 returns the actual top 3 by the specified sort.</div>
+        <div class="iv-code">-- Returns 3 RANDOM rows (no guaranteed meaning)
+SELECT TOP 3 name, score FROM students;
+
+-- Returns the 3 HIGHEST scoring students
+SELECT TOP 3 name, score FROM students ORDER BY score DESC;</div>
+        <div class="iv-gotcha"><strong>Interview trap:</strong> "Which students have the top 3 scores?" — you must include ORDER BY. Without it, TOP is meaningless for data analysis.</div>
+      </div></div>
+    </div>
+
+    <div class="iv-card" onclick="this.classList.toggle('open')">
+      <div class="iv-head">
+        <div class="iv-q-wrap">
+          <span class="iv-tag advanced">Advanced</span>
+          <span class="iv-q">How does an index on a sorted column improve ORDER BY performance?</span>
+        </div>
+        <svg class="iv-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="iv-body"><div class="iv-body-inner">
+        <div class="iv-a">A b-tree index stores values in sorted order. When you ORDER BY an indexed column, SQL Server reads rows directly from the index in order — skipping the sort operation entirely.</div>
+        <div class="iv-code">-- Without index on score: full scan + Sort operator in execution plan
+-- With index on score: index scan in sorted order (no Sort operator)
+SELECT name, score FROM students ORDER BY score DESC;</div>
+        <div class="iv-gotcha"><strong>Covering index:</strong> If the index includes all selected columns, SQL Server satisfies the query entirely from the index — no table access at all. This is the fastest possible path.</div>
+        <div class="iv-tip"><strong>Practical rule:</strong> For frequent WHERE + ORDER BY on same column, a composite index on (filter_col, sort_col) can cover both operations.</div>
+      </div></div>
+    </div>
+
+    </div><!-- /iv-grid -->
+  </div>
+
+  <!-- NEXT CHAPTER -->
+  <div class="next-chapter-wrap">
+    <div class="next-chapter-left">
+      <div class="next-chapter-eyebrow">Up Next</div>
+      <div class="next-chapter-title">Aggregates: COUNT, SUM, AVG, MAX, MIN</div>
+      <div class="next-chapter-sub">Learn to calculate totals, averages, and statistics across rows of data.</div>
+    </div>
+    <span class="next-chapter-btn" title="Coming soon — Aggregates chapter is being written">
+      Aggregates
+      <span style="font-size:.58rem;background:rgba(0,0,0,.25);border-radius:3px;padding:2px 6px;letter-spacing:.07em;text-transform:uppercase;font-weight:700">SOON</span>
+    </span>
+  </div>
+
+</div><!-- /content -->
+
+<!-- PLAYGROUND OVERLAY -->
+<div class="pg-overlay" id="pg-overlay" onclick="closePG()"></div>
+
+<div class="pg-panel" id="pg-panel" role="dialog" aria-modal="true" aria-label="SQL Playground">
+  <div class="pg-drag" id="pg-drag">
+    <div class="pg-drag-bar"></div>
+    <button class="pg-drag-x" onclick="closePG()" aria-label="Close playground">✕</button>
+  </div>
+  <div class="pg-topbar">
+    <div class="pg-topbar-left">
+      <span class="pg-label">
+        <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        SQL Playground
+      </span>
+      <span class="pg-q-label" id="pg-q-label" style="display:none"></span>
+    </div>
+    <div class="pg-topbar-right">
+      <span class="pg-status" id="pg-status">Ready</span>
+      <button class="pg-close-btn" onclick="closePG()">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        Close
+      </button>
+    </div>
+  </div>
+  <div class="pg-body">
+    <textarea class="pg-editor" id="pg-editor" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="Write your SQL here…"></textarea>
+    <div class="pg-run-row">
+      <button class="pg-run-btn" onclick="runPG()">
+        <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Run
+      </button>
+      <button class="pg-reset-btn" onclick="resetPG()">Reset</button>
+      <div class="pg-kbd-hint">
+        <span class="pg-kbd">Ctrl</span>+<span class="pg-kbd">Enter</span>
+      </div>
+    </div>
+    <div class="pg-results" id="pg-results">
+      <p class="pg-msg">Write your query above and click Run.</p>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="done-toast">
+  <svg class="toast-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg>
+  <div>
+    <div class="toast-text" id="toast-title">Question completed</div>
+    <div class="toast-sub" id="toast-sub"></div>
+  </div>
+</div>
+
+<!-- PROGRESS RING -->
+<div class="progress-ring-wrap" id="progress-ring">
+  <svg width="44" height="44" viewBox="0 0 44 44">
+    <defs>
+      <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:var(--ob)"/>
+        <stop offset="100%" style="stop-color:var(--blue)"/>
+      </linearGradient>
+    </defs>
+    <circle class="ring-track" cx="22" cy="22" r="18"/>
+    <circle class="ring-fill" id="ring-fill" cx="22" cy="22" r="18"/>
+  </svg>
+  <div class="ring-label" id="ring-pct">0%</div>
+</div>
+
+<!-- BACK TO TOP -->
+<button id="btt" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">
+  <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+
+
+<script>
+/* ════ DATA ════ */
+var SETUP_STU = "DROP TABLE IF EXISTS students; CREATE TABLE students(id INTEGER,name TEXT,city TEXT,score INTEGER); INSERT INTO students VALUES(1,'Arjun','Delhi',88),(2,'Priya','Mumbai',72),(3,'Raj','Pune',95),(4,'Simran','Delhi',61),(5,'Karan','Chennai',80);";
+var SETUP_PROD = "DROP TABLE IF EXISTS products; CREATE TABLE products(id INTEGER,name TEXT,price INTEGER,stock INTEGER); INSERT INTO products VALUES(1,'Laptop',999,10),(2,'Phone',699,25),(3,'Tablet',399,15),(4,'Headphones',149,50),(5,'Charger',29,100);";
+var SETUP_EMP  = "DROP TABLE IF EXISTS employees; CREATE TABLE employees(id INTEGER,name TEXT,dept TEXT,salary INTEGER); INSERT INTO employees VALUES(1,'Ravi','Sales',75000),(2,'Neha','HR',52000),(3,'Amit','Sales',88000),(4,'Priya','IT',64000),(5,'Sanjay','HR',48000),(6,'Divya','IT',72000);";
+
+var SCHEMA_STU  = '<div class="schema-wrap"><div class="schema-label">students</div><table class="schema-table"><thead><tr><th>id</th><th>name</th><th>city</th><th>score</th></tr></thead><tbody><tr><td>1</td><td>Arjun</td><td>Delhi</td><td>88</td></tr><tr><td>2</td><td>Priya</td><td>Mumbai</td><td>72</td></tr><tr><td>3</td><td>Raj</td><td>Pune</td><td>95</td></tr><tr><td>4</td><td>Simran</td><td>Delhi</td><td>61</td></tr><tr><td>5</td><td>Karan</td><td>Chennai</td><td>80</td></tr></tbody></table></div>';
+var SCHEMA_PROD = '<div class="schema-wrap"><div class="schema-label">products</div><table class="schema-table"><thead><tr><th>id</th><th>name</th><th>price</th><th>stock</th></tr></thead><tbody><tr><td>1</td><td>Laptop</td><td>999</td><td>10</td></tr><tr><td>2</td><td>Phone</td><td>699</td><td>25</td></tr><tr><td>3</td><td>Tablet</td><td>399</td><td>15</td></tr><tr><td>4</td><td>Headphones</td><td>149</td><td>50</td></tr><tr><td>5</td><td>Charger</td><td>29</td><td>100</td></tr></tbody></table></div>';
+var SCHEMA_EMP  = '<div class="schema-wrap"><div class="schema-label">employees</div><table class="schema-table"><thead><tr><th>id</th><th>name</th><th>dept</th><th>salary</th></tr></thead><tbody><tr><td>1</td><td>Ravi</td><td>Sales</td><td>75000</td></tr><tr><td>2</td><td>Neha</td><td>HR</td><td>52000</td></tr><tr><td>3</td><td>Amit</td><td>Sales</td><td>88000</td></tr><tr><td>4</td><td>Priya</td><td>IT</td><td>64000</td></tr><tr><td>5</td><td>Sanjay</td><td>HR</td><td>48000</td></tr><tr><td>6</td><td>Divya</td><td>IT</td><td>72000</td></tr></tbody></table></div>';
+
+/* ════ QUESTIONS ════ */
+var QUESTIONS = [
+
+  /* ── MCQ ── */
+  {id:1, tp:'m', diff:'easy',
+   title:'What ORDER BY does',
+   desc:'What does <code>ORDER BY</code> do in a SQL query?',
+   opts:['Removes duplicate rows from results',
+         'Sorts the rows in the result set',
+         'Filters rows by a condition',
+         'Groups rows together for counting'],
+   ans:1,
+   expl:'<code>ORDER BY</code> sorts the rows in the result set. It runs after <code>FROM</code>, <code>WHERE</code>, and <code>GROUP BY</code> — on the final set of matched rows.'},
+
+  {id:2, tp:'m', diff:'easy',
+   title:'Default sort direction',
+   desc:'You write <code>ORDER BY score</code> with no direction keyword. What happens?',
+   opts:['Syntax error — direction is required',
+         'Rows sort descending (highest first)',
+         'Rows sort ascending (lowest first)',
+         'Rows stay in insertion order'],
+   ans:2,
+   expl:'The default is <code>ASC</code> (ascending — smallest first). <code>ORDER BY score</code> and <code>ORDER BY score ASC</code> are identical. You only need to add a keyword if you want <code>DESC</code>.'},
+
+  {id:3, tp:'m', diff:'easy',
+   title:'Correct clause order',
+   desc:'Which query has the clauses in the <strong>correct order</strong>?',
+   opts:['SELECT * FROM t ORDER BY score WHERE score &gt; 70',
+         'SELECT * FROM t WHERE score &gt; 70 ORDER BY score',
+         'ORDER BY score SELECT * FROM t WHERE score &gt; 70',
+         'SELECT * FROM t WHERE ORDER BY score &gt; 70'],
+   ans:1,
+   expl:'The fixed clause order is <code>FROM → WHERE → ORDER BY</code>. ORDER BY always comes after WHERE, never before it. In SQL Server, <code>TOP n</code> goes after SELECT at the start; in SQLite/MySQL, <code>LIMIT n</code> goes at the end.'},
+
+  {id:4, tp:'m', diff:'easy',
+   title:'DESC — which row is first?',
+   desc:'You run <code>SELECT name, score FROM students ORDER BY score DESC</code>. Which row appears <strong>first</strong>?',
+   opts:['Simran — she has the lowest score (61)',
+         'Raj — he has the highest score (95)',
+         'Arjun — he is id 1 in the table',
+         'The result is unpredictable without LIMIT'],
+   ans:1,
+   expl:'<code>DESC</code> = descending = highest value first. Raj has score 95, the highest in the students table, so he appears in row 1.'},
+
+  {id:5, tp:'m', diff:'easy',
+   title:'ORDER BY a non-SELECT column',
+   desc:'Can you <code>ORDER BY</code> a column that is <strong>not</strong> in your <code>SELECT</code> list?',
+   opts:['No — ORDER BY can only use columns listed in SELECT',
+         'Yes — any column that exists in the table works',
+         'Only if the column is a numeric type',
+         'Only if LIMIT is also present'],
+   ans:1,
+   expl:'You can ORDER BY any column in the table, even if it does not appear in SELECT. Example: <code>SELECT name FROM students ORDER BY score</code> is valid — score sorts the rows but is not shown in the output.'},
+
+  {id:6, tp:'m', diff:'easy',
+   title:'Multi-column sort — how ties break',
+   desc:'You write <code>ORDER BY city ASC, score DESC</code>. How are students with the <strong>same city</strong> ordered?',
+   opts:['Alphabetically by their name (default fallback)',
+         'By score, highest first',
+         'By score, lowest first',
+         'In random order — ties are unpredictable'],
+   ans:1,
+   expl:'The second sort key breaks ties within groups that share the same primary sort value. <code>score DESC</code> puts the highest scorer first within each city group.'},
+
+  {id:7, tp:'m', diff:'medium',
+   title:'Top-N pattern — SQL Server vs playground',
+   desc:'In SQL Server, how do you return only the <strong>top 3 highest-scoring</strong> students?',
+   opts:['SELECT * FROM students ORDER BY score DESC LIMIT 3',
+         'SELECT TOP 3 * FROM students ORDER BY score DESC',
+         'SELECT * FROM students LIMIT 3 ORDER BY score DESC',
+         'SELECT FIRST 3 * FROM students ORDER BY score DESC'],
+   ans:1,
+   expl:'In SQL Server, <code>TOP n</code> goes immediately after SELECT — before the column list. <code>SELECT TOP 3 * FROM students ORDER BY score DESC</code> returns Raj (95), Arjun (88), Karan (80). <code>LIMIT</code> is SQLite/MySQL syntax; <code>FIRST</code> is not standard SQL.'},
+
+  {id:8, tp:'m', diff:'medium',
+   title:'NULLs and ORDER BY in SQL Server',
+   desc:'A table has some NULL scores. You run <code>ORDER BY score ASC</code> in SQL Server. Where do NULLs appear?',
+   opts:['At the end, after all real values',
+         'At the start, before all real values',
+         'They are excluded from results automatically',
+         'In the middle, between smallest and largest values'],
+   ans:1,
+   expl:'SQL Server treats NULL as lower than any non-NULL value. In ASC order, NULLs appear first (they are "smallest"). In DESC order, NULLs appear last. Note: PostgreSQL sorts NULLs <em>last</em> in ASC by default — behaviour varies by database. SQL Server and SQLite agree on NULLs-first in ASC.'},
+
+  {id:9, tp:'m', diff:'medium',
+   title:'Expression in ORDER BY — SQL Server',
+   desc:'In SQL Server, which clause sorts results by the <strong>number of characters</strong> in the name, shortest first?',
+   opts:['ORDER BY name ASC',
+         'ORDER BY LEN(name) ASC',
+         'ORDER BY name LEN',
+         'ORDER BY SORT(name)'],
+   ans:1,
+   expl:'In SQL Server, <code>LEN(name)</code> returns the character count. Any valid expression — including function calls — works in ORDER BY. <code>ASC</code> puts the shortest name first. Note: SQLite uses <code>LENGTH()</code> instead of <code>LEN()</code>. There is no <code>SORT()</code> function in SQL.'},
+
+  {id:10, tp:'m', diff:'medium',
+   title:'WHERE and ORDER BY together',
+   desc:'You want students with score &gt; 70, sorted by score descending. How do the clauses go?',
+   opts:['WHERE and ORDER BY can appear in either order after FROM',
+         'WHERE comes before ORDER BY',
+         'ORDER BY comes before WHERE',
+         'You can only use one of them — they conflict'],
+   ans:1,
+   expl:'Both work together. The order is fixed: <code>FROM → WHERE → ORDER BY</code>. WHERE filters first, then ORDER BY sorts whatever survived the filter.'},
+
+  /* ── FIX-IT ── */
+  {id:11, tp:'f', diff:'easy',
+   title:'Missing BY keyword',
+   hint:'The clause is always two words.',
+   broken:'SELECT name, score FROM students ORDER score DESC;',
+   schema: SCHEMA_STU,
+   sol:'SELECT name, score FROM students ORDER BY score DESC;',
+   notes:'The clause is always <strong>ORDER BY</strong> — two words. Writing just <code>ORDER</code> alone is a syntax error in every SQL database.'},
+
+  {id:12, tp:'f', diff:'easy',
+   title:'DSC instead of DESC',
+   hint:'Count the letters: descending has four letters.',
+   broken:'SELECT name, score FROM students ORDER BY score DSC;',
+   schema: SCHEMA_STU,
+   sol:'SELECT name, score FROM students ORDER BY score DESC;',
+   notes:'The descending keyword is <strong>DESC</strong> (D-E-S-C, four letters). <code>DSC</code> is not a valid SQL keyword.'},
+
+  {id:13, tp:'f', diff:'easy',
+   title:'SORT BY instead of ORDER BY',
+   hint:'Standard SQL uses ORDER BY, not SORT BY.',
+   broken:'SELECT * FROM students SORT BY score ASC;',
+   schema: SCHEMA_STU,
+   sol:'SELECT * FROM students ORDER BY score ASC;',
+   notes:'Standard SQL uses <code>ORDER BY</code>, not <code>SORT BY</code>. <code>SORT BY</code> exists only in Hive SQL for distributed queries — it is not valid in SQLite, MySQL, or PostgreSQL.'},
+
+  {id:14, tp:'f', diff:'easy',
+   title:'ORDER BY placed before WHERE',
+   hint:'Clause order is fixed: WHERE always comes before ORDER BY.',
+   broken:'SELECT name, score FROM students ORDER BY score WHERE score > 70;',
+   schema: SCHEMA_STU,
+   sol:'SELECT name, score FROM students WHERE score > 70 ORDER BY score;',
+   notes:'The clause order is fixed: <code>FROM → WHERE → ORDER BY</code>. Putting ORDER BY before WHERE is a syntax error. In SQL Server, <code>TOP n</code> goes at the start after SELECT; in SQLite/MySQL <code>LIMIT n</code> goes at the end.'},
+
+  {id:15, tp:'f', diff:'easy',
+   title:'LIMIT between column name and DESC',
+   hint:'ASC/DESC comes right after the column name.',
+   broken:'SELECT name, score FROM students ORDER BY score LIMIT 3 DESC;',
+   schema: SCHEMA_STU,
+   sol:'SELECT name, score FROM students ORDER BY score DESC LIMIT 3;',
+   notes:'The direction keyword (<code>ASC</code> or <code>DESC</code>) must appear immediately after the column name. In SQLite/MySQL, <code>LIMIT</code> goes at the end after ORDER BY. In SQL Server there is no LIMIT — use <code>SELECT TOP n ...</code> before the column list instead.'},
+
+  {id:16, tp:'f', diff:'medium',
+   title:'Missing comma in multi-column sort',
+   hint:'Multiple sort columns must be separated by commas.',
+   broken:'SELECT * FROM students ORDER BY city score DESC;',
+   schema: SCHEMA_STU,
+   sol:'SELECT * FROM students ORDER BY city, score DESC;',
+   notes:'When sorting by multiple columns, each column must be separated by a comma. Without the comma the database cannot tell where the first column ends and the second begins.'},
+
+  {id:17, tp:'f', diff:'medium',
+   title:'DESC placed before the column name',
+   hint:'Direction comes after the column name, not before it.',
+   broken:'SELECT * FROM students ORDER BY DESC score;',
+   schema: SCHEMA_STU,
+   sol:'SELECT * FROM students ORDER BY score DESC;',
+   notes:'<code>DESC</code> always follows the column name: <code>ORDER BY column DESC</code>. Writing it before the column name is a syntax error.'},
+
+  {id:18, tp:'f', diff:'medium',
+   title:'Nothing after ORDER BY',
+   hint:'ORDER BY must be followed by at least one column or expression.',
+   broken:'SELECT name, score FROM students ORDER BY;',
+   schema: SCHEMA_STU,
+   sol:'SELECT name, score FROM students ORDER BY score;',
+   notes:'<code>ORDER BY</code> must be followed by a column name or expression to sort on. An empty <code>ORDER BY</code> with no sort key is always a syntax error.'},
+
+  {id:19, tp:'f', diff:'medium',
+   title:'Column name wrapped in single quotes',
+   hint:"Single quotes are for text values like 'Delhi', not column names.",
+   broken:"SELECT name, score FROM students ORDER BY 'score' DESC;",
+   schema: SCHEMA_STU,
+   sol:'SELECT name, score FROM students ORDER BY score DESC;',
+   notes:"Single quotes are for string <em>values</em> (like <code>'Delhi'</code>). Writing <code>'score'</code> makes the database treat it as the literal text string \"score\" rather than a column reference."},
+
+  {id:20, tp:'f', diff:'medium',
+   title:'LIMIT placed before ORDER BY',
+   hint:'LIMIT must come after ORDER BY, not before it.',
+   broken:'SELECT name, score FROM students LIMIT 3 ORDER BY score DESC;',
+   schema: SCHEMA_STU,
+   sol:'SELECT name, score FROM students ORDER BY score DESC LIMIT 3;',
+   notes:'The correct order is <code>FROM → WHERE → ORDER BY</code>, then cap rows last. In SQLite <code>LIMIT</code> goes after ORDER BY; in SQL Server use <code>SELECT TOP n</code> at the start. Placing the row-cap before ORDER BY gives you a random sample, not the true top rows.'},
+
+  /* ── WRITE ── */
+  {id:21, tp:'w', diff:'easy',
+   title:'Basic ASC — lowest first',
+   hint:'ASC sorts smallest value first.',
+   desc:'List all students <strong>ordered by score, lowest first</strong>.',
+   schema: SCHEMA_STU,
+   sol:'SELECT * FROM students ORDER BY score ASC;',
+   notes:'ASC (ascending) puts the smallest number first: Simran (61) → Priya (72) → Karan (80) → Arjun (88) → Raj (95).'},
+
+  {id:22, tp:'w', diff:'easy',
+   title:'Basic DESC — highest first',
+   hint:'Use DESC to put the highest value at the top.',
+   desc:'List all students <strong>ordered by score, highest first</strong>.',
+   schema: SCHEMA_STU,
+   sol:'SELECT * FROM students ORDER BY score DESC;',
+   notes:'DESC (descending) puts the largest number first: Raj (95) → Arjun (88) → Karan (80) → Priya (72) → Simran (61).'},
+
+  {id:23, tp:'w', diff:'easy',
+   title:'Alphabetical — A to Z',
+   hint:'For text columns, ASC is alphabetical (A before Z).',
+   desc:'List all students <strong>sorted by name A to Z</strong>.',
+   schema: SCHEMA_STU,
+   sol:'SELECT * FROM students ORDER BY name ASC;',
+   notes:'For text columns ASC is alphabetical order. Result: Arjun, Karan, Priya, Raj, Simran.'},
+
+  {id:24, tp:'w', diff:'easy',
+   title:'Reverse alphabetical — Z to A',
+   hint:'DESC reverses alphabetical order for text columns.',
+   desc:'List all students <strong>sorted by name Z to A</strong> (reverse alphabetical).',
+   schema: SCHEMA_STU,
+   sol:'SELECT * FROM students ORDER BY name DESC;',
+   notes:'For text columns DESC is reverse alphabetical. Result: Simran, Raj, Priya, Karan, Arjun.'},
+
+  {id:25, tp:'w', diff:'medium',
+   title:'Multi-column — city A–Z then score high–low',
+   hint:'Separate two sort columns with a comma; each can have its own direction.',
+   desc:'List all students <strong>sorted by city A–Z, then by score highest first</strong> within each city.',
+   schema: SCHEMA_STU,
+   sol:'SELECT * FROM students ORDER BY city ASC, score DESC;',
+   notes:'Primary sort: city ASC. Secondary: score DESC breaks ties within each city. Within Delhi: Arjun (88) before Simran (61).'},
+
+  {id:26, tp:'w', diff:'medium',
+   title:'Top 3 students by score',
+   hint:'Sort highest first, then cap to 3 rows. This playground uses LIMIT; SQL Server uses SELECT TOP 3.',
+   desc:'Show the <strong>top 3 students</strong> by score (highest first).',
+   schema: SCHEMA_STU,
+   sol:'SELECT * FROM students ORDER BY score DESC LIMIT 3;',
+   notes:'ORDER BY score DESC puts the highest scores first. LIMIT 3 keeps only those top 3 rows: Raj (95), Arjun (88), Karan (80). <strong>SQL Server:</strong> <code>SELECT TOP 3 * FROM students ORDER BY score DESC;</code>'},
+
+  {id:27, tp:'w', diff:'medium',
+   title:'The student with the lowest score',
+   hint:'Sort ascending and take just 1 row. SQL Server: SELECT TOP 1.',
+   desc:'Show only the student with the <strong>lowest score</strong>.',
+   schema: SCHEMA_STU,
+   sol:'SELECT * FROM students ORDER BY score ASC LIMIT 1;',
+   notes:'ORDER BY score ASC puts the lowest score at the top. LIMIT 1 returns just that one row — Simran with score 61. <strong>SQL Server:</strong> <code>SELECT TOP 1 * FROM students ORDER BY score ASC;</code>'},
+
+  {id:28, tp:'w', diff:'medium',
+   title:'WHERE + ORDER BY combined',
+   hint:'WHERE filters first; ORDER BY sorts what is left. Clause order: FROM → WHERE → ORDER BY.',
+   desc:'Show name and score for students with score above 70, <strong>sorted by score highest first</strong>.',
+   schema: SCHEMA_STU,
+   sol:'SELECT name, score FROM students WHERE score > 70 ORDER BY score DESC;',
+   notes:'WHERE removes Simran (61 is not > 70). ORDER BY then sorts the remaining 4 rows: Raj 95, Arjun 88, Karan 80, Priya 72.'},
+
+  {id:29, tp:'w', diff:'medium',
+   title:'Cheapest product first',
+   hint:'ORDER BY the price column in ascending order.',
+   desc:'List all products <strong>sorted by price, cheapest first</strong>.',
+   schema: SCHEMA_PROD,
+   pgSetup: SETUP_PROD,
+   sol:'SELECT * FROM products ORDER BY price ASC;',
+   notes:'Charger (29) → Headphones (149) → Tablet (399) → Phone (699) → Laptop (999). Same ascending sort, different table.'},
+
+  {id:30, tp:'w', diff:'medium',
+   title:'Top 2 most expensive products',
+   hint:'Sort by price descending, then cap to 2 rows. SQL Server: SELECT TOP 2.',
+   desc:'Show the <strong>2 most expensive products</strong> — name and price only.',
+   schema: SCHEMA_PROD,
+   pgSetup: SETUP_PROD,
+   sol:'SELECT name, price FROM products ORDER BY price DESC LIMIT 2;',
+   notes:'ORDER BY price DESC: Laptop (999) first, Phone (699) second. LIMIT 2 keeps only those two rows. <strong>SQL Server:</strong> <code>SELECT TOP 2 name, price FROM products ORDER BY price DESC;</code>'},
+
+  {id:31, tp:'w', diff:'medium',
+   title:'Employees by salary, highest first',
+   hint:'Sort the salary column in descending order.',
+   desc:'List all employees <strong>sorted by salary, highest first</strong>.',
+   schema: SCHEMA_EMP,
+   pgSetup: SETUP_EMP,
+   sol:'SELECT * FROM employees ORDER BY salary DESC;',
+   notes:'Highest to lowest: Amit (88000) → Ravi (75000) → Divya (72000) → Priya (64000) → Neha (52000) → Sanjay (48000).'},
+
+  {id:32, tp:'w', diff:'hard',
+   title:'Sort by expression — LEN(name) in SQL Server',
+   hint:'SQL Server uses LEN() for character count — this playground (SQLite) uses LENGTH()',
+   desc:'List all students <strong>sorted by the length of their name</strong>, shortest name first.',
+   schema: SCHEMA_STU,
+   sol:'SELECT * FROM students ORDER BY LENGTH(name) ASC;',
+   notes:'Character count in ORDER BY: <strong>SQL Server:</strong> <code>ORDER BY LEN(name) ASC</code>. This playground uses <code>LENGTH()</code> (SQLite). Result: Raj (3) first, then 5-char names (Priya, Karan, Arjun), then Simran (6).'},
+
+  {id:33, tp:'w', diff:'hard',
+   title:'Cheapest product over ₹100',
+   hint:'Filter with WHERE, sort ascending, then take 1 row. SQL Server: SELECT TOP 1.',
+   desc:'Find the <strong>cheapest product that costs over 100</strong>. Show name and price only.',
+   schema: SCHEMA_PROD,
+   pgSetup: SETUP_PROD,
+   sol:'SELECT name, price FROM products WHERE price > 100 ORDER BY price ASC LIMIT 1;',
+   notes:'WHERE removes Charger (29 ≤ 100). ORDER BY price ASC puts the cheapest remaining item first. LIMIT 1 returns Headphones (149). <strong>SQL Server:</strong> <code>SELECT TOP 1 name, price FROM products WHERE price > 100 ORDER BY price ASC;</code>'},
+
+  {id:34, tp:'w', diff:'hard',
+   title:'Employees — dept A–Z, salary high–low',
+   hint:'Two sort columns separated by a comma; each has its own direction.',
+   desc:'List all employees <strong>sorted by department A–Z, then salary highest first</strong> within each department.',
+   schema: SCHEMA_EMP,
+   pgSetup: SETUP_EMP,
+   sol:'SELECT * FROM employees ORDER BY dept ASC, salary DESC;',
+   notes:'HR: Neha (52000) before Sanjay (48000). IT: Divya (72000) before Priya (64000). Sales: Amit (88000) before Ravi (75000).'},
+
+  {id:35, tp:'w', diff:'hard',
+   title:'Final challenge: WHERE + IN + ORDER BY',
+   hint:'Use IN for the city filter, then ORDER BY for the sort.',
+   desc:'Show <strong>name, city, and score</strong> for students from Delhi or Mumbai, <strong>sorted by score highest first</strong>.',
+   schema: SCHEMA_STU,
+   sol:"SELECT name, city, score FROM students WHERE city IN ('Delhi', 'Mumbai') ORDER BY score DESC;",
+   notes:"WHERE with IN filters to Delhi/Mumbai students: Arjun, Priya, Simran. ORDER BY score DESC: Arjun (88) → Priya (72) → Simran (61). You now know SELECT, WHERE, and ORDER BY together."},
+
+  {id:36, tp:'m', diff:'hard',
+   title:'OFFSET-FETCH paging — SQL Server syntax',
+   desc:'You want rows 11–20 (page 2, 10 rows per page) from the students table sorted by score. Which SQL Server syntax is correct?',
+   opts:['SELECT * FROM students ORDER BY score LIMIT 10 OFFSET 10',
+         'SELECT * FROM students ORDER BY score OFFSET 10 ROWS FETCH NEXT 10 ROWS ONLY',
+         'SELECT TOP 10 * FROM students ORDER BY score SKIP 10',
+         'SELECT * FROM students WHERE rownum BETWEEN 11 AND 20 ORDER BY score'],
+   ans:1,
+   expl:'SQL Server uses <code>OFFSET n ROWS FETCH NEXT n ROWS ONLY</code> after ORDER BY. OFFSET 10 skips the first 10 rows; FETCH NEXT 10 returns the next 10. ORDER BY is required. LIMIT/OFFSET is SQLite/PostgreSQL syntax; SKIP does not exist; ROWNUM is Oracle syntax.'},
+
+  {id:37, tp:'m', diff:'hard',
+   title:'Non-deterministic sort — tiebreaker',
+   desc:'You run <code>SELECT name, score FROM students ORDER BY score DESC</code>. Two students both have score 80. Which row appears first?',
+   opts:['The one with the lower id — SQL Server defaults to id order',
+         'The one inserted first — SQL Server defaults to insertion order',
+         'It is not guaranteed — ties produce non-deterministic order',
+         'Alphabetical by name — SQL Server uses name as a tiebreaker'],
+   ans:2,
+   expl:'When two rows have the same sort key, SQL Server does <em>not</em> guarantee their relative order. The result is non-deterministic — it can vary between runs. To get a stable, repeatable result, always add a tiebreaker column: <code>ORDER BY score DESC, id ASC</code>.'},
+
+  {id:38, tp:'w', diff:'hard',
+   title:'CASE in ORDER BY — custom sort priority',
+   hint:'CASE WHEN inside ORDER BY assigns numeric priorities to rows.',
+   desc:'Sort the students table so that <strong>Delhi students appear first</strong>, then all other cities. Within each group, sort by score descending.',
+   schema: SCHEMA_STU,
+   sol:"SELECT * FROM students ORDER BY CASE WHEN city = 'Delhi' THEN 0 ELSE 1 END ASC, score DESC;",
+   notes:"CASE WHEN inside ORDER BY assigns numeric priorities: Delhi rows get 0 (sorted first), all others get 1. The second sort key (score DESC) breaks ties within each group. This pattern is called a custom sort order or priority sort and is common in dashboards."}
+];
+
+/* ════ PROGRESS STATE ════ */
+var DONE = (function(){ try { return JSON.parse(localStorage.getItem('su_orderby_done') || '[]'); } catch(e) { return []; } })();
+
+function saveDone() {
+  try { localStorage.setItem('su_orderby_done', JSON.stringify(DONE)); } catch(e) {}
+}
+
+function updateProgress() {
+  var count = DONE.length;
+  var total = QUESTIONS.length;
+  var pct = Math.round(count / total * 100);
+  var fill = document.getElementById('practice-fill');
+  var countEl  = document.getElementById('done-count');
+  var countEl2 = document.getElementById('done-count2');
+  var msgEl    = document.getElementById('progress-msg');
+  if (fill) fill.style.width = pct + '%';
+  if (countEl)  countEl.textContent  = count;
+  if (countEl2) countEl2.textContent = count;
+  if (msgEl) {
+    if (count === 0)     msgEl.textContent = 'Start with Q01';
+    else if (count === total) msgEl.textContent = "All done — you've mastered ORDER BY!";
+    else msgEl.textContent = pct + '% complete — keep going';
+  }
+  var dots = document.querySelectorAll('#chapter-dots .nav-dot');
+  if (dots[4]) {
+    if (count === total) dots[4].classList.add('done');
+    else if (count > 0)  dots[4].classList.add('active');
+  }
+  if (count > 0) {
+    var step = document.getElementById('cstep-4');
+    if (step) {
+      step.classList.remove('active','done');
+      if (count === total) step.classList.add('done');
+      else step.classList.add('active');
+    }
+  }
+}
+
+/* ════ RENDER QUESTIONS ════ */
+function renderQuestions() {
+  var list = document.getElementById('q-list');
+  if (!list) return;
+  var html = '';
+  QUESTIONS.forEach(function(q) {
+    var isDone = DONE.indexOf(String(q.id)) >= 0;
+    var typeLabel = q.tp === 'm' ? 'MCQ' : q.tp === 'f' ? 'Fix It' : 'Write';
+    var typeClass = q.tp === 'm' ? 'mcq' : q.tp === 'f' ? 'fix' : 'write';
+    var bodyHtml = '';
+
+    if (q.tp === 'm') {
+      bodyHtml += '<p class="q-desc">' + q.desc + '</p>';
+      bodyHtml += '<div class="mcq-opts" id="opts-' + q.id + '">';
+      q.opts.forEach(function(opt, i) {
+        bodyHtml += '<button class="mcq-btn" data-idx="' + i + '" data-qid="' + q.id + '" data-ans="' + q.ans + '" onclick="mcqPick(this)"><span class="mcq-btn-letter">' + String.fromCharCode(65+i) + '</span>' + escHtml(opt) + '</button>';
+      });
+      bodyHtml += '</div>';
+      bodyHtml += '<div class="mcq-expl" id="expl-' + q.id + '">' + q.expl + '</div>';
+    } else if (q.tp === 'f') {
+      bodyHtml += '<p class="q-desc">This query has a bug. Find it and fix it:</p>';
+      bodyHtml += '<code class="broken-query">' + escHtml(q.broken) + '</code>';
+      bodyHtml += q.schema;
+      bodyHtml += '<div class="q-actions">';
+      bodyHtml += '<button class="q-show-sol" onclick="toggleSol(' + q.id + ')">Show Solution</button>';
+      if (!isDone) bodyHtml += '<button class="q-mark-done" id="mark-' + q.id + '" onclick="markDone(' + q.id + ')">Mark Done</button>';
+      bodyHtml += '<button class="q-try-link" onclick="openPG(' + q.id + ')"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>Try in Playground</button>';
+      bodyHtml += '</div>';
+      bodyHtml += '<div class="sol-label" id="sol-wrap-' + q.id + '" style="display:none;margin-top:14px"><span>Solution</span><button class="sol-copy" onclick="copySol(' + q.id + ')">Copy</button></div>';
+      bodyHtml += '<pre class="q-solution kw-pre" id="sol-' + q.id + '">' + highlightSQL(q.sol) + '</pre>';
+      if (q.notes) bodyHtml += '<p class="sol-notes" id="notes-' + q.id + '">' + q.notes + '</p>';
+    } else {
+      bodyHtml += '<p class="q-desc">' + q.desc + '</p>';
+      bodyHtml += q.schema;
+      bodyHtml += '<div class="q-actions">';
+      bodyHtml += '<button class="q-show-sol" onclick="toggleSol(' + q.id + ')">Show Solution</button>';
+      if (!isDone) bodyHtml += '<button class="q-mark-done" id="mark-' + q.id + '" onclick="markDone(' + q.id + ')">Mark Done</button>';
+      bodyHtml += '<button class="q-try-link" onclick="openPG(' + q.id + ')"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>Try in Playground</button>';
+      bodyHtml += '</div>';
+      bodyHtml += '<div class="sol-label" id="sol-wrap-' + q.id + '" style="display:none;margin-top:14px"><span>Solution</span><button class="sol-copy" onclick="copySol(' + q.id + ')">Copy</button></div>';
+      bodyHtml += '<pre class="q-solution kw-pre" id="sol-' + q.id + '">' + highlightSQL(q.sol) + '</pre>';
+      if (q.notes) bodyHtml += '<p class="sol-notes" id="notes-' + q.id + '">' + q.notes + '</p>';
+    }
+
+    html += '<div class="q-card' + (isDone ? ' done' : '') + '" id="qcard-' + q.id + '">';
+    html += '<div class="q-head" onclick="toggleCard(' + q.id + ')" tabindex="0" role="button" aria-expanded="false" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();toggleCard(' + q.id + ')}">';
+    html += '<span class="q-num">Q' + (q.id < 10 ? '0'+q.id : q.id) + '</span>';
+    html += '<span class="q-type-badge ' + typeClass + '">' + typeLabel + '</span>';
+    if (q.diff) { var diffLabel = q.diff==='easy'?'Easy':q.diff==='medium'?'Medium':'Hard'; html += '<span class="diff-badge diff-' + q.diff + '">' + diffLabel + '</span>'; }
+    html += '<span class="q-title">' + escHtml(q.title) + '</span>';
+    html += '<svg class="q-done-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg>';
+    html += '<svg class="q-chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>';
+    html += '</div>';
+    html += '<div class="q-body"><div class="q-body-inner">' + bodyHtml + '</div></div>';
+    html += '</div>';
+  });
+  list.innerHTML = html;
+}
+
+/* ════ FILTER BAR ════ */
+var _pfType = 'all', _pfDiff = 'all', _pfSearch = '';
+function pqFilter(btn) {
+  var filter = btn.dataset.filter, val = btn.dataset.val;
+  if (filter === 'type') { _pfType = val; document.querySelectorAll('[data-filter="type"]').forEach(function(b){b.classList.remove('pq-active');}); }
+  else { _pfDiff = val; document.querySelectorAll('[data-filter="diff"]').forEach(function(b){b.classList.remove('pq-active');}); }
+  btn.classList.add('pq-active');
+  applyFilters();
+}
+function pqSearch(val) { _pfSearch = val.toLowerCase(); applyFilters(); }
+function pqReset() {
+  _pfType='all'; _pfDiff='all'; _pfSearch='';
+  document.querySelectorAll('.pq-filter-btn').forEach(function(b){b.classList.remove('pq-active');});
+  document.querySelectorAll('.pq-filter-btn[data-val="all"]').forEach(function(b){b.classList.add('pq-active');});
+  var s=document.getElementById('pq-search'); if(s)s.value='';
+  applyFilters();
+}
+function pqDeselect(btn) {
+  var filter = btn.dataset.filter;
+  document.querySelectorAll('[data-filter="' + filter + '"]').forEach(function(b){b.classList.remove('pq-active');});
+  var allBtn = document.querySelector('[data-filter="' + filter + '"][data-val="all"]');
+  if (allBtn) allBtn.classList.add('pq-active');
+  if (filter === 'type') _pfType = 'all'; else _pfDiff = 'all';
+  applyFilters();
+}
+function applyFilters() {
+  var shown=0;
+  QUESTIONS.forEach(function(q){
+    var card=document.getElementById('qcard-'+q.id);
+    if(!card)return;
+    var typeOk=_pfType==='all'||(q.tp==='m'&&_pfType==='mcq')||(q.tp==='f'&&_pfType==='fix')||(q.tp==='w'&&_pfType==='write');
+    var diffOk=_pfDiff==='all'||(q.diff===_pfDiff);
+    var searchOk=_pfSearch===''||q.title.toLowerCase().indexOf(_pfSearch)>=0;
+    var vis=typeOk&&diffOk&&searchOk;
+    card.style.display=vis?'':'none';
+    if(vis)shown++;
+  });
+  var cnt=document.getElementById('pq-count'); if(cnt)cnt.textContent=shown+' question'+(shown!==1?'s':'');
+  var noRes=document.getElementById('pq-no-results'); if(noRes)noRes.style.display=shown===0?'block':'none';
+}
+
+/* ════ INTERACTION ════ */
+function toggleCard(id) {
+  var card = document.getElementById('qcard-' + id);
+  if (!card) return;
+  var body = card.querySelector('.q-body');
+  var head = card.querySelector('.q-head');
+  if (!body) return;
+  var opening = !card.classList.contains('open');
+  if (opening) {
+    var h = body.scrollHeight;
+    card.classList.add('open');
+    body.style.maxHeight = h + 'px';
+    if (head) head.setAttribute('aria-expanded', 'true');
+    body.addEventListener('transitionend', function handler() {
+      if (card.classList.contains('open')) body.style.maxHeight = '';
+      body.removeEventListener('transitionend', handler);
+    });
+  } else {
+    body.style.maxHeight = body.scrollHeight + 'px';
+    body.offsetHeight;
+    body.style.maxHeight = '0';
+    card.classList.remove('open');
+    if (head) head.setAttribute('aria-expanded', 'false');
+  }
+}
+
+function mcqPick(btn) {
+  var qid = parseInt(btn.dataset.qid);
+  var idx = parseInt(btn.dataset.idx);
+  var ans = parseInt(btn.dataset.ans);
+  var opts = document.getElementById('opts-' + qid);
+  if (!opts || opts.dataset.answered) return;
+  opts.dataset.answered = '1';
+  var btns = opts.querySelectorAll('.mcq-btn');
+  btns.forEach(function(b) {
+    b.disabled = true;
+    if (parseInt(b.dataset.idx) === ans) b.classList.add('correct');
+  });
+  if (idx !== ans) btn.classList.add('wrong');
+  var expl = document.getElementById('expl-' + qid);
+  if (expl) expl.classList.add('show');
+  if (idx === ans) { setTimeout(function() { markDone(qid); }, 400); }
+}
+
+function toggleSol(id) {
+  var sol   = document.getElementById('sol-' + id);
+  var wrap  = document.getElementById('sol-wrap-' + id);
+  var notes = document.getElementById('notes-' + id);
+  if (!sol) return;
+  var showing = sol.classList.contains('show');
+  sol.classList.toggle('show');
+  if (wrap)  wrap.style.display = showing ? 'none' : 'flex';
+  if (notes) notes.classList.toggle('show');
+}
+
+function markDone(id) {
+  var sid = String(id);
+  if (DONE.indexOf(sid) >= 0) return;
+  DONE.push(sid);
+  saveDone();
+  var card = document.getElementById('qcard-' + id);
+  if (card) {
+    card.classList.add('done');
+    card.classList.add('done-anim');
+    setTimeout(function(){ card.classList.remove('done-anim'); }, 800);
+  }
+  var btn = document.getElementById('mark-' + id);
+  if (btn) { btn.textContent = 'Done'; btn.disabled = true; }
+  updateProgress();
+  showToast(id);
+}
+
+function copySol(id) {
+  var sol = document.getElementById('sol-' + id);
+  if (!sol) return;
+  navigator.clipboard.writeText(sol.textContent).then(function() {
+    var wrap = document.getElementById('sol-wrap-' + id);
+    var btn  = wrap ? wrap.querySelector('.sol-copy') : null;
+    if (btn) { var orig = btn.textContent; btn.textContent = 'Copied!'; setTimeout(function(){ btn.textContent = orig; }, 1500); }
+  }).catch(function(){});
+}
+
+function showToast(id) {
+  var toast = document.getElementById('done-toast');
+  var title = document.getElementById('toast-title');
+  var sub   = document.getElementById('toast-sub');
+  if (!toast) return;
+  if (title) title.textContent = 'Q' + (id < 10 ? '0'+id : id) + ' completed';
+  if (sub)   sub.textContent   = DONE.length + ' of ' + QUESTIONS.length + ' done';
+  clearTimeout(toast._t);
+  toast.classList.add('show');
+  toast._t = setTimeout(function() { toast.classList.remove('show'); }, 2800);
+}
+
+/* ════ SYNTAX HIGHLIGHTING ════ */
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function highlightSQL(sql) {
+  var s = escHtml(sql);
+  var kws = ['SELECT','FROM','WHERE','AND','OR','NOT','IN','BETWEEN','LIKE','IS','NULL','AS','DISTINCT','TOP','LIMIT','ORDER','BY','GROUP','HAVING','INTO','VALUES','UPDATE','SET','DELETE','INSERT','UPPER','LOWER','LEN','LENGTH','COALESCE','NULLIF','ISNULL','CREATE','DROP','TABLE','IF','EXISTS','INT','TEXT','VARCHAR','ASC','DESC','OFFSET','FETCH','NEXT','ROWS','ONLY','CASE','WHEN','THEN','ELSE','END'];
+  kws.forEach(function(kw) {
+    s = s.replace(new RegExp('\\b' + kw + '\\b', 'gi'), function(m) {
+      return '<span class="kw">' + m + '</span>';
+    });
+  });
+  s = s.replace(/'([^']*)'/g, '<span class="str">\'$1\'</span>');
+  s = s.replace(/\b(\d+)\b/g, '<span class="num">$1</span>');
+  s = s.replace(/--(.*)/g, '<span class="cm">--$1</span>');
+  return s;
+}
+
+/* ════ INIT ════ */
+renderQuestions();
+updateProgress();
+var qTotalEl = document.getElementById('q-total');
+if (qTotalEl) qTotalEl.textContent = QUESTIONS.length;
+
+/* ════ SCROLL EFFECTS ════ */
+(function(){
+  var sp    = document.getElementById('scroll-progress');
+  var btt   = document.getElementById('btt');
+  var ring  = document.getElementById('progress-ring');
+  var rfill = document.getElementById('ring-fill');
+  var rpct  = document.getElementById('ring-pct');
+  var dots  = document.querySelectorAll('#chapter-dots .nav-dot');
+  var secEls = ['intro','anatomy','examples','gotchas','practice'].map(function(id){
+    return document.getElementById(id);
+  });
+  var steps = [0,1,2,3,4].map(function(i){ return document.getElementById('cstep-'+i); });
+  var lines = [0,1,2,3].map(function(i){ return document.getElementById('cline-'+i); });
+  var ticking = false;
+
+  function onScroll() {
+    var sy  = window.scrollY;
+    var pct = Math.min(100, sy / Math.max(1, document.body.scrollHeight - window.innerHeight) * 100);
+    if (sp) sp.style.transform = 'scaleX(' + (pct / 100) + ')';
+    if (btt) btt.classList.toggle('show', sy > 400);
+    if (ring && rfill) {
+      ring.classList.toggle('show', sy > 300);
+      rfill.style.strokeDashoffset = 113 - (pct / 100 * 113);
+      if (rpct) rpct.textContent = Math.round(pct) + '%';
+    }
+    var active = 0;
+    secEls.forEach(function(el, i) { if (el && el.offsetTop - 140 <= sy) active = i; });
+    dots.forEach(function(d, i) { d.classList.toggle('active', i === active); });
+    steps.forEach(function(step, i) {
+      if (!step) return;
+      step.classList.remove('active','done');
+      if (i < active) step.classList.add('done');
+      else if (i === active) step.classList.add('active');
+    });
+    lines.forEach(function(line, l) { if (line) line.classList.toggle('done', l < active); });
+  }
+
+  window.addEventListener('scroll', function() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function() { ticking = false; onScroll(); });
+  }, {passive: true});
+
+  onScroll();
+})();
+
+/* Nav dots — click to jump */
+document.querySelectorAll('#chapter-dots .nav-dot').forEach(function(dot) {
+  dot.addEventListener('click', function() {
+    var el = document.getElementById(this.getAttribute('data-sec'));
+    if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
+  });
+});
+
+/* ════ INLINE SQL PLAYGROUND ════ */
+var pgDB = null; var pgSQL = null; var pgInitializing = false;
+var pgCurrentQid = null; var pgOriginalHint = ''; var pgLiveCtx = null;
+var _pgScrollY = 0;
+
+function normSQL(s) {
+  return s.replace(/--[^\n]*/g,'').replace(/;+\s*$/,'').replace(/\s+/g,' ').trim().toLowerCase();
+}
+
+var PG_EXAMPLES = (function(){
+  var m = {};
+  [
+    {sql:"SELECT * FROM students ORDER BY score DESC;",
+     why:"Rows are sorted by <code>score</code> descending — the largest value (95) comes first. Without ORDER BY, rows come back in insertion order, which is unpredictable and changes whenever rows are added or deleted.",
+     avoid:"Don't omit <code>DESC</code> if you want highest first — <code>ORDER BY score</code> alone gives you <em>lowest</em> first. Also: <code>ORDER score DESC</code> (missing BY) is a syntax error.",
+     chips:[{label:"Switch to ASC", sql:"SELECT * FROM students ORDER BY score ASC;"}]},
+
+    {sql:"SELECT name, score FROM students ORDER BY score ASC;",
+     why:"<code>ASC</code> (ascending) is the default direction. Writing it explicitly is optional but recommended — it makes your intent clear to anyone reading the query later.",
+     avoid:"Don't confuse <code>ASC</code> with <code>DESC</code>. ASC = smallest first. DESC = largest first. Adding the wrong direction is a silent logic bug — no error, wrong results.",
+     chips:[{label:"Try ORDER BY name ASC", sql:"SELECT name, score FROM students ORDER BY name ASC;"}]},
+
+    {sql:"SELECT name, city, score FROM students ORDER BY city ASC, score DESC;",
+     why:"The first sort key (<code>city ASC</code>) groups rows into cities. The second key (<code>score DESC</code>) only decides order <em>within</em> rows that share the same city. Within Delhi: Arjun (88) before Simran (61).",
+     avoid:"Don't forget the comma: <code>ORDER BY city score DESC</code> is ambiguous. Each column must have its own direction if you want something other than the default ASC.",
+     chips:[{label:"Reverse city order", sql:"SELECT name, city, score FROM students ORDER BY city DESC, score DESC;"}]},
+
+    {sql:"SELECT name, score FROM students ORDER BY score DESC LIMIT 3;",
+     why:"<code>LIMIT</code> runs after <code>ORDER BY</code>. Sorting DESC puts the highest scores at the top first — then LIMIT 3 keeps only those first 3 rows. This top-N pattern appears in almost every real-world report query.",
+     avoid:"Don't put LIMIT before DESC: <code>ORDER BY score LIMIT 3 DESC</code> is a syntax error. Direction always comes right after the column name, and LIMIT goes at the very end.",
+     chips:[{label:"Try LIMIT 1 (top scorer)", sql:"SELECT name, score FROM students ORDER BY score DESC LIMIT 1;"}]},
+
+    {sql:"SELECT name FROM students ORDER BY LENGTH(name) ASC;",
+     why:"<code>LENGTH(name)</code> returns the number of characters. <code>ASC</code> puts the shortest name first — Raj (3 chars). Expressions in ORDER BY are powerful; you can sort by any computed value, not just raw columns.",
+     avoid:"Don't write <code>ORDER BY LENGTH name</code> — the function call needs parentheses: <code>LENGTH(name)</code>. Also, <code>SORT(name)</code> is not a SQL function.",
+     chips:[{label:"Sort by LENGTH DESC", sql:"SELECT name FROM students ORDER BY LENGTH(name) DESC;"}]},
+
+    {sql:"SELECT name, score FROM students WHERE city = 'Delhi' ORDER BY score DESC;",
+     why:"WHERE runs first and filters to only Delhi students (Arjun and Simran). Then ORDER BY sorts those 2 rows by score descending. The clause order <code>FROM → WHERE → ORDER BY</code> is fixed in standard SQL.",
+     avoid:"Never put ORDER BY before WHERE: <code>ORDER BY score WHERE city = 'Delhi'</code> is always a syntax error. WHERE filters first, then ORDER BY sorts what's left.",
+     chips:[{label:"Try Chennai instead", sql:"SELECT name, score FROM students WHERE city = 'Chennai' ORDER BY score DESC;"}]}
+  ].forEach(function(e){ m[normSQL(e.sql)] = e; });
+  return m;
+})();
+
+function diagnosePGError(msg, q) {
+  var ml = msg.toLowerCase(), ql = q.toLowerCase();
+  if (ql.indexOf('dsc') >= 0 && ql.indexOf('desc') < 0)
+    return 'You wrote <code>DSC</code> — the descending keyword is <code>DESC</code> (four letters: D-E-S-C).';
+  if (ql.indexOf('sort by') >= 0)
+    return 'SQL does not have <code>SORT BY</code> — the correct clause is <code>ORDER BY</code>.';
+  if (ml.indexOf('syntax error') >= 0) {
+    if (ql.indexOf('order') >= 0 && ql.indexOf('order by') < 0)
+      return 'Missing the <code>BY</code> keyword — it is always <code>ORDER BY</code>, two words.';
+    if (ql.indexOf('order by') >= 0 && ql.indexOf('where') >= 0 && ql.indexOf('order by') < ql.indexOf('where'))
+      return 'You put <code>ORDER BY</code> before <code>WHERE</code>. The fixed order is <code>FROM → WHERE → ORDER BY → LIMIT</code>.';
+    if (ql.indexOf("'") >= 0 && ql.indexOf('order by') >= 0)
+      return 'A column name appears to be wrapped in single quotes. Use bare names for columns: <code>ORDER BY score</code> not <code>ORDER BY \'score\'</code>.';
+    return 'Syntax error — check for a typo, missing keyword, or clauses out of order.';
+  }
+  if (ml.indexOf('no such column') >= 0) {
+    var mc = msg.match(/no such column:\s*(\S+)/i);
+    var col = mc ? mc[1] : 'that column';
+    return 'Column <code>' + escHtml(col) + '</code> not found. Check the table schema and verify the column name is spelled correctly.';
+  }
+  if (ml.indexOf('no such table') >= 0) return 'The table does not exist in this session. Click Reset and try again.';
+  return escHtml(msg);
+}
+
+function checkPGAnswer(userQuery) {
+  if (!pgCurrentQid) return;
+  var q = QUESTIONS.filter(function(x){ return x.id === pgCurrentQid; })[0];
+  if (!q || !q.sol || q.tp === 'm') return;
+  if (DONE.indexOf(String(q.id)) >= 0) return;
+  if (normSQL(userQuery) !== normSQL(q.sol)) return;
+  var results = document.getElementById('pg-results');
+  if (results) {
+    var notesHtml = q.notes ? '<p class="pg-correct-notes">' + escHtml(q.notes) + '</p>' : '';
+    var banner = '<div class="pg-correct-banner">'
+      + '<svg class="pg-correct-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg>'
+      + '<div><div class="pg-correct-title">Correct!</div>' + notesHtml + '</div>'
+      + '</div>';
+    results.innerHTML = banner + results.innerHTML;
+  }
+  setTimeout(function() { markDone(q.id); }, 500);
+}
+
+function ensureSqlJs(cb) {
+  if (pgSQL) { cb(); return; }
+  if (pgInitializing) {
+    var t = setInterval(function(){ if(pgSQL){ clearInterval(t); cb(); } }, 200);
+    setTimeout(function(){ clearInterval(t); }, 15000);
+    return;
+  }
+  pgInitializing = true;
+  pgSetStatus('Loading SQL engine…');
+  var s = document.createElement('script');
+  s.src = 'https://cdn.jsdelivr.net/npm/sql.js@1.10.2/dist/sql-wasm.min.js';
+  s.onload = function() {
+    initSqlJs({ locateFile: function(f){ return 'https://cdn.jsdelivr.net/npm/sql.js@1.10.2/dist/' + f; } })
+      .then(function(SQL){ pgSQL = SQL; pgInitializing = false; cb(); })
+      .catch(function(){ pgInitializing = false; pgSetStatus('Failed to load SQL engine'); });
+  };
+  s.onerror = function(){ pgInitializing = false; pgSetStatus('Network error loading sql.js'); };
+  document.head.appendChild(s);
+}
+
+function openPG(qid) {
+  pgCurrentQid = qid;
+  var q = QUESTIONS.filter(function(x){ return x.id === qid; })[0];
+  if (!q) return;
+  var setup = q.pgSetup || SETUP_STU;
+  var hint  = (q.tp === 'f') ? q.broken : ('-- Hint: ' + q.hint + '\nSELECT ');
+  pgOriginalHint = hint;
+  var panel   = document.getElementById('pg-panel');
+  var editor  = document.getElementById('pg-editor');
+  var results = document.getElementById('pg-results');
+  var qLabel  = document.getElementById('pg-q-label');
+  if (!panel) return;
+  if (editor)  editor.value = hint;
+  if (results) results.innerHTML = '<p class="pg-msg">Write your query above and click Run.</p>';
+  if (qLabel) {
+    var typeMap = {m:'MCQ', f:'Fix It', w:'Write'};
+    qLabel.textContent = 'Q' + (q.id < 10 ? '0'+q.id : q.id) + ' · ' + typeMap[q.tp] + ' · ' + q.title;
+    qLabel.style.display = '';
+  }
+  panel.classList.add('open');
+  var ov = document.getElementById('pg-overlay'); if (ov) ov.classList.add('show');
+  _pgScrollY = window.pageYOffset || 0;
+  if ('ontouchstart' in window) {
+    document.body.style.overflow = 'hidden';
+    document.body.style.overscrollBehavior = 'none';
+  } else {
+    document.body.style.cssText = 'overflow:hidden;position:fixed;width:100%;top:-' + _pgScrollY + 'px';
+  }
+  ensureSqlJs(function(){
+    if (pgDB) { try { pgDB.close(); } catch(e){} }
+    pgDB = new pgSQL.Database();
+    try { pgDB.run(setup); } catch(e){}
+    pgSetStatus('Table ready');
+    if (editor && !('ontouchstart' in window)) editor.focus();
+  });
+}
+
+function closePG() {
+  var p = document.getElementById('pg-panel');
+  if (p) { p.classList.remove('open'); p.style.maxHeight = ''; }
+  var ov = document.getElementById('pg-overlay');
+  if (ov) ov.classList.remove('show');
+  if ('ontouchstart' in window) {
+    document.body.style.overflow = '';
+    document.body.style.overscrollBehavior = '';
+  } else {
+    document.body.style.cssText = '';
+    window.scrollTo(0, _pgScrollY);
+  }
+}
+
+function resetPG() {
+  var editor = document.getElementById('pg-editor');
+  if (editor && pgOriginalHint) {
+    editor.value = pgOriginalHint;
+    editor.focus();
+    var results = document.getElementById('pg-results');
+    if (results) results.innerHTML = '<p class="pg-msg">Write your query above and click Run.</p>';
+    pgSetStatus('Reset');
+  }
+}
+
+function loadVariation(sql) {
+  var editor = document.getElementById('pg-editor');
+  if (editor) { editor.value = sql; editor.focus(); }
+  runPG();
+}
+
+function pgSetStatus(txt) {
+  var el = document.getElementById('pg-status');
+  if (el) el.textContent = txt;
+}
+
+function runPG() {
+  var editor  = document.getElementById('pg-editor');
+  var results = document.getElementById('pg-results');
+  if (!editor) return;
+  if (!pgDB) { pgSetStatus('DB not ready — open a question first'); return; }
+  var q = editor.value.trim();
+  if (!q) return;
+  try {
+    var res = pgDB.exec(q);
+    if (!res.length) {
+      results.innerHTML = '<p class="pg-msg">Query ran — no rows returned.</p>';
+    } else {
+      var r = res[0];
+      var h = '<table><thead><tr>' + r.columns.map(function(c){ return '<th>' + escHtml(String(c)) + '</th>'; }).join('') + '</tr></thead><tbody>';
+      r.values.forEach(function(row){
+        h += '<tr>' + row.map(function(v){ return '<td>' + (v === null ? '<span style="color:var(--muted);font-style:italic">NULL</span>' : escHtml(String(v))) + '</td>'; }).join('') + '</tr>';
+      });
+      h += '</tbody></table>';
+      results.innerHTML = h;
+    }
+    pgSetStatus(res.length ? res[0].values.length + ' row(s)' : 'Done');
+    if (pgCurrentQid === null && pgLiveCtx) {
+      var curNorm  = normSQL(q);
+      var origNorm = normSQL(pgLiveCtx.sql);
+      if (curNorm === origNorm) {
+        var chipsHtml = '';
+        if (pgLiveCtx.chips && pgLiveCtx.chips.length) {
+          chipsHtml = '<div class="pg-fb-chips">';
+          pgLiveCtx.chips.forEach(function(c){
+            chipsHtml += '<button class="pg-fb-chip" onclick="loadVariation(' + JSON.stringify(c.sql) + ')">' + escHtml(c.label) + '</button>';
+          });
+          chipsHtml += '</div>';
+        }
+        results.innerHTML += '<div class="pg-feedback pg-fb-success">'
+          + '<div class="pg-fb-head"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg>Why this works</div>'
+          + '<div class="pg-fb-why">' + pgLiveCtx.why + '</div>'
+          + '<div class="pg-fb-avoid"><strong>⚠ What to avoid:</strong> ' + pgLiveCtx.avoid + '</div>'
+          + chipsHtml + '</div>';
+      } else {
+        results.innerHTML += '<div class="pg-feedback pg-fb-experiment">'
+          + '<div class="pg-fb-reset-note">Exploring a variation — <button onclick="resetPG()">Reset</button> to go back to the original example.</div>'
+          + '</div>';
+      }
+    }
+    checkPGAnswer(q);
+  } catch(e) {
+    if (pgCurrentQid === null && pgLiveCtx) {
+      results.innerHTML = '<p class="pg-err">⚠ ' + diagnosePGError(e.message, q) + '</p>'
+        + '<div class="pg-feedback pg-fb-error">'
+        + '<div class="pg-fb-head"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="pointer-events:none"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>Query failed</div>'
+        + '<div class="pg-fb-why">The original example runs correctly. Check the hint above, or <button onclick="resetPG()" style="background:none;border:none;color:var(--ob);font-size:.8rem;font-family:var(--fh);cursor:pointer;padding:0;text-decoration:underline">click Reset</button> to restore it.</div>'
+        + '</div>';
+    } else {
+      results.innerHTML = '<p class="pg-err">⚠ ' + diagnosePGError(e.message, q) + '</p>';
+    }
+    pgSetStatus('Error');
+  }
+}
+
+/* Ctrl+Enter to run */
+document.addEventListener('keydown', function(e){
+  if ((e.ctrlKey||e.metaKey) && e.key === 'Enter') {
+    var panel = document.getElementById('pg-panel');
+    if (panel && panel.classList.contains('open')) { e.preventDefault(); runPG(); }
+  }
+});
+
+/* Tab key indent in editor */
+(function(){
+  var ed = document.getElementById('pg-editor');
+  if (!ed) return;
+  ed.addEventListener('keydown', function(e) {
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      var s = ed.selectionStart, end = ed.selectionEnd;
+      ed.value = ed.value.substring(0, s) + '  ' + ed.value.substring(end);
+      ed.selectionStart = ed.selectionEnd = s + 2;
+    }
+    if (e.key === 'Escape') { closePG(); }
+  });
+})();
+
+/* Drag handle — resize playground height */
+(function(){
+  var drag  = document.getElementById('pg-drag');
+  var panel = document.getElementById('pg-panel');
+  if (!drag || !panel) return;
+  var startY, startH;
+  function onMove(e) {
+    var y = e.touches ? e.touches[0].clientY : e.clientY;
+    var delta = startY - y;
+    var newH  = Math.max(140, Math.min(window.innerHeight * 0.88, startH + delta));
+    panel.style.maxHeight = newH + 'px';
+  }
+  function onEnd() {
+    document.removeEventListener('mousemove', onMove);
+    document.removeEventListener('mouseup',   onEnd);
+    document.removeEventListener('touchmove', onMove);
+    document.removeEventListener('touchend',  onEnd);
+  }
+  drag.addEventListener('mousedown', function(e) {
+    startY = e.clientY; startH = panel.offsetHeight; e.preventDefault();
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup',   onEnd);
+  });
+  drag.addEventListener('touchstart', function(e) {
+    startY = e.touches[0].clientY; startH = panel.offsetHeight;
+    document.addEventListener('touchmove', onMove, {passive:true});
+    document.addEventListener('touchend',  onEnd);
+  }, {passive:true});
+})();
+
+/* ════ CODE BLOCK HELPERS (examples section) ════ */
+function cbCopy(btn, sql) {
+  navigator.clipboard.writeText(sql).then(function() {
+    var orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(function(){ btn.textContent = orig; }, 1500);
+  }).catch(function(){
+    var orig = btn.textContent;
+    btn.textContent = 'Failed';
+    setTimeout(function(){ btn.textContent = orig; }, 1500);
+  });
+}
+
+function cbTry(sql) {
+  pgCurrentQid = null;
+  pgLiveCtx    = PG_EXAMPLES[normSQL(sql)] || null;
+  pgOriginalHint = sql;
+  var panel   = document.getElementById('pg-panel');
+  var editor  = document.getElementById('pg-editor');
+  var results = document.getElementById('pg-results');
+  var qLabel  = document.getElementById('pg-q-label');
+  if (!panel) return;
+  if (editor)  editor.value = sql;
+  if (results) results.innerHTML = '<p class="pg-msg">Click Run (or Ctrl+Enter) to execute.</p>';
+  if (qLabel)  { qLabel.textContent = 'Live Example'; qLabel.style.display = ''; }
+  panel.classList.add('open');
+  var ov = document.getElementById('pg-overlay'); if (ov) ov.classList.add('show');
+  _pgScrollY = window.pageYOffset || 0;
+  if ('ontouchstart' in window) {
+    document.body.style.overflow = 'hidden';
+    document.body.style.overscrollBehavior = 'none';
+  } else {
+    document.body.style.cssText = 'overflow:hidden;position:fixed;width:100%;top:-' + _pgScrollY + 'px';
+  }
+  ensureSqlJs(function(){
+    if (pgDB) { try { pgDB.close(); } catch(e){} }
+    pgDB = new pgSQL.Database();
+    try { pgDB.run(SETUP_STU); } catch(e){}
+    pgSetStatus('Table ready');
+    if (editor && !('ontouchstart' in window)) editor.focus();
+  });
+}
+
+/* ════ TYPEWRITER — hero code card ════ */
+(function(){
+  var el = document.getElementById('hero-sql');
+  if (!el) return;
+  var plain = 'SELECT name, score\nFROM students\nORDER BY score DESC;';
+  var finalHTML = '<span class="kw2">SELECT</span> <span class="col2">name</span>, <span class="col2">score</span><br><span class="kw2">FROM</span> <span class="tbl2">students</span><br><span class="ob2">ORDER BY</span> <span class="col2">score</span> <span class="ob2">DESC</span>;';
+  var cursor    = '<span class="tw-cursor"></span>';
+  var runBtn    = document.getElementById('hero-run-btn');
+  var resultLabel = document.getElementById('hero-result-label');
+  var rows      = document.querySelectorAll('.hero-preview-table tbody tr');
+  var i = 0, cycles = 0;
+
+  function esc(c){ return c==='<'?'&lt;':c==='>'?'&gt;':c==='&'?'&amp;':c; }
+
+  function animateRows() {
+    if (runBtn) { runBtn.textContent = '⟳ Running'; runBtn.classList.add('running'); }
+    setTimeout(function(){
+      if (resultLabel) resultLabel.classList.add('r-in');
+      rows.forEach(function(row, idx){
+        setTimeout(function(){ row.classList.add('r-in'); }, 160 + idx * 110);
+      });
+      var resetDelay = 160 + rows.length * 110 + 300;
+      setTimeout(function(){
+        if (runBtn) { runBtn.textContent = '▶ Run'; runBtn.classList.remove('running'); }
+      }, resetDelay);
+      if (cycles < 2) { setTimeout(resetAndLoop, resetDelay + 2800); }
+      else { setTimeout(function(){ el.innerHTML = finalHTML; }, resetDelay + 600); }
+    }, 420);
+  }
+
+  function resetAndLoop() {
+    cycles++;
+    rows.forEach(function(row){ row.classList.remove('r-in'); });
+    if (resultLabel) resultLabel.classList.remove('r-in');
+    el.innerHTML = cursor;
+    i = 0;
+    setTimeout(tick, 600);
+  }
+
+  function tick() {
+    if (i <= plain.length) {
+      var chunk = '';
+      for (var j = 0; j < i; j++) chunk += plain[j] === '\n' ? '<br>' : esc(plain[j]);
+      el.innerHTML = chunk + cursor;
+      i++;
+      setTimeout(tick, i <= 1 ? 500 : i <= 7 ? 90 : 55);
+    } else {
+      el.innerHTML = finalHTML + cursor;
+      setTimeout(animateRows, 500);
+    }
+  }
+
+  setTimeout(tick, 800);
+})();
+</script>
+
+</body>
+</html>
+

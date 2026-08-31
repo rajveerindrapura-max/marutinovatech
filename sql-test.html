@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SQL Skills Challenge — MarutiNovaTech</title>
+  <meta name="description" content="Test your SQL skills and earn an exclusive discount on MarutiNovaTech courses. 10 real interview questions. Free.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230D1117'/%3E%3Ctext x='16' y='22' font-family='monospace' font-size='13' font-weight='700' fill='%2300E5C8' text-anchor='middle'%3ESQL%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:     #080C14;
+      --s1:     rgba(255,255,255,.04);
+      --s2:     rgba(255,255,255,.07);
+      --border: rgba(255,255,255,.08);
+      --border2:rgba(255,255,255,.14);
+      --text:   #F0F4FF;
+      --muted:  #7A8499;
+      --teal:   #00E5C8;
+      --teal2:  rgba(0,229,200,.12);
+      --teal3:  rgba(0,229,200,.3);
+      --green:  #10D48E;
+      --green2: rgba(16,212,142,.12);
+      --green3: rgba(16,212,142,.35);
+      --red:    #FF5A5A;
+      --red2:   rgba(255,90,90,.12);
+      --red3:   rgba(255,90,90,.3);
+      --gold:   #FBBF24;
+      --gold2:  rgba(251,191,36,.1);
+      --gold3:  rgba(251,191,36,.35);
+      --blue:   #60A5FA;
+      --blue2:  rgba(96,165,250,.1);
+      --blue3:  rgba(96,165,250,.35);
+      --fh:'Space Grotesk',sans-serif;
+      --fb:'Inter',sans-serif;
+      --fm:'JetBrains Mono',monospace;
+      --price: 14000;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{font-size:16px}
+    body{
+      background:var(--bg);color:var(--text);font-family:var(--fb);
+      min-height:100vh;overflow-x:hidden;
+    }
+    ::-webkit-scrollbar{width:4px}
+    ::-webkit-scrollbar-track{background:transparent}
+    ::-webkit-scrollbar-thumb{background:var(--teal3);border-radius:2px}
+
+    /* ── ANIMATED BG ── */
+    .bg-layer{
+      position:fixed;inset:0;pointer-events:none;z-index:0;
+      background:
+        radial-gradient(ellipse 60% 50% at 20% 20%, rgba(0,229,200,.05) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 80% 80%, rgba(96,165,250,.04) 0%, transparent 60%);
+    }
+    .bg-grid{
+      position:fixed;inset:0;pointer-events:none;z-index:0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      background-size:52px 52px;
+      mask-image:radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%);
+    }
+
+    /* ── BACK BUTTON ── */
+    .back-btn{
+      position:fixed;top:20px;left:20px;z-index:100;
+      display:flex;align-items:center;gap:7px;
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--border2);
+      border-radius:999px;
+      padding:8px 16px 8px 12px;
+      color:var(--muted);font-size:.8rem;font-family:var(--fb);font-weight:500;
+      text-decoration:none;
+      transition:background .15s,color .15s,border-color .15s;
+      backdrop-filter:blur(12px);
+    }
+    .back-btn:hover{background:rgba(255,255,255,.1);color:var(--text);border-color:var(--border2)}
+    .back-btn svg{pointer-events:none}
+
+    /* ── SCREEN SYSTEM ── */
+    .screen{
+      position:fixed;inset:0;z-index:1;
+      display:flex;align-items:flex-start;justify-content:center;
+      padding:64px 20px 24px;  /* tighter vertical padding */
+      overflow-y:auto;
+      opacity:0;pointer-events:none;transition:opacity .35s ease;
+    }
+    .screen.active{opacity:1;pointer-events:all}
+    #s-intro{align-items:center;padding-top:64px}
+
+    /* ─────────────────────────────────────────────────────────
+       INTRO SCREEN — single viewport, no scroll
+    ───────────────────────────────────────────────────────── */
+    #s-intro{
+      overflow:hidden; /* lock to one viewport */
+      align-items:center;
+    }
+    .intro{width:100%;max-width:620px;text-align:center}
+
+    .brand-chip{
+      display:inline-flex;align-items:center;gap:7px;
+      background:rgba(0,229,200,.08);border:1px solid rgba(0,229,200,.2);
+      border-radius:999px;padding:5px 14px;margin-bottom:18px;
+      font-size:.62rem;font-weight:700;color:var(--teal);
+      letter-spacing:.1em;text-transform:uppercase;
+    }
+
+    .intro-h{
+      font-family:var(--fh);
+      font-size:clamp(2rem,5.5vw,3.1rem);
+      font-weight:800;line-height:1.1;
+      margin-bottom:12px;letter-spacing:-.04em;
+    }
+    .intro-h .g{
+      background:linear-gradient(135deg, var(--teal) 0%, #60A5FA 100%);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    }
+    .intro-h .w{color:var(--text)}
+
+    .intro-sub{
+      color:#9CA3AF;font-size:.9rem;line-height:1.7;
+      margin-bottom:24px;max-width:440px;margin-inline:auto;
+    }
+
+    /* ── Tier strip — compact horizontal, no prices ── */
+    .reward-ladder{
+      display:flex;gap:0;
+      margin-bottom:20px;
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:12px;overflow:hidden;
+    }
+    .rl-card{
+      flex:1;padding:16px 10px;text-align:center;
+      position:relative;cursor:default;
+      transition:background .2s;
+    }
+    .rl-card:not(:last-child)::after{
+      content:'';position:absolute;right:0;top:15%;
+      height:70%;width:1px;background:rgba(255,255,255,.07);
+    }
+    /* Colored top accent per tier */
+    .rl-card::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+    }
+    .rl-card.g1::before{background:linear-gradient(90deg,var(--gold),rgba(251,191,36,.3))}
+    .rl-card.g2::before{background:linear-gradient(90deg,var(--blue),rgba(96,165,250,.3))}
+    .rl-card.g3::before{background:linear-gradient(90deg,rgba(139,148,158,.6),transparent)}
+    .rl-card.g4::before{background:linear-gradient(90deg,rgba(249,115,22,.6),transparent)}
+    .rl-card:hover{background:rgba(255,255,255,.04)}
+
+    .rl-pct{
+      font-family:var(--fh);font-size:1.7rem;font-weight:800;
+      line-height:1;margin-bottom:2px;letter-spacing:-.04em;
+    }
+    .rl-card.g1 .rl-pct{color:var(--gold)}
+    .rl-card.g2 .rl-pct{color:var(--blue)}
+    .rl-card.g3 .rl-pct{color:#9CA3AF}
+    .rl-card.g4 .rl-pct{color:#F97316}
+
+    .rl-off{
+      font-size:.6rem;font-weight:700;text-transform:uppercase;
+      letter-spacing:.1em;margin-bottom:8px;opacity:.6;
+    }
+    .rl-card.g1 .rl-off{color:var(--gold)}
+    .rl-card.g2 .rl-off{color:var(--blue)}
+    .rl-card.g3 .rl-off{color:#9CA3AF}
+    .rl-card.g4 .rl-off{color:#F97316}
+
+    .rl-score{
+      font-size:.65rem;font-family:var(--fm);
+      color:rgba(255,255,255,.35);letter-spacing:.02em;
+    }
+
+    /* ── Meta pills — no emojis ── */
+    .meta-row{
+      display:flex;align-items:center;justify-content:center;
+      gap:6px;flex-wrap:wrap;margin-bottom:18px;
+    }
+    .meta-pill{
+      background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+      border-radius:999px;padding:5px 14px;
+      font-size:.75rem;color:#9CA3AF;font-family:var(--fb);
+    }
+
+    /* ── Live counter ── */
+    .live-row{
+      display:flex;align-items:center;justify-content:center;gap:8px;
+      margin-bottom:22px;font-size:.78rem;color:#6B7280;
+    }
+    .live-dot{
+      width:6px;height:6px;border-radius:50%;background:var(--green);
+      animation:livepulse 2.2s ease-in-out infinite;flex-shrink:0;
+    }
+    @keyframes livepulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+
+    /* ── CTA button ── */
+    .btn-start{
+      display:inline-flex;align-items:center;gap:10px;
+      background:var(--teal);
+      color:#030D0C;font-family:var(--fh);font-size:1rem;font-weight:700;
+      padding:14px 40px;border-radius:999px;border:none;cursor:pointer;
+      letter-spacing:-.01em;
+      transition:background .15s,transform .15s,box-shadow .15s;
+    }
+    .btn-start:hover{
+      background:#0CCFB8;transform:translateY(-2px);
+      box-shadow:0 12px 32px rgba(0,229,200,.28);
+    }
+    .btn-start:active{transform:translateY(0)}
+    .btn-start svg{pointer-events:none}
+
+    /* ─────────────────────────────────────────────────────────
+       QUIZ SCREEN
+    ───────────────────────────────────────────────────────── */
+    .quiz{width:100%;max-width:740px}
+
+    /* ── Top bar ── */
+    .quiz-top{
+      display:flex;align-items:center;justify-content:space-between;
+      margin-bottom:10px;gap:10px;flex-wrap:wrap;
+    }
+    .q-num-chip{
+      display:flex;align-items:center;gap:9px;
+      font-size:.76rem;font-family:var(--fb);color:#9CA3AF;font-weight:500;
+    }
+    .q-num-circle{
+      width:28px;height:28px;border-radius:50%;
+      background:var(--teal);
+      display:flex;align-items:center;justify-content:center;
+      font-size:.72rem;font-weight:800;color:#030D0C;font-family:var(--fh);
+      flex-shrink:0;
+    }
+
+    /* Projection chip — no emoji, clean pill */
+    .projection-chip{
+      display:none;align-items:center;gap:6px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.1);
+      border-radius:7px;padding:4px 11px;
+      font-size:.68rem;font-weight:600;color:#9CA3AF;font-family:var(--fb);
+      letter-spacing:.01em;
+    }
+    .projection-chip.show{display:flex}
+    .proj-arrow{
+      width:12px;height:12px;flex-shrink:0;
+      color:#10B981;  /* green trend arrow */
+    }
+
+    /* Streak chip — no emoji */
+    .streak-chip{
+      display:none;align-items:center;gap:6px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.09);
+      border-radius:7px;padding:4px 11px;
+      font-size:.68rem;font-weight:600;color:#9CA3AF;font-family:var(--fb);
+      animation:streakpop .35s cubic-bezier(.34,1.56,.64,1);
+    }
+    .streak-chip.show{display:flex}
+    .streak-dot{
+      width:6px;height:6px;border-radius:50%;
+      background:#F59E0B;flex-shrink:0;
+    }
+    @keyframes streakpop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+
+    /* ── Progress dots — softer palette ── */
+    .q-dots{display:flex;gap:4px;margin-bottom:8px;flex-wrap:nowrap;overflow:hidden}
+    .q-dot{
+      flex:1;height:3px;border-radius:999px;
+      background:rgba(255,255,255,.08);
+      transition:background .3s ease;
+    }
+    /* Correct: soft emerald */
+    .q-dot.done-ok{background:rgba(16,185,129,.65)}
+    /* Wrong: muted rose — NOT alarm red */
+    .q-dot.done-bad{background:rgba(239,68,68,.5)}
+    /* Current: teal with subtle glow */
+    .q-dot.current{background:var(--teal);box-shadow:0 0 4px rgba(0,229,200,.45)}
+
+    /* Remove bar — dots are sufficient */
+    .q-bar-track{display:none}
+    .q-bar-fill{display:none}
+
+    /* ── Question card ── */
+    .q-card{
+      background:#0D1724;
+      border:1px solid rgba(255,255,255,.1);
+      border-radius:16px;padding:20px 24px;margin-bottom:10px;
+      position:relative;overflow:hidden;
+      box-shadow:0 4px 32px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.06);
+      transition:transform .2s;
+    }
+    .q-card::after{
+      content:'';position:absolute;top:0;left:0;right:0;height:1px;
+      background:linear-gradient(90deg,transparent 0%,rgba(0,229,200,.45) 50%,transparent 100%);
+    }
+    .q-card.shake{animation:shake .4s ease}
+    @keyframes shake{
+      0%,100%{transform:translateX(0)}
+      20%{transform:translateX(-6px)}40%{transform:translateX(6px)}
+      60%{transform:translateX(-3px)}80%{transform:translateX(3px)}
+    }
+
+    /* Card header row */
+    .q-card-top{
+      display:flex;align-items:center;justify-content:space-between;
+      margin-bottom:14px;gap:8px;
+    }
+    /* Difficulty — subtle dot + label, no full fill */
+    .diff-tag{
+      display:inline-flex;align-items:center;gap:6px;
+      font-size:.62rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+      border-radius:999px;padding:3px 11px;
+      border:1px solid transparent;
+    }
+    /* Dot inside difficulty badge */
+    .diff-tag::before{
+      content:'';width:6px;height:6px;border-radius:50%;flex-shrink:0;
+    }
+    .diff-tag.easy{
+      background:rgba(16,185,129,.08);color:#10B981;
+      border-color:rgba(16,185,129,.22);
+    }
+    .diff-tag.easy::before{background:#10B981}
+    .diff-tag.medium{
+      background:rgba(251,191,36,.08);color:#F59E0B;
+      border-color:rgba(245,158,11,.22);
+    }
+    .diff-tag.medium::before{background:#F59E0B}
+    .diff-tag.hard{
+      background:rgba(239,68,68,.08);color:#EF4444;
+      border-color:rgba(239,68,68,.22);
+    }
+    .diff-tag.hard::before{background:#EF4444}
+
+    /* Category tag — minimal */
+    .cat-tag{
+      display:inline-flex;align-items:center;
+      font-size:.64rem;color:#6B7280;font-family:var(--fb);letter-spacing:.02em;
+      background:transparent;border:1px solid rgba(255,255,255,.08);
+      border-radius:999px;padding:3px 10px;
+    }
+
+    /* Question text */
+    .q-text{
+      font-family:var(--fh);font-size:1.06rem;font-weight:700;
+      line-height:1.58;margin-bottom:16px;letter-spacing:-.01em;
+      color:#E8EEFF;
+    }
+
+    /* Code block */
+    .q-code{
+      background:#060C12;border:1px solid rgba(0,229,200,.12);
+      border-radius:9px;padding:12px 16px;
+      font-family:var(--fm);font-size:.8rem;
+      line-height:1.7;display:none;margin-bottom:14px;
+      overflow-x:auto;white-space:pre;color:#79C0FF;
+    }
+
+    /* ── Option buttons ── */
+    .opts{display:flex;flex-direction:column;gap:7px}
+    .opt{
+      display:flex;align-items:center;gap:13px;
+      background:rgba(255,255,255,.045);
+      border:1px solid rgba(255,255,255,.09);
+      border-radius:11px;padding:12px 16px;
+      cursor:pointer;text-align:left;width:100%;
+      color:#C8D3E8;
+      font-family:var(--fb);font-size:.91rem;font-weight:500;line-height:1.45;
+      transition:background .14s,border-color .14s,transform .1s;
+    }
+    .opt:not(.locked):hover{
+      background:rgba(0,229,200,.055);
+      border-color:rgba(0,229,200,.3);
+      /* Left accent line on hover — directional affordance */
+      box-shadow:inset 3px 0 0 rgba(0,229,200,.6);
+      color:#EEF2FF;
+    }
+    .opt:not(.locked):hover .opt-ltr{
+      border-color:rgba(0,229,200,.4);
+      color:#00C4AD;
+    }
+    .opt.locked{cursor:default}
+
+    /* After answering: de-emphasise others cleanly */
+    .opts.answered .opt:not(.correct):not(.wrong){
+      background:rgba(255,255,255,.02);
+      border-color:rgba(255,255,255,.05);
+      color:#374151;
+    }
+    .opts.answered .opt:not(.correct):not(.wrong) .opt-ltr{
+      color:#2D3748;border-color:rgba(255,255,255,.06);background:rgba(255,255,255,.03);
+    }
+
+    /* Option letter — circular, not square */
+    .opt-ltr{
+      display:flex;align-items:center;justify-content:center;
+      min-width:28px;height:28px;border-radius:50%;  /* circle — cleaner than square */
+      background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+      font-family:var(--fm);font-size:.7rem;font-weight:600;
+      color:#9CA3AF;flex-shrink:0;transition:all .14s;
+    }
+
+    /* ── Correct ── */
+    .opt.correct{
+      background:rgba(16,185,129,.09);
+      border-color:rgba(16,185,129,.5);
+      color:#EEF2FF;
+    }
+    .opt.correct .opt-ltr{
+      background:#10B981;border-color:#10B981;color:#fff;font-weight:800;
+    }
+    .opt.correct{animation:lift .28s cubic-bezier(.34,1.56,.64,1)}
+    @keyframes lift{from{transform:scale(.99)}to{transform:scale(1)}}
+
+    /* ── Wrong ── */
+    .opt.wrong{
+      background:rgba(239,68,68,.08);
+      border-color:rgba(239,68,68,.45);
+      color:#C8D3E8;
+    }
+    .opt.wrong .opt-ltr{
+      background:#EF4444;border-color:#EF4444;color:#fff;font-weight:800;
+    }
+
+    /* ── Explanation ── */
+    .explanation{
+      display:none;margin-top:10px;padding:13px 16px;
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.07);
+      border-radius:10px;
+      font-size:.84rem;color:#9CA3AF;line-height:1.7;
+    }
+    .explanation.show{display:block;animation:fadeup .28s ease}
+    .explanation.exp-ok {border-left:2px solid #10B981}
+    .explanation.exp-wrong{border-left:2px solid #EF4444}
+    .explanation strong{color:#E5EAF0;font-weight:600}
+    .explanation code{
+      font-family:var(--fm);font-size:.79em;color:#79C0FF;
+      background:rgba(121,192,255,.1);padding:1px 5px;border-radius:4px;
+    }
+
+    .exp-tag{
+      display:inline-block;font-size:.58rem;font-weight:700;
+      letter-spacing:.1em;text-transform:uppercase;
+      padding:2px 8px;border-radius:999px;margin-right:8px;vertical-align:middle;
+    }
+    .exp-tag.ok{background:rgba(16,185,129,.14);color:#10B981;border:1px solid rgba(16,185,129,.28)}
+    .exp-tag.wrong{background:rgba(239,68,68,.12);color:#EF4444;border:1px solid rgba(239,68,68,.25)}
+
+    /* ── Motivational banner ── */
+    .motivate-banner{
+      display:none;align-items:center;gap:12px;
+      padding:10px 16px;border-radius:10px;margin-bottom:10px;
+      border:1px solid transparent;animation:fadeup .3s ease;
+    }
+    .motivate-banner.mb-gold{background:rgba(251,191,36,.07);border-color:rgba(251,191,36,.2)}
+    .motivate-banner.mb-blue{background:rgba(96,165,250,.07);border-color:rgba(96,165,250,.2)}
+    .motivate-banner.mb-gray{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.09)}
+    .motivate-banner.mb-orange{background:rgba(249,115,22,.07);border-color:rgba(249,115,22,.2)}
+    .motivate-banner.mb-dim {background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.06)}
+    .motivate-banner.mb-last{padding:12px 16px}
+    .mb-tier{
+      display:flex;flex-direction:column;align-items:flex-start;gap:1px;
+      flex-shrink:0;padding-right:12px;
+      border-right:1px solid rgba(255,255,255,.08);
+    }
+    .mb-pct{
+      font-family:var(--fh);font-size:.88rem;font-weight:800;
+      line-height:1;letter-spacing:-.02em;
+    }
+    .mb-gold .mb-pct{color:#FBBF24}
+    .mb-blue .mb-pct{color:#60A5FA}
+    .mb-gray .mb-pct{color:#9CA3AF}
+    .mb-orange .mb-pct{color:#F97316}
+    .mb-dim  .mb-pct{color:#6B7280}
+    .mb-label{font-size:.56rem;color:#6B7280;font-family:var(--fb);text-transform:uppercase;letter-spacing:.09em;margin-top:2px}
+    .mb-content{flex:1;min-width:0}
+    .mb-msg{font-size:.79rem;color:#9CA3AF;font-family:var(--fb);line-height:1.45}
+    .mb-sub{font-size:.68rem;color:#4B5563;font-family:var(--fb);margin-top:2px}
+    .mb-last .mb-msg{color:#C8D3E8}
+    .mb-last .mb-pct{font-size:1rem}
+
+    /* ── Next button — full-width, clear CTA ── */
+    .btn-next{
+      display:none;align-items:center;justify-content:center;gap:8px;
+      width:100%;padding:13px 24px;margin-top:10px;
+      background:#00BAA5;
+      color:#021210;
+      border:none;border-radius:11px;
+      font-family:var(--fh);font-size:.93rem;font-weight:700;
+      cursor:pointer;letter-spacing:-.01em;
+      transition:background .14s,transform .1s,box-shadow .14s;
+    }
+    .btn-next.show{display:flex}
+    .btn-next:hover{background:#00CDB7;transform:translateY(-1px);box-shadow:0 6px 24px rgba(0,186,165,.3)}
+    .btn-next:active{transform:translateY(0);box-shadow:none}
+    .btn-next svg{pointer-events:none}
+
+    /* ─────────────────────────────────────────────────────────
+       RESULT SCREEN
+    ───────────────────────────────────────────────────────── */
+    #s-result{align-items:flex-start}
+    .result{width:100%;max-width:600px;margin:0 auto}
+
+    /* Score ring */
+    .score-ring-wrap{position:relative;width:160px;height:160px;margin:0 auto 24px}
+    .score-ring-wrap svg{width:160px;height:160px;transform:rotate(-90deg)}
+    .sr-track{fill:none;stroke:rgba(255,255,255,.06);stroke-width:10}
+    .sr-fill{
+      fill:none;stroke-width:10;stroke-linecap:round;
+      stroke-dasharray:395;stroke-dashoffset:395;
+      transition:stroke-dashoffset 1.8s cubic-bezier(.25,.46,.45,.94);
+    }
+    .score-inner{
+      position:absolute;inset:0;display:flex;flex-direction:column;
+      align-items:center;justify-content:center;
+    }
+    .score-n{font-family:var(--fh);font-size:3rem;font-weight:800;color:var(--text);line-height:1;letter-spacing:-.05em}
+    .score-d{font-size:.82rem;color:var(--muted);font-family:var(--fm);margin-top:2px}
+
+    /* vs average */
+    .vs-row{
+      display:flex;align-items:center;justify-content:center;gap:8px;
+      font-size:.8rem;color:var(--muted);margin-bottom:20px;
+    }
+    .vs-pill{
+      background:rgba(255,255,255,.06);border:1px solid var(--border);
+      border-radius:999px;padding:3px 12px;font-size:.75rem;
+      display:flex;align-items:center;gap:5px;
+    }
+
+    .disc-badge{
+      display:inline-flex;align-items:center;gap:10px;
+      padding:14px 28px;border-radius:13px;margin-bottom:12px;
+      font-family:var(--fh);font-weight:800;font-size:1.35rem;
+      position:relative;overflow:hidden;
+    }
+    .disc-badge::after{
+      content:'';position:absolute;top:0;left:-120%;width:60%;height:100%;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.07),transparent);
+      animation:shimmer 3s infinite;
+    }
+    @keyframes shimmer{to{left:200%}}
+    .disc-badge.dg{background:rgba(251,191,36,.1);border:2px solid rgba(251,191,36,.45);color:var(--gold)}
+    .disc-badge.ds{background:rgba(96,165,250,.1);border:2px solid rgba(96,165,250,.45);color:var(--blue)}
+    .disc-badge.db{background:rgba(139,148,158,.08);border:2px solid rgba(139,148,158,.3);color:var(--muted)}
+    .disc-badge.dt{background:var(--red2);border:2px solid var(--red3);color:var(--red)}
+    .disc-badge.dc{background:rgba(249,115,22,.1);border:2px solid rgba(249,115,22,.35);color:#F97316}
+
+    .disc-sub{color:var(--muted);font-size:.93rem;line-height:1.7;margin-bottom:20px}
+
+    /* ── SAVINGS BOX — the centrepiece ── */
+    .savings-box{
+      background:var(--s1);border:1px solid var(--border);
+      border-radius:16px;padding:22px 24px;margin-bottom:20px;
+      position:relative;overflow:hidden;
+      backdrop-filter:blur(12px);
+    }
+    .savings-box::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:1px;
+      background:linear-gradient(90deg,transparent,rgba(251,191,36,.5),transparent);
+    }
+    .savings-hd{
+      display:flex;align-items:center;gap:8px;
+      font-size:.72rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+      color:var(--gold);margin-bottom:16px;
+    }
+    .savings-row{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:8px 0;font-size:.9rem;
+    }
+    .savings-row.strike .val{text-decoration:line-through;color:var(--muted)}
+    .savings-row .lbl{color:var(--muted);font-size:.88rem}
+    .savings-row .val{font-family:var(--fm);font-weight:600;font-size:.92rem}
+    .savings-divider{height:1px;background:var(--border);margin:6px 0}
+    .savings-row.total{padding-top:12px;margin-top:2px}
+    .savings-row.total .lbl{font-weight:700;color:var(--text);font-size:.95rem}
+    .savings-row.total .val{font-family:var(--fh);font-weight:800;font-size:1.4rem}
+    .savings-you-save{
+      margin-top:12px;padding:8px 14px;
+      background:var(--green2);border:1px solid var(--green3);border-radius:8px;
+      font-size:.82rem;font-weight:600;color:var(--green);
+      display:flex;align-items:center;gap:6px;
+    }
+
+    /* Expiry */
+    .expiry-row{
+      display:flex;align-items:center;justify-content:center;gap:6px;
+      font-size:.79rem;color:var(--muted);margin-bottom:18px;
+    }
+    .expiry-t{color:var(--red);font-family:var(--fm);font-weight:600}
+
+    /* Code box */
+    .code-box{
+      background:rgba(0,229,200,.05);border:1px solid var(--teal3);
+      border-radius:12px;padding:16px 20px;margin-bottom:22px;
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+    }
+    .code-lbl{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px}
+    .code-val{font-family:var(--fm);font-size:1.55rem;font-weight:600;color:var(--teal);letter-spacing:.12em}
+    .btn-copy{
+      background:rgba(0,229,200,.08);border:1px solid var(--teal3);
+      border-radius:8px;padding:8px 15px;font-size:.8rem;
+      color:var(--teal);cursor:pointer;transition:all .15s;white-space:nowrap;font-family:var(--fb);
+    }
+    .btn-copy:hover{background:rgba(0,229,200,.15)}
+    .btn-copy.ok{background:var(--teal2)}
+
+    /* CTA stack */
+    .cta-stack{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+    .btn-wa{
+      display:flex;align-items:center;justify-content:center;gap:12px;
+      background:rgba(37,211,102,.08);
+      border:1.5px solid rgba(37,211,102,.45);
+      color:#25D366;
+      font-family:var(--fh);font-size:.97rem;font-weight:700;
+      padding:16px 24px;border-radius:12px;cursor:pointer;
+      text-decoration:none;
+      backdrop-filter:blur(8px);
+      transition:background .15s,border-color .15s,color .15s,transform .12s,box-shadow .15s;
+    }
+    .btn-wa:hover{
+      background:rgba(37,211,102,.15);
+      border-color:rgba(37,211,102,.75);
+      transform:translateY(-2px);
+      box-shadow:0 10px 30px rgba(37,211,102,.18);
+    }
+    .btn-wa svg{pointer-events:none;flex-shrink:0}
+    .wa-icon-wrap{
+      display:flex;align-items:center;justify-content:center;
+      width:32px;height:32px;border-radius:50%;
+      background:rgba(37,211,102,.12);
+      border:1px solid rgba(37,211,102,.3);
+      flex-shrink:0;
+    }
+    .btn-dl{
+      display:flex;align-items:center;justify-content:center;gap:10px;
+      background:var(--s1);color:var(--text);
+      font-family:var(--fh);font-size:.92rem;font-weight:600;
+      padding:14px 24px;border-radius:12px;border:1px solid var(--border2);
+      cursor:pointer;transition:border-color .15s,transform .12s;
+    }
+    .btn-dl:hover{border-color:rgba(255,255,255,.25);transform:translateY(-2px)}
+    .btn-dl svg{pointer-events:none}
+    .btn-retake{
+      background:none;border:none;color:var(--muted);font-size:.84rem;
+      cursor:pointer;padding:8px;font-family:var(--fb);
+      text-decoration:underline;text-underline-offset:3px;transition:color .15s;
+    }
+    .btn-retake:hover{color:var(--text)}
+
+    /* Review */
+    .rev-toggle{
+      background:none;border:1px solid var(--border);border-radius:8px;
+      padding:9px 18px;color:var(--muted);font-size:.84rem;
+      cursor:pointer;transition:all .15s;font-family:var(--fb);margin-top:4px;
+    }
+    .rev-toggle:hover{border-color:var(--border2);color:var(--text)}
+    .rev-panel{display:none;margin-top:14px;text-align:left}
+    .rev-panel.open{display:block}
+    .r-item{border-bottom:1px solid var(--border);padding:11px 0;display:flex;gap:10px;align-items:flex-start;font-size:.86rem}
+    .r-item:last-child{border-bottom:none}
+    .r-icon{flex-shrink:0;margin-top:1px}
+    .r-body{color:var(--muted);line-height:1.5}
+    .r-body strong{color:var(--text);display:block;margin-bottom:2px;font-size:.78rem}
+    .r-ok{color:var(--green)} .r-bad{color:var(--red)}
+
+    /* No discount result */
+    .no-disc-card{
+      background:var(--s1);border:1px solid var(--border);border-radius:14px;
+      padding:20px;margin-bottom:20px;text-align:center;
+    }
+    .no-disc-card p{font-size:.9rem;color:var(--muted);line-height:1.7}
+
+    /* Confetti canvas */
+    #confetti-cv{position:fixed;inset:0;pointer-events:none;z-index:50}
+
+    /* Animations */
+    @keyframes fadeup{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes slidein{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    .anim{animation:slidein .4s ease both}
+
+    /* Mobile */
+    @media(max-width:520px){
+      .reward-ladder{border-radius:10px}
+      .rl-pct{font-size:1.35rem}
+      .rl-score{font-size:.58rem}
+      .intro-h{font-size:clamp(1.7rem,7vw,2.3rem)}
+      .intro-sub{font-size:.83rem}
+      .q-card{padding:16px 18px}
+      .q-text{font-size:1rem}
+      .opt{padding:10px 14px;font-size:.87rem}
+      .opt-ltr{min-width:26px;height:26px}
+      .explanation{padding:11px 14px;font-size:.8rem}
+      .code-box{flex-direction:column;text-align:center}
+      .savings-row.total .val{font-size:1.2rem}
+      .back-btn span{display:none}
+      #s-intro{overflow-y:auto;align-items:flex-start;padding-top:70px}
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg-layer" aria-hidden="true"></div>
+<div class="bg-grid" aria-hidden="true"></div>
+<canvas id="confetti-cv" style="display:none"></canvas>
+
+<!-- Back button -->
+<a href="index.html" class="back-btn" aria-label="Back to home">
+  <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/></svg>
+  <span>Home</span>
+</a>
+
+<!-- ── INTRO ──────────────────────────────────────────────── -->
+<div id="s-intro" class="screen active">
+  <div class="intro anim">
+
+    <!-- Brand -->
+    <div class="brand-chip">
+      <svg width="6" height="6" viewBox="0 0 6 6" fill="currentColor"><circle cx="3" cy="3" r="3"/></svg>
+      MarutiNovaTech
+    </div>
+
+    <!-- Title -->
+    <h1 class="intro-h">
+      The <span class="g">SQL Skills</span> Challenge
+    </h1>
+
+    <!-- Sub — no prices -->
+    <p class="intro-sub">
+      Answer 10 real interview questions. Your score unlocks an exclusive course discount — applied at enrollment.
+    </p>
+
+    <!-- Tier strip — compact, no prices, no emojis -->
+    <div class="reward-ladder">
+      <div class="rl-card g1">
+        <div class="rl-pct">50%</div>
+        <div class="rl-off">Off</div>
+        <div class="rl-score">Score 9 – 10</div>
+      </div>
+      <div class="rl-card g2">
+        <div class="rl-pct">30%</div>
+        <div class="rl-off">Off</div>
+        <div class="rl-score">Score 7 – 8</div>
+      </div>
+      <div class="rl-card g3">
+        <div class="rl-pct">20%</div>
+        <div class="rl-off">Off</div>
+        <div class="rl-score">Score 5 – 6</div>
+      </div>
+      <div class="rl-card g4">
+        <div class="rl-pct">10%</div>
+        <div class="rl-off">Off</div>
+        <div class="rl-score">Score 1 – 4</div>
+      </div>
+    </div>
+
+    <!-- Meta — text only, no emojis -->
+    <div class="meta-row">
+      <span class="meta-pill">10 questions</span>
+      <span class="meta-pill">~5 minutes</span>
+      <span class="meta-pill">No sign-up</span>
+    </div>
+
+    <!-- Live counter -->
+    <div class="live-row">
+      <span class="live-dot"></span>
+      <span><span id="live-count">—</span> people took this challenge today</span>
+    </div>
+
+    <!-- CTA -->
+    <button class="btn-start" onclick="startQuiz()">
+      Accept the Challenge
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" style="pointer-events:none"><path d="M3.5 3a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .764.424l7-4.5a.5.5 0 0 0 0-.848l-7-4.5A.5.5 0 0 0 3.5 3z"/></svg>
+    </button>
+
+  </div>
+</div>
+
+<!-- ── QUIZ ──────────────────────────────────────────────── -->
+<div id="s-quiz" class="screen">
+  <div class="quiz">
+
+    <div class="quiz-top">
+      <div class="q-num-chip">
+        <div class="q-num-circle" id="q-num-circle">1</div>
+        <span id="q-counter">Question 1 of 10</span>
+      </div>
+      <div class="projection-chip" id="proj-chip">
+        <svg class="proj-arrow" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 9 L6 3 L10 9"/>
+        </svg>
+        <span id="proj-text">On track for —</span>
+      </div>
+      <div class="streak-chip" id="streak-chip">
+        <span class="streak-dot"></span>
+        <span id="streak-text">2 in a row</span>
+      </div>
+    </div>
+
+    <div class="q-dots" id="q-dots"></div>
+    <div class="q-bar-track"><div class="q-bar-fill" id="q-bar" style="width:0%"></div></div>
+
+    <!-- Motivational banner — shown Q4 onwards -->
+    <div class="motivate-banner" id="motivate-banner">
+      <div class="mb-tier">
+        <div class="mb-pct" id="mb-pct">—</div>
+        <div class="mb-label">Projected</div>
+      </div>
+      <div class="mb-content">
+        <div class="mb-msg" id="mb-msg"></div>
+        <div class="mb-sub" id="mb-sub"></div>
+      </div>
+    </div>
+
+    <div class="q-card" id="q-card">
+      <div class="q-card-top">
+        <div class="diff-tag easy" id="q-diff">Easy</div>
+        <div class="cat-tag" id="q-cat">Query Basics</div>
+      </div>
+      <div class="q-text" id="q-text"></div>
+      <pre class="q-code" id="q-code"></pre>
+      <div class="opts" id="q-opts"></div>
+      <div class="explanation" id="q-exp"></div>
+    </div>
+
+    <button class="btn-next" id="btn-next" onclick="nextQ()">
+      Next Question
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/></svg>
+    </button>
+
+  </div>
+</div>
+
+<!-- ── RESULT ─────────────────────────────────────────────── -->
+<div id="s-result" class="screen">
+  <div class="result anim">
+
+    <div style="text-align:center;margin-bottom:20px">
+      <span style="font-size:.7rem;color:var(--muted);font-family:var(--fm);letter-spacing:.12em;text-transform:uppercase">Challenge Complete</span>
+    </div>
+
+    <div style="text-align:center">
+      <div class="score-ring-wrap">
+        <svg viewBox="0 0 160 160">
+          <circle class="sr-track" cx="80" cy="80" r="63"/>
+          <circle class="sr-fill" id="sr-fill" cx="80" cy="80" r="63"/>
+        </svg>
+        <div class="score-inner">
+          <div class="score-n" id="score-n">0</div>
+          <div class="score-d">out of 10</div>
+        </div>
+      </div>
+
+      <div class="vs-row">
+        <span class="vs-pill" id="vs-pill">vs avg: —</span>
+        <span id="vs-txt" style="font-size:.78rem"></span>
+      </div>
+
+      <div class="disc-badge dg" id="disc-badge" style="margin-bottom:12px">50% OFF — SQL Expert</div>
+      <p class="disc-sub" id="disc-sub">Sending your discount on WhatsApp.</p>
+    </div>
+
+    <!-- Savings box (shown when discount earned) -->
+    <div class="savings-box" id="savings-box">
+      <div class="savings-hd">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M1 0 0 1l2.2 3.81A2 2 0 0 0 2 5v9.5A1.5 1.5 0 0 0 3.5 16h9a1.5 1.5 0 0 0 1.5-1.5V5a2 2 0 0 0-.2-.19L16 1 15 0 13 2H3L1 0zM2 5h12v9.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V5z"/></svg>
+        Your Exclusive Pricing Breakdown
+      </div>
+      <div class="savings-row strike">
+        <span class="lbl">Full Course Fee</span>
+        <span class="val" id="s-full">₹14,000</span>
+      </div>
+      <div class="savings-row" style="color:var(--red)">
+        <span class="lbl" id="s-disc-lbl">30% Discount</span>
+        <span class="val" id="s-disc-val" style="color:var(--red)">− ₹4,200</span>
+      </div>
+      <div class="savings-divider"></div>
+      <div class="savings-row total">
+        <span class="lbl">You Pay Only</span>
+        <span class="val" id="s-final" style="color:var(--gold)">₹9,800</span>
+      </div>
+      <div class="savings-you-save" id="s-yousave">
+        You save ₹4,200 — EMI available from ₹817/month
+      </div>
+    </div>
+
+    <!-- No discount card -->
+    <div class="no-disc-card" id="no-disc-card" style="display:none">
+      <p>Score 5+ to unlock a discount. <strong>Retake anytime</strong> — the course will get you there fast. Your current score was <span id="no-disc-score">—</span>/10.</p>
+    </div>
+
+    <div style="text-align:center">
+      <div class="expiry-row" id="expiry-row">
+        <svg width="11" height="11" viewBox="0 0 16 16" fill="currentColor" style="color:var(--red)"><path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/></svg>
+        Offer expires in <span class="expiry-t" id="expiry-t">47:59:59</span>
+      </div>
+
+      <div class="code-box" id="code-box">
+        <div>
+          <div class="code-lbl">Discount Code</div>
+          <div class="code-val" id="code-val">SQL50-XXXX</div>
+        </div>
+        <button class="btn-copy" id="btn-copy" onclick="copyCode()">Copy</button>
+      </div>
+    </div>
+
+    <div class="cta-stack">
+      <a class="btn-wa" id="btn-wa" href="#" target="_blank" rel="noopener noreferrer">
+        <span class="wa-icon-wrap">
+          <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/></svg>
+        </span>
+        Claim My Discount on WhatsApp
+      </a>
+      <button class="btn-dl" onclick="downloadCard()">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/></svg>
+        Download Result Card
+      </button>
+      <button class="btn-retake" onclick="retake()">↺ Retake Challenge</button>
+    </div>
+
+    <div style="text-align:center">
+      <button class="rev-toggle" id="rev-toggle" onclick="toggleReview()">Review My Answers</button>
+      <div class="rev-panel" id="rev-panel"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ── QUESTIONS ─────────────────────────────────────────── */
+const QS = [
+  {
+    d:'easy', cat:'Filtering & Dedup',
+    q:'Which keyword removes duplicate rows from a SELECT result?',
+    opts:['UNIQUE','DISTINCT','EXCLUSIVE','FILTER'], a:1,
+    exp:'<strong>DISTINCT</strong> eliminates duplicate rows in the output. <code>SELECT DISTINCT city FROM employees</code> returns each city once, even if it appears many times.'
+  },
+  {
+    d:'easy', cat:'Filtering',
+    q:'Which clause filters rows BEFORE they are grouped?',
+    opts:['HAVING','FILTER','LIMIT','WHERE'], a:3,
+    exp:'<strong>WHERE</strong> filters individual rows before grouping. <strong>HAVING</strong> filters groups after GROUP BY — you can\'t use aggregate functions inside WHERE.'
+  },
+  {
+    d:'easy', cat:'Query Structure',
+    q:'What is the correct logical execution order of SQL clauses?',
+    opts:[
+      'SELECT → FROM → WHERE → GROUP BY → HAVING → ORDER BY',
+      'FROM → SELECT → WHERE → GROUP BY → HAVING → ORDER BY',
+      'SELECT → FROM → GROUP BY → WHERE → HAVING → ORDER BY',
+      'FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY'
+    ], a:3,
+    exp:"SQL's logical order is: <strong>FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY</strong>. SELECT is evaluated late — that's why column aliases can't be used in WHERE or HAVING."
+  },
+  {
+    d:'easy', cat:'Joins',
+    q:'Which JOIN returns ONLY rows where the condition matches in BOTH tables?',
+    opts:['LEFT JOIN','FULL OUTER JOIN','INNER JOIN','CROSS JOIN'], a:2,
+    exp:'<strong>INNER JOIN</strong> returns only matched rows. LEFT JOIN preserves all left-table rows. FULL OUTER JOIN preserves unmatched rows from both sides.'
+  },
+  {
+    d:'medium', cat:'Aggregation',
+    q:'What is the difference between COUNT(*) and COUNT(column_name)?',
+    opts:[
+      'They are identical in all databases',
+      'COUNT(*) counts all rows; COUNT(column) skips NULL values in that column',
+      'COUNT(*) is faster but may double-count rows',
+      'COUNT(column) counts all rows including NULLs; COUNT(*) does not'
+    ], a:1,
+    exp:'<strong>COUNT(*)</strong> counts every row regardless of NULLs. <strong>COUNT(column)</strong> counts only non-NULL values in that column. This matters when a column has optional data.'
+  },
+  {
+    d:'medium', cat:'NULL Handling',
+    q:'What does COALESCE(a, b, c) return?',
+    opts:[
+      'The minimum non-NULL value among a, b, c',
+      'NULL if any argument is NULL',
+      'The first non-NULL value in the argument list',
+      'The sum of all non-NULL arguments'
+    ], a:2,
+    exp:'<strong>COALESCE</strong> returns the first argument that is not NULL. Example: <code>COALESCE(phone, email, \'No contact\')</code> returns the first contact detail that exists.'
+  },
+  {
+    d:'medium', cat:'Set Operations',
+    q:'What is the key difference between UNION and UNION ALL?',
+    opts:[
+      'UNION ALL removes duplicates; UNION keeps them',
+      'UNION removes duplicate rows; UNION ALL keeps all rows including duplicates',
+      'They produce identical results',
+      'UNION ALL only works with numeric column types'
+    ], a:1,
+    exp:'<strong>UNION</strong> deduplicates — slower. <strong>UNION ALL</strong> appends both result sets with no dedup — faster when duplicates are acceptable or impossible.'
+  },
+  {
+    d:'medium', cat:'Window Functions',
+    q:'Which window function assigns consecutive ranks with NO gaps when rows tie?',
+    opts:['RANK()','ROW_NUMBER()','NTILE()','DENSE_RANK()'], a:3,
+    exp:'<strong>DENSE_RANK()</strong> produces 1, 2, 2, 3 when rows tie. <strong>RANK()</strong> produces 1, 2, 2, 4 (skips numbers). <strong>ROW_NUMBER()</strong> always assigns unique integers regardless of ties.'
+  },
+  {
+    d:'hard', cat:'Aggregation',
+    q:'What does this query return?',
+    code:'SELECT dept, AVG(salary) AS avg_sal\nFROM employees\nGROUP BY dept\nHAVING AVG(salary) > 50000\nORDER BY avg_sal DESC;',
+    opts:[
+      'All employees in departments where average salary > 50,000',
+      "Each department's average salary, only for depts where the average exceeds 50,000, sorted highest first",
+      'The single department with the highest average salary',
+      'This fails — you cannot ORDER BY a column alias'
+    ], a:1,
+    exp:"Groups by department, computes avg salary, <strong>HAVING</strong> removes groups below 50,000, ORDER BY sorts survivors. Using a SELECT alias in ORDER BY is valid in MySQL, PostgreSQL, SQLite — NOT valid in WHERE/HAVING."
+  },
+  {
+    d:'hard', cat:'Advanced Joins',
+    q:'What does this query return?',
+    code:'SELECT *\nFROM orders o\nLEFT JOIN customers c\n  ON o.customer_id = c.id\nWHERE c.id IS NULL;',
+    opts:[
+      'All orders with their customer details',
+      'Customers who have never placed an order',
+      'Orders with no matching customer record (orphaned orders)',
+      'Nothing — LEFT JOIN and IS NULL cannot be combined'
+    ], a:2,
+    exp:'LEFT JOIN keeps all orders; unmatched customer columns become NULL. <strong>WHERE c.id IS NULL</strong> keeps only those — a classic <em>anti-join</em> for finding orphaned records.'
+  }
+];
+
+/* ── CONSTANTS ─────────────────────────────────────────── */
+const WA = '919079622142';
+const FULL_PRICE = 14000;
+const AVG_SCORE  = 5.8;
+
+/* ── STATE ─────────────────────────────────────────────── */
+let S = { cur:0, score:0, answers:[], streak:0, maxStreak:0, code:null };
+let expiryTick = null;
+
+/* ── LIVE COUNTER ─────────────────────────────────────── */
+(function(){
+  const base = 18 + Math.floor(Math.random()*14);
+  document.getElementById('live-count').textContent = base;
+  setInterval(()=>{
+    const n = +document.getElementById('live-count').textContent;
+    if(Math.random()<.35) document.getElementById('live-count').textContent = n + 1;
+  }, 4200);
+})();
+
+/* ── SCREENS ────────────────────────────────────────────── */
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.getElementById(id).scrollTop=0;
+}
+
+/* ── START ──────────────────────────────────────────────── */
+function startQuiz(){
+  S={cur:0,score:0,answers:[],streak:0,maxStreak:0,code:null};
+  document.getElementById('motivate-banner').style.display='none';
+  buildDots();
+  renderQ();
+  show('s-quiz');
+}
+
+/* ── DOTS ────────────────────────────────────────────────── */
+function buildDots(){
+  const el=document.getElementById('q-dots');
+  el.innerHTML='';
+  QS.forEach((_,i)=>{
+    const d=document.createElement('div');
+    d.className='q-dot'+(i===0?' current':'');
+    d.id='dot-'+i;
+    el.appendChild(d);
+  });
+}
+function updateDots(idx, ok){
+  document.getElementById('dot-'+idx).className='q-dot '+(ok?'done-ok':'done-bad');
+  if(idx+1<QS.length) document.getElementById('dot-'+(idx+1)).className='q-dot current';
+}
+
+/* ── RENDER QUESTION ────────────────────────────────────── */
+function renderQ(){
+  const q=QS[S.cur];
+  document.getElementById('q-num-circle').textContent=S.cur+1;
+  document.getElementById('q-counter').textContent=`Question ${S.cur+1} of ${QS.length}`;
+  document.getElementById('q-bar').style.width=(S.cur/QS.length*100)+'%';
+
+  const db=document.getElementById('q-diff');
+  db.className='diff-tag '+q.d;
+  db.textContent=q.d.charAt(0).toUpperCase()+q.d.slice(1);
+  document.getElementById('q-cat').textContent=q.cat;
+
+  document.getElementById('q-text').textContent=q.q;
+  const ce=document.getElementById('q-code');
+  if(q.code){ce.textContent=q.code;ce.style.display='block'}
+  else ce.style.display='none';
+
+  const optsEl=document.getElementById('q-opts');
+  optsEl.innerHTML='';
+  optsEl.classList.remove('answered');  /* reset dim state for next question */
+  ['A','B','C','D'].forEach((L,i)=>{
+    const b=document.createElement('button');
+    b.className='opt';
+    b.innerHTML=`<span class="opt-ltr">${L}</span><span>${q.opts[i]}</span>`;
+    b.onclick=()=>pick(i);
+    optsEl.appendChild(b);
+  });
+
+  document.getElementById('q-exp').className='explanation';
+  document.getElementById('q-exp').innerHTML='';
+  document.getElementById('btn-next').className='btn-next';
+  document.getElementById('streak-chip').className='streak-chip';
+  updateProjection();
+
+  const card=document.getElementById('q-card');
+  card.style.animation='none';
+  void card.offsetWidth;
+  card.style.animation='fadein .35s ease';
+}
+
+/* ── PROJECTION chip (top-right) ────────────────────────── */
+function updateProjection(){
+  const answered=S.cur;
+  if(answered<2){document.getElementById('proj-chip').className='projection-chip';return;}
+  const projected=Math.round((S.score/answered)*10);
+  const t=tierFor(projected);
+  const chip=document.getElementById('proj-chip');
+  const projText=document.getElementById('proj-text');
+  if(t.pct>0){
+    projText.textContent=`On track for ${t.pct}% off`;
+    chip.className='projection-chip show';
+  } else {
+    projText.textContent='';chip.className='projection-chip';
+  }
+  updateMotivateBanner();
+}
+
+/* ── MOTIVATIONAL BANNER ─────────────────────────────────── */
+function updateMotivateBanner(){
+  const banner=document.getElementById('motivate-banner');
+  const answered=S.cur;  /* questions answered so far */
+
+  /* Only show from Q4 onwards — enough signal to project */
+  if(answered<3){banner.style.display='none';return;}
+
+  const projected=Math.round((S.score/answered)*10);
+  const t=tierFor(projected);
+  const remaining=QS.length-S.cur;
+  const isLast=(S.cur===QS.length-1);
+
+  /* Accent class by tier */
+  const accentMap={50:'mb-gold',30:'mb-blue',20:'mb-gray',10:'mb-orange',0:'mb-dim'};
+  const accent=accentMap[t.pct]||'mb-dim';
+
+  /* Message copy — motivational, honest */
+  let msg,sub;
+  if(t.pct===50){
+    msg=isLast
+      ?'Final question — your 50% discount is right there. Lock it in.'
+      :`You're on course for the top discount. ${remaining} question${remaining>1?'s':''} to go.`;
+    sub=isLast?'Score this and walk away with the best deal we offer.':'Stay focused — you\'re in elite territory.';
+  } else if(t.pct===30){
+    msg=isLast
+      ?`Last question — 30% off is within reach. Make it count.`
+      :`30% discount is on track. ${remaining} question${remaining>1?'s':''} remaining.`;
+    sub=isLast?'One right answer seals the deal.':'Score a few more correctly to push for 50%.';
+  } else if(t.pct===20){
+    msg=isLast
+      ?'20% discount is secured — a strong finish could push you higher.'
+      :`You've locked in 20% off. ${remaining} question${remaining>1?'s':''} left to climb.`;
+    sub=isLast?'Get this right and you may earn 30% off.':'Answer correctly to unlock a better tier.';
+  } else {
+    msg=isLast
+      ?'Last question — you still have a 10% consolation discount locked in!'
+      :`${remaining} question${remaining>1?'s':''} left. Score 5+ to unlock 20% off!`;
+    sub=isLast?'Answer a few more correctly to push for 20% off.':'Every correct answer moves you up a tier.';
+  }
+
+  document.getElementById('mb-pct').textContent=`${t.pct}% off`;
+  document.getElementById('mb-msg').textContent=msg;
+  document.getElementById('mb-sub').textContent=sub;
+
+  banner.className=`motivate-banner ${accent}${isLast?' mb-last':''}`;
+  banner.style.display='flex';
+}
+
+/* ── PICK ANSWER ─────────────────────────────────────────── */
+function pick(chosen){
+  const q=QS[S.cur];
+  const ok=chosen===q.a;
+  if(ok){S.score++;S.streak++;}
+  else S.streak=0;
+  if(S.streak>S.maxStreak) S.maxStreak=S.streak;
+  S.answers.push({qi:S.cur,chosen,ok});
+  updateDots(S.cur,ok);
+
+  const optsContainer=document.getElementById('q-opts');
+  optsContainer.classList.add('answered');  /* dims unrelated options */
+  document.querySelectorAll('.opt').forEach((b,i)=>{
+    b.classList.add('locked');
+    if(i===q.a) b.classList.add('correct');
+    else if(i===chosen&&!ok) b.classList.add('wrong');
+  });
+
+  if(!ok){
+    const card=document.getElementById('q-card');
+    card.classList.remove('shake');
+    void card.offsetWidth;
+    card.classList.add('shake');
+  }
+
+  if(S.streak>=2){
+    const sc=document.getElementById('streak-chip');
+    document.getElementById('streak-text').textContent=`${S.streak} in a row`;
+    sc.className='streak-chip show';
+  }
+
+  const expEl=document.getElementById('q-exp');
+  const tag=ok
+    ?'<span class="exp-tag ok">Correct</span>'
+    :'<span class="exp-tag wrong">Not quite</span>';
+  expEl.innerHTML=tag+q.exp;
+  expEl.className='explanation show '+(ok?'exp-ok':'exp-wrong');
+
+  const nb=document.getElementById('btn-next');
+  const isLast=S.cur===QS.length-1;
+  nb.innerHTML=isLast
+    ?'See My Results <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M13.485 1.431a1.473 1.473 0 0 1 2.104 2.062l-7.84 9.801a1.473 1.473 0 0 1-2.12.04L.431 8.138a1.473 1.473 0 0 1 2.084-2.083l4.111 4.112 6.82-8.69a.486.486 0 0 1 .04-.046z"/></svg>'
+    :'Next Question <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/></svg>';
+  nb.className='btn-next show';
+}
+
+/* ── NEXT ────────────────────────────────────────────────── */
+function nextQ(){
+  S.cur++;
+  if(S.cur>=QS.length) showResult();
+  else renderQ();
+}
+
+/* ── TIER ─────────────────────────────────────────────────── */
+function tierFor(sc){
+  if(sc>=9) return{pct:50,label:'SQL Expert',    cls:'dg',pre:'SQL50',emoji:'',  color:'#FBBF24',
+    save:7000, pay:7000};
+  if(sc>=7) return{pct:30,label:'SQL Proficient', cls:'ds',pre:'SQL30',emoji:'',  color:'#60A5FA',
+    save:4200, pay:9800};
+  if(sc>=5) return{pct:20,label:'SQL Learner',   cls:'db',pre:'SQL20',emoji:'',  color:'#9CA3AF',
+    save:2800, pay:11200};
+  return         {pct:10,label:'SQL Beginner',   cls:'dc',pre:'SQL10',emoji:'',  color:'#F97316',
+    save:1400, pay:12600};
+}
+
+/* ── RESULT ──────────────────────────────────────────────── */
+function showResult(){
+  const sc=S.score;
+  const t=tierFor(sc);
+  const code=t.pre?mkCode(sc,t.pre):null;
+  S.code=code;
+
+  // Ring
+  const circ=2*Math.PI*63;
+  setTimeout(()=>{
+    const rf=document.getElementById('sr-fill');
+    rf.style.stroke=t.color;
+    rf.style.filter=`drop-shadow(0 0 10px ${t.color}88)`;
+    rf.style.strokeDashoffset=circ-(circ*sc/10);
+  },80);
+
+  // Count-up
+  let n=0;
+  const el=document.getElementById('score-n');
+  const iv=setInterval(()=>{el.textContent=++n;if(n>=sc)clearInterval(iv);},110);
+
+  // vs average
+  const vsPill=document.getElementById('vs-pill');
+  const vsTxt=document.getElementById('vs-txt');
+  vsPill.textContent=`Average score: ${AVG_SCORE}/10`;
+  if(sc>AVG_SCORE){vsTxt.textContent=`You beat ${Math.round((sc-AVG_SCORE)/AVG_SCORE*100)}% of test takers`;vsTxt.style.color='var(--green)'}
+  else if(sc===Math.round(AVG_SCORE)){vsTxt.textContent='You matched the average';vsTxt.style.color='var(--muted)'}
+  else{vsTxt.textContent='You can do better — retake anytime';vsTxt.style.color='var(--muted)'}
+
+  // Badge
+  const badge=document.getElementById('disc-badge');
+  badge.className='disc-badge '+t.cls;
+  badge.textContent=(t.emoji?t.emoji+' ':'')+`${t.pct}% OFF — ${t.label}`;
+
+  // Sub-text
+  const subs={
+    dg:`Outstanding! ${sc}/10 puts you in our top tier. You've unlocked the biggest discount we offer.`,
+    ds:`Great work! ${sc}/10 earns 30% off the SQL & Data Engineering course.`,
+    db:`Not bad — ${sc}/10 earns you 20% off. Start the course and you'll easily score 9+ next time.`,
+    dc:`Good attempt! ${sc}/10 earns a 10% consolation discount. Enroll and you'll be acing SQL in no time.`
+  };
+  document.getElementById('disc-sub').textContent=subs[t.cls];
+
+  // Savings box — always shown (every score earns a discount)
+  document.getElementById('savings-box').style.display='';
+  document.getElementById('no-disc-card').style.display='none';
+  document.getElementById('s-disc-lbl').textContent=`${t.pct}% Discount`;
+  document.getElementById('s-disc-val').textContent=`− ₹${t.save.toLocaleString('en-IN')}`;
+  document.getElementById('s-final').textContent=`₹${t.pay.toLocaleString('en-IN')}`;
+  document.getElementById('s-yousave').innerHTML=`You save ₹${t.save.toLocaleString('en-IN')} — EMI available from ₹${Math.ceil(t.pay/12).toLocaleString('en-IN')}/month`;
+
+  // Code box & expiry
+  if(code){
+    document.getElementById('code-val').textContent=code;
+    document.getElementById('code-box').style.display='';
+    document.getElementById('expiry-row').style.display='';
+    startExpiry();
+  } else {
+    document.getElementById('code-box').style.display='none';
+    document.getElementById('expiry-row').style.display='none';
+  }
+
+  // WhatsApp
+  const msg=t.pct>=20
+    ?`Hi! 🎯 I just scored ${sc}/10 on the MarutiNovaTech SQL Challenge!\n\n📊 Result: ${sc}/10 (${t.label})\n🏅 Discount Unlocked: ${t.pct}% OFF\n\n💰 My Pricing Breakdown:\n   Full Course Fee:   ₹14,000\n   ${t.pct}% Discount:      − ₹${t.save.toLocaleString('en-IN')}\n   ─────────────────────\n   I Pay Only:        ₹${t.pay.toLocaleString('en-IN')} 🎉\n\n🔑 My Code: ${code}\n\nCould you confirm this and share the next batch start date?`
+    :`Hi! I just took the MarutiNovaTech SQL Challenge and scored ${sc}/10.\n\nI received a 10% consolation discount and would love to enroll!\n\n🔑 My Code: ${code}\n\nCould you share the next batch start date and course details?`;
+  document.getElementById('btn-wa').href=`https://wa.me/${WA}?text=${encodeURIComponent(msg)}`;
+
+  buildReview();
+  show('s-result');
+  if(sc>=8) setTimeout(launchConfetti,400);
+}
+
+/* ── CODE ─────────────────────────────────────────────────── */
+function mkCode(sc, pre){
+  const seed=((Date.now()&0xFFFF)^(sc*7919+31337))%1679615;
+  return pre+'-'+seed.toString(36).toUpperCase().padStart(4,'0').slice(-4);
+}
+
+/* ── EXPIRY ──────────────────────────────────────────────── */
+function startExpiry(){
+  if(expiryTick)clearInterval(expiryTick);
+  let s=2*3600-1;
+  const el=document.getElementById('expiry-t');
+  function tick(){
+    el.textContent=`${pad(Math.floor(s/3600))}:${pad(Math.floor(s%3600/60))}:${pad(s%60)}`;
+    if(--s<0)clearInterval(expiryTick);
+  }
+  tick();expiryTick=setInterval(tick,1000);
+}
+function pad(n){return String(n).padStart(2,'0')}
+
+/* ── COPY ─────────────────────────────────────────────────── */
+function copyCode(){
+  const code=document.getElementById('code-val').textContent;
+  const btn=document.getElementById('btn-copy');
+  const done=()=>{btn.textContent='✓ Copied!';btn.classList.add('ok');setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('ok')},2200)};
+  navigator.clipboard?navigator.clipboard.writeText(code).then(done):(()=>{const t=document.createElement('textarea');t.value=code;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);done()})();
+}
+
+/* ── REVIEW ──────────────────────────────────────────────── */
+function buildReview(){
+  document.getElementById('rev-panel').innerHTML=S.answers.map(a=>{
+    const q=QS[a.qi];
+    const icon=a.ok
+      ?'<svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor" style="color:#10D48E;flex-shrink:0;margin-top:2px"><path d="M13.485 1.431a1.473 1.473 0 0 1 2.104 2.062l-7.84 9.801a1.473 1.473 0 0 1-2.12.04L.431 8.138a1.473 1.473 0 0 1 2.084-2.083l4.111 4.112 6.82-8.69z"/></svg>'
+      :'<svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor" style="color:#FF5A5A;flex-shrink:0;margin-top:2px"><path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/></svg>';
+    return`<div class="r-item">${icon}<div class="r-body"><strong>Q${a.qi+1}: ${q.q}</strong>${a.ok?`<span class="r-ok">${q.opts[a.chosen]}</span>`:`Your answer: <span class="r-bad">${q.opts[a.chosen]}</span> · Correct: <span class="r-ok">${q.opts[q.a]}</span>`}</div></div>`;
+  }).join('');
+}
+function toggleReview(){
+  const p=document.getElementById('rev-panel');
+  const open=p.classList.toggle('open');
+  document.getElementById('rev-toggle').textContent=open?'Hide Answers':'Review My Answers';
+}
+
+/* ── RETAKE ──────────────────────────────────────────────── */
+function retake(){
+  if(expiryTick)clearInterval(expiryTick);
+  show('s-intro');
+}
+
+/* ── CONFETTI ────────────────────────────────────────────── */
+function launchConfetti(){
+  const cv=document.getElementById('confetti-cv');
+  cv.style.display='block';
+  cv.width=window.innerWidth;cv.height=window.innerHeight;
+  const ctx=cv.getContext('2d');
+  const colors=['#00E5C8','#FBBF24','#60A5FA','#10D48E','#F87171','#C084FC'];
+  const pieces=Array.from({length:100},()=>({
+    x:Math.random()*cv.width,y:Math.random()*cv.height-cv.height,
+    vx:(Math.random()-0.5)*3,vy:Math.random()*4+2,
+    color:colors[Math.floor(Math.random()*colors.length)],
+    w:Math.random()*8+4,h:Math.random()*14+6,
+    rot:Math.random()*360,rv:(Math.random()-0.5)*8,op:1
+  }));
+  let frame=0;
+  function draw(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    pieces.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;p.rot+=p.rv;p.op=Math.max(0,p.op-(frame>90?.012:0));
+      ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);
+      ctx.globalAlpha=p.op;ctx.fillStyle=p.color;
+      ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore();
+    });
+    frame++;
+    if(frame<160)requestAnimationFrame(draw);
+    else{ctx.clearRect(0,0,cv.width,cv.height);cv.style.display='none';}
+  }
+  draw();
+}
+
+/* ── DOWNLOAD CARD ───────────────────────────────────────── */
+function downloadCard(){
+  const sc=S.score;const t=tierFor(sc);const code=S.code;
+  const W=900,H=500;
+  const cv=document.createElement('canvas');cv.width=W;cv.height=H;
+  const c=cv.getContext('2d');
+
+  // BG
+  const bg=c.createLinearGradient(0,0,W,H);
+  bg.addColorStop(0,'#080C14');bg.addColorStop(1,'#111827');
+  c.fillStyle=bg;c.fillRect(0,0,W,H);
+
+  // Grid dots
+  c.fillStyle='rgba(255,255,255,.04)';
+  for(let x=52;x<W;x+=52)for(let y=52;y<H;y+=52){c.beginPath();c.arc(x,y,1,0,Math.PI*2);c.fill();}
+
+  // Glow
+  const glow=c.createRadialGradient(W/2,H/2,10,W/2,H/2,300);
+  glow.addColorStop(0,t.color+'18');glow.addColorStop(1,'transparent');
+  c.fillStyle=glow;c.fillRect(0,0,W,H);
+
+  // Border
+  c.strokeStyle='rgba(255,255,255,.08)';c.lineWidth=1;c.strokeRect(1,1,W-2,H-2);
+
+  // Accent bar
+  c.fillStyle=t.color;c.fillRect(0,0,5,H);
+
+  // Brand
+  c.fillStyle='rgba(255,255,255,.35)';c.font='600 12px sans-serif';c.textAlign='left';c.fillText('MARUTINOVATECH · SQL SKILLS CHALLENGE',28,42);
+  c.fillStyle='rgba(255,255,255,.07)';c.fillRect(28,52,W-56,1);
+
+  // Score
+  c.fillStyle=t.color;c.font='800 110px sans-serif';c.textAlign='center';c.fillText(`${sc}/10`,W/2,200);
+
+  // Tier
+  c.fillStyle=t.color;c.font='600 18px sans-serif';c.fillText(t.label.toUpperCase(),W/2,234);
+
+  if(t.pct>0){
+    // Pricing breakdown box
+    c.fillStyle='rgba(255,255,255,.04)';c.beginPath();c.rect(W/2-190,258,380,130);c.fill();
+    c.strokeStyle='rgba(255,255,255,.1)';c.lineWidth=1;c.strokeRect(W/2-190,258,380,130);
+    c.fillStyle='rgba(255,255,255,.4)';c.font='500 11px sans-serif';
+    c.fillText(`Full Price: ₹14,000  ·  ${t.pct}% Discount: −₹${t.save.toLocaleString('en-IN')}`,W/2,285);
+    c.fillStyle='#F0F4FF';c.font='700 28px sans-serif';
+    c.fillText(`You Pay Only: ₹${t.pay.toLocaleString('en-IN')}`,W/2,324);
+    if(code){
+      c.fillStyle=t.color;c.font='600 16px monospace';
+      c.fillText(`Code: ${code}`,W/2,360);
+    }
+  }
+
+  // Footer
+  c.fillStyle='rgba(255,255,255,.2)';c.font='400 12px sans-serif';
+  c.fillText('Claim at wa.me/919079622142 · marutinovatech.com',W/2,H-24);
+
+  const a=document.createElement('a');
+  a.download=`MNT-SQL-${sc}of10.png`;a.href=cv.toDataURL('image/png');a.click();
+}
+</script>
+</body>
+</html>

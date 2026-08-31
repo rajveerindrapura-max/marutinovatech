@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SQL Reverse Challenge — Can you reverse-engineer a query?</title>
+  <meta name="description" content="10 levels. See the result. Write the query. The SQL interview skill nobody teaches.">
+  <link rel="canonical" href="https://marutinovatech.com/sql-challenge.html">
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://marutinovatech.com/sql-challenge.html">
+  <meta property="og:title" content="SQL Reverse Challenge — Can you reverse-engineer a query?">
+  <meta property="og:description" content="10 levels. See the result. Write the query. The SQL interview skill nobody teaches.">
+  <meta property="og:image" content="https://marutinovatech.com/og-sql-challenge.png">
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SQL Reverse Challenge — Can you reverse-engineer a query?">
+  <meta name="twitter:description" content="10 levels. See the result. Write the query. The SQL interview skill nobody teaches.">
+  <meta name="twitter:image" content="https://marutinovatech.com/og-sql-challenge.png">
+  <link rel="preload" href="https://cdn.jsdelivr.net/npm/sql.js@1.10.2/dist/sql-wasm.min.js" as="script">
+  <link rel="preload" href="https://cdn.jsdelivr.net/npm/sql.js@1.10.2/dist/sql-wasm.wasm" as="fetch" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <script>
+  (function() {
+    try {
+      let currentUser = null;
+      try {
+        const raw = localStorage.getItem('currentUser') || localStorage.getItem('mnt_user');
+        if (raw) currentUser = JSON.parse(raw);
+      } catch(e) {}
+      const userUnlocked = currentUser && Array.isArray(currentUser.unlockedPlaygrounds) ? currentUser.unlockedPlaygrounds.filter(m => m !== 'analytics_default') : [];
+      let userPaid = [];
+      if (currentUser && currentUser.email) {
+        try {
+          userPaid = JSON.parse(localStorage.getItem(`mnt_paid_unlocks_${currentUser.email.toLowerCase().trim()}`) || '[]');
+        } catch(e) {}
+      }
+      const isUnlocked = userPaid.includes('sql') || userUnlocked.includes('sql') || (currentUser && (currentUser.isSqlPaid || currentUser.isPaid || (Array.isArray(currentUser.unlockedCourses) && currentUser.unlockedCourses.includes('sql'))));
+      if (!isUnlocked) {
+        alert('🔒 The SQL Bootcamp lab is locked. Please unlock it for ₹399 from your Student Dashboard.');
+        window.location.href = 'dashboard.html';
+      }
+    } catch(e) {}
+  })();
+  </script>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23111111'/%3E%3Ctext x='16' y='22' font-family='monospace' font-size='10' font-weight='700' fill='%235B8DEF' text-anchor='middle'%3ESQL%3C/text%3E%3C/svg%3E">
+  <style>
+    :root {
+      --bg:#111111; --surface:#1A1A1A; --elevated:#222222;
+      --text:#EDEDEC; --muted:rgba(237,237,236,.42); --border:rgba(255,255,255,.09); --border2:rgba(255,255,255,.17);
+      --coral:#E06C75; --gold:#C9A84C;
+      --blue:#5B8DEF; --blue-dim:rgba(91,141,239,.07); --blue-border:rgba(91,141,239,.22);
+      --green:#6EBF8B; --green-dim:rgba(110,191,139,.07);
+      --fh:'Space Grotesk',sans-serif; --fb:'Inter',sans-serif; --fm:'JetBrains Mono',monospace;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{background:var(--bg);color:var(--text);font-family:var(--fb);font-size:16px;line-height:1.7;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+    button{font-family:var(--fb);cursor:pointer;border:none;outline:none}
+    button:focus-visible{outline:2px solid rgba(91,141,239,.6);outline-offset:3px;border-radius:4px}
+    code{font-family:var(--fm);background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:3px;padding:1px 5px;font-size:.87em;color:var(--blue)}
+
+    /* ── NAV ── */
+    .nav{position:sticky;top:0;z-index:200;background:rgba(17,17,17,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .nav-back{display:flex;align-items:center;gap:5px;font-size:.77rem;color:var(--muted);padding:5px 10px;border-radius:5px;transition:.15s;text-decoration:none;flex-shrink:0}
+    .nav-back:hover{color:var(--text);background:rgba(255,255,255,.05)}
+    .nav-back svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.5;pointer-events:none}
+    .nav-title{font-family:var(--fh);font-weight:600;font-size:.85rem;letter-spacing:-.01em;color:var(--text)}
+    .nav-title span{color:var(--blue)}
+    .nav-meta{font-size:.67rem;color:var(--muted);font-family:var(--fb);white-space:nowrap}
+
+    /* ── PAGE WRAPPER ── */
+    .page{min-height:calc(100vh - 52px);display:flex;align-items:flex-start;justify-content:center;padding:28px 16px 60px}
+    .game-wrap{width:100%;max-width:680px}
+
+    /* ── GAME CARD ── */
+    .rq-wrap{border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--surface)}
+    .rq-topbar{display:flex;align-items:center;justify-content:space-between;padding:11px 20px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px}
+    .rq-level-tag{font-size:.64rem;font-weight:400;letter-spacing:.02em;color:var(--muted);font-family:var(--fb)}
+    .rq-dots{display:flex;gap:5px;align-items:center}
+    .rq-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.1);transition:.2s}
+    .rq-dot.rq-done{background:var(--green)}
+    .rq-dot.rq-done.rq-crown{background:var(--gold);box-shadow:0 0 4px rgba(201,168,76,.45)}
+    .rq-dot.rq-active{background:var(--blue)}
+    .rq-timer{font-family:var(--fm);font-size:.64rem;color:var(--muted);letter-spacing:.04em}
+    .rq-streak-pill{font-size:.63rem;font-weight:500;font-family:var(--fb);color:var(--gold)}
+    .rq-body{padding:28px 32px}
+
+    /* ── SCHEMA PANEL ── */
+    .rq-schema-panel{margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+    .rq-schema-label{font-size:.6rem;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-family:var(--fb);margin-bottom:7px}
+    .rq-schema-row{display:flex;flex-direction:column;gap:7px}
+    .rq-schema-table-chip{display:inline-flex;align-items:center;gap:5px;font-size:.73rem;font-family:var(--fm);color:var(--text);font-weight:600}
+    .rq-schema-table-chip svg{color:var(--muted);flex-shrink:0;pointer-events:none}
+    .rq-schema-cols-wrap{display:flex;flex-wrap:wrap;gap:4px}
+    .rq-schema-col-chip{font-size:.7rem;font-family:var(--fm);color:var(--muted);padding:2px 7px;border-radius:3px;background:rgba(255,255,255,.04);border:1px solid var(--border)}
+    .rq-schema-col-chip .col-type{font-size:.58rem;color:rgba(237,237,236,.25);margin-left:4px;text-transform:uppercase;letter-spacing:.03em}
+
+    /* ── LEVEL CONTENT ── */
+    .rq-concept-pill{font-size:.6rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);font-family:var(--fb);display:inline-block;margin-bottom:8px}
+    .rq-clue{display:flex;align-items:flex-start;gap:10px;font-size:.81rem;color:rgba(237,237,236,.65);border-left:2px solid rgba(201,168,76,.38);padding:6px 0 6px 14px;margin-bottom:18px;line-height:1.65}
+    .rq-clue-icon{flex-shrink:0;font-size:.82rem;margin-top:1px}
+    .rq-title{font-family:var(--fh);font-size:1.32rem;font-weight:700;color:var(--text);letter-spacing:-.025em;line-height:1.25;margin:0 0 8px}
+    .rq-instruction{font-size:.875rem;color:rgba(237,237,236,.58);line-height:1.7;margin:0 0 20px}
+    .rq-section-label{font-size:.6rem;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;font-family:var(--fb)}
+    .rq-tbl-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:6px;margin-bottom:20px}
+    .rq-tbl{width:100%;border-collapse:collapse;font-size:.82rem}
+    .rq-tbl th{padding:8px 14px;text-align:left;font-size:.59rem;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);background:rgba(255,255,255,.015);border-bottom:1px solid var(--border);white-space:nowrap;font-family:var(--fb)}
+    .rq-tbl td{padding:9px 14px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--text);font-family:var(--fm);font-size:.8rem}
+    .rq-tbl tr:last-child td{border-bottom:none}
+    .rq-tbl tbody tr:hover td{background:rgba(255,255,255,.02)}
+
+    /* ── EDITOR ── */
+    .rq-editor-box{border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:12px;transition:border-color .15s;display:grid}
+    .rq-editor-box:focus-within{border-color:rgba(91,141,239,.32)}
+    .rq-editor-box>*{grid-area:1/1;font-family:var(--fm);font-size:.83rem;line-height:1.75;padding:12px 14px;min-height:70px;box-sizing:border-box;border:none;margin:0;white-space:pre-wrap;overflow-wrap:break-word;word-break:break-word;tab-size:2;border-radius:0}
+    .rq-highlight-pre{background:rgba(0,0,0,.16);color:var(--text);pointer-events:none;overflow:hidden}
+    .rq-editor{width:100%;display:block;background:transparent;color:transparent;caret-color:var(--text);resize:none;outline:none;position:relative;z-index:1}
+    .rq-editor::placeholder{color:var(--muted)}
+    .rq-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .rq-run-btn{font-family:var(--fb);font-size:.76rem;font-weight:600;letter-spacing:.01em;padding:7px 20px;border-radius:5px;background:var(--text);color:#111111;border:none;cursor:pointer;transition:opacity .15s}
+    .rq-run-btn:hover{opacity:.84}
+    .rq-hint-btn{font-family:var(--fb);font-size:.74rem;color:var(--muted);background:transparent;border:none;cursor:pointer;transition:color .15s;padding:7px 2px}
+    .rq-hint-btn:hover{color:var(--text)}
+    .rq-hint-reveal{font-size:.75rem;color:rgba(237,237,236,.48);font-style:italic}
+    .rq-output-area{margin-top:20px}
+    .rq-sep{height:1px;background:var(--border);margin:0 -32px 20px}
+    .rq-correct{display:flex;align-items:center;gap:7px;font-size:.85rem;font-weight:500;color:var(--green);margin-bottom:10px}
+    .rq-wrong{font-size:.82rem;color:var(--coral);margin-bottom:8px}
+    .rq-error-msg{font-family:var(--fm);font-size:.73rem;color:#f87171;background:rgba(248,113,113,.05);border:1px solid rgba(248,113,113,.12);border-radius:5px;padding:9px 13px;margin-bottom:12px;white-space:pre-wrap;word-break:break-word}
+    .rq-diff-hint{font-size:.75rem;color:rgba(237,237,236,.48);font-family:var(--fb);margin-top:6px;line-height:1.6}
+    .rq-diff-hint strong{color:rgba(237,237,236,.76)}
+    .rq-next-btn{font-family:var(--fb);font-size:.75rem;font-weight:400;color:var(--muted);background:transparent;border:none;cursor:pointer;transition:color .15s;padding:7px 0;letter-spacing:.01em}
+    .rq-next-btn:hover{color:var(--text)}
+    .rq-insight{border-left:2px solid rgba(91,141,239,.32);padding:0 0 0 14px;margin:12px 0;font-size:.81rem;color:rgba(237,237,236,.62);line-height:1.65}
+    .rq-insight-label{font-size:.58rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--blue);font-family:var(--fb);margin-bottom:5px}
+
+    /* ── COMPLETE / SCORE ── */
+    .rq-complete{padding:40px 32px;text-align:center}
+    .rq-complete-glyph{font-size:1.6rem;margin-bottom:12px;color:var(--green);font-family:var(--fm)}
+    .rq-complete-sub{font-size:.82rem;color:var(--muted);line-height:1.7;margin-bottom:22px;max-width:360px;margin-left:auto;margin-right:auto}
+    .rq-restart-btn{font-family:var(--fb);font-size:.74rem;color:var(--muted);background:transparent;border:none;cursor:pointer;transition:color .15s;padding:7px 0}
+    .rq-restart-btn:hover{color:var(--text)}
+    .rq-score-big{font-family:var(--fh);font-size:3.2rem;font-weight:700;color:var(--text);letter-spacing:-.05em;line-height:1}
+    .rq-score-denom{font-size:1rem;color:var(--muted);font-family:var(--fh);font-weight:400}
+    .rq-score-grade{font-size:.62rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;font-family:var(--fb);margin-top:6px}
+    .rq-breakdown{width:100%;border-collapse:collapse;font-size:.8rem;margin:20px 0 16px;text-align:left}
+    .rq-breakdown th{font-size:.58rem;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);padding:7px 10px;border-bottom:1px solid var(--border);white-space:nowrap;font-family:var(--fb)}
+    .rq-breakdown td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--text)}
+    .rq-breakdown tr:last-child td{border-bottom:none}
+    .rq-breakdown .rq-bd-pts{font-family:var(--fm);text-align:right;font-weight:500;color:var(--text)}
+    .rq-breakdown .rq-bd-zero{color:var(--muted)}
+    .rq-breakdown-foot td{border-top:1px solid var(--border)!important;border-bottom:none!important;font-weight:600;padding-top:11px!important}
+    .rq-share-btn{font-family:var(--fb);font-size:.74rem;color:var(--muted);background:transparent;border:1px solid var(--border);border-radius:5px;padding:6px 14px;cursor:pointer;transition:.15s}
+    .rq-share-btn:hover{color:var(--text);border-color:var(--border2)}
+    .rq-share-btn.copied{color:var(--green);border-color:rgba(110,191,139,.3)}
+
+    /* ── MODAL ── */
+    @keyframes rq-overlay-in{from{opacity:0}to{opacity:1}}
+    @keyframes rq-card-up{from{opacity:0;transform:translateY(18px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+    @keyframes rq-shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+    .rq-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(10px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:24px;animation:rq-overlay-in .2s ease forwards}
+    .rq-modal-card{background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:32px 36px;max-width:420px;width:100%;box-shadow:0 32px 80px rgba(0,0,0,.6);animation:rq-card-up .28s cubic-bezier(.22,1,.36,1) forwards;text-align:left}
+    .rq-modal-terminal{font-family:var(--fm);font-size:.79rem;color:rgba(237,237,236,.52);line-height:2.1;margin-bottom:4px;min-height:86px}
+    .rq-terminal-ok{color:var(--green);margin-left:6px}
+    .rq-modal-question{opacity:0;transform:translateY(10px);transition:opacity .4s ease,transform .4s ease;text-align:center}
+    .rq-modal-question.rq-visible{opacity:1;transform:translateY(0)}
+    .rq-modal-preview{font-family:var(--fh);font-size:1.8rem;font-weight:700;letter-spacing:-.04em;line-height:1;margin:0 0 22px;transition:color .18s}
+    .rq-modal-preview.rq-empty{color:rgba(237,237,236,.16)}
+    .rq-modal-preview:not(.rq-empty){color:var(--text)}
+    .rq-modal-input{font-family:var(--fb);font-size:1rem;color:var(--text);background:rgba(255,255,255,.04);border:1px solid var(--border2);border-radius:8px;padding:13px 18px;width:100%;box-sizing:border-box;outline:none;text-align:center;transition:border-color .2s,box-shadow .2s;letter-spacing:.01em}
+    .rq-modal-input:focus{border-color:rgba(91,141,239,.4);box-shadow:0 0 0 3px rgba(91,141,239,.08)}
+    .rq-modal-input::placeholder{color:var(--muted)}
+    .rq-modal-input.rq-shake{animation:rq-shake .38s ease}
+    .rq-modal-err{font-size:.72rem;color:var(--coral);min-height:22px;margin:9px 0 2px;font-family:var(--fb);font-weight:400;text-align:center}
+    .rq-modal-btn{font-family:var(--fb);font-size:.87rem;font-weight:600;letter-spacing:.01em;padding:13px 28px;border-radius:7px;background:var(--text);color:#111111;border:none;cursor:pointer;transition:opacity .15s;margin-top:6px;width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .rq-modal-btn:hover{opacity:.86}
+    .rq-modal-btn:disabled{opacity:.38;cursor:not-allowed}
+    .rq-modal-hint{font-size:.7rem;color:var(--muted);margin-top:12px;font-family:var(--fb);text-align:center}
+
+    /* ── CONFETTI ── */
+    @keyframes rq-fall{0%{transform:translateY(0) rotate(0deg);opacity:1}60%{opacity:.9}100%{transform:translateY(105vh) rotate(720deg);opacity:0}}
+
+    /* ── STREAK BANNER ── */
+    #rq-streak-banner{position:fixed;top:-110px;left:50%;transform:translateX(-50%);z-index:10000;background:rgba(28,22,8,.96);border:1px solid rgba(201,168,76,.3);border-radius:40px;padding:12px 24px 12px 18px;display:flex;align-items:center;gap:12px;box-shadow:0 8px 40px rgba(0,0,0,.7);transition:top .5s cubic-bezier(.22,1,.36,1);white-space:nowrap;pointer-events:none}
+    #rq-streak-banner.rq-sbanner-show{top:64px}
+    .rq-sbanner-title{font-family:var(--fh);font-weight:700;font-size:.88rem;color:#fbbf24;letter-spacing:-.01em}
+    .rq-sbanner-sub{font-size:.7rem;color:rgba(251,191,36,.58);font-family:var(--fb);margin-top:1px}
+
+    /* ── TABLE FLASH ── */
+    @keyframes rq-row-flash{0%{background:transparent}25%{background:rgba(110,191,139,.11)}100%{background:transparent}}
+    .rq-tbl-wrap.rq-flash .rq-tbl tbody tr td{animation:rq-row-flash .7s ease forwards}
+
+    /* ── LEVEL SLIDE-IN ── */
+    @keyframes rq-slide-in{from{opacity:0}to{opacity:1}}
+    .rq-slide-in{animation:rq-slide-in .2s ease forwards}
+
+    /* ── FLOATING SCORE ── */
+    @keyframes rq-float-up{0%{transform:translateY(0);opacity:1}100%{transform:translateY(-38px);opacity:0}}
+    .rq-float-pts{font-family:var(--fh);font-weight:700;font-size:.85rem;color:var(--green);animation:rq-float-up 1.4s ease-out forwards;pointer-events:none;margin-left:8px;display:inline-block;vertical-align:middle}
+
+    /* ── RUNNING SCORE IN TOPBAR ── */
+    .rq-pts-display{font-family:var(--fm);font-size:.64rem;color:var(--gold);letter-spacing:.04em}
+
+    /* ── HALFWAY CHECKPOINT ── */
+    .rq-halfway{padding:52px 32px;text-align:center}
+    .rq-halfway-icon{font-size:2.2rem;margin-bottom:16px;line-height:1}
+    .rq-halfway-title{font-family:var(--fh);font-size:1.38rem;font-weight:700;color:var(--text);letter-spacing:-.03em;margin:0 0 8px}
+    .rq-halfway-sub{font-size:.84rem;color:var(--muted);margin:0 0 28px;line-height:1.6}
+    .rq-halfway-stats{display:flex;justify-content:center;gap:0;margin-bottom:24px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+    .rq-halfway-stat{flex:1;padding:16px 0;display:flex;flex-direction:column;align-items:center;gap:4px}
+    .rq-halfway-stat+.rq-halfway-stat{border-left:1px solid var(--border)}
+    .rq-halfway-stat-num{font-family:var(--fh);font-size:1.5rem;font-weight:700;color:var(--text);letter-spacing:-.03em;line-height:1}
+    .rq-halfway-stat-label{font-size:.57rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-family:var(--fb)}
+    .rq-halfway-msg{font-size:.83rem;color:rgba(237,237,236,.62);border-left:2px solid rgba(91,141,239,.28);padding:0 0 0 14px;margin-bottom:28px;line-height:1.65;font-style:italic;text-align:left}
+    .rq-halfway-btn{font-family:var(--fb);font-size:.85rem;font-weight:600;letter-spacing:.01em;padding:11px 32px;border-radius:6px;background:var(--text);color:#111111;border:none;cursor:pointer;transition:opacity .15s}
+    .rq-halfway-btn:hover{opacity:.84}
+
+    /* ── REDUCED MOTION ── */
+    @media(prefers-reduced-motion:reduce){
+      *{animation-duration:.01ms!important;transition-duration:.01ms!important}
+    }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:640px){
+      .rq-body{padding:20px 18px}
+      .rq-sep{margin:0 -18px 18px}
+      .rq-title{font-size:1.1rem}
+      .page{padding:12px 10px 48px}
+      .rq-topbar{padding:10px 14px}
+      .rq-dots .rq-dot{width:6px;height:6px}
+      .rq-complete{padding:28px 18px}
+      .rq-halfway{padding:36px 18px}
+      .rq-halfway-stats{margin-bottom:20px}
+      .rq-score-big{font-size:2.6rem}
+      .rq-breakdown th,.rq-breakdown td{padding:6px 8px;font-size:.76rem}
+      .rq-tbl th,.rq-tbl td{padding:7px 10px}
+      #rq-player-name{display:none}
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <a class="nav-back" href="sql-unlocked.html">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      SQL Unlocked
+    </a>
+    <div class="nav-title"><span>Reverse</span> Challenge</div>
+    <div class="nav-meta" id="nav-progress" style="opacity:0">0 / 10</div>
+  </nav>
+
+  <main class="page">
+    <div class="game-wrap">
+      <div class="rq-wrap" id="rq-wrap">
+        <div class="rq-topbar" id="rq-topbar" style="display:none">
+          <div style="display:flex;align-items:center;gap:12px;min-width:0;overflow:hidden">
+            <span class="rq-level-tag"><span id="rq-player-name" style="color:var(--blue);margin-right:6px"></span>Level <span id="rq-level-num">1</span> / 10</span>
+            <span class="rq-timer" id="rq-timer"></span>
+            <span class="rq-streak-pill" id="rq-streak" style="display:none"></span>
+          </div>
+          <div style="display:flex;align-items:center;gap:14px;flex-shrink:0">
+            <span class="rq-pts-display" id="rq-pts-display" style="display:none"></span>
+            <div class="rq-dots" id="rq-dots"></div>
+          </div>
+        </div>
+        <div id="rq-content">
+          <div style="padding:48px 32px;text-align:center">
+            <div style="font-family:var(--fm);font-size:.78rem;color:var(--muted);letter-spacing:.06em">Loading SQL engine<span id="rq-loading-dots">...</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+  /* ── STATE ── */
+  var RQ_NAME = '';
+  var RQ_DB = null;
+  var RQ_SQL = null;
+  var RQ_CURRENT = 0;
+  var RQ_SOLVED = new Array(10).fill(false);
+  var RQ_FIRST_TRY = new Array(10).fill(true);
+  var RQ_HINT_USED = new Array(10).fill(false);
+  var RQ_ATTEMPTS = new Array(10).fill(0);
+  var RQ_TIMES = new Array(10).fill(0);
+  var RQ_STREAK = 0;
+  var RQ_TIMER_START = 0;
+  var RQ_TIMER_INT = null;
+
+  var RQ_SCHEMA = 'CREATE TABLE students(id INTEGER,name TEXT,city TEXT,score INTEGER);' +
+    "INSERT INTO students VALUES(1,'Arjun','Delhi',88);" +
+    "INSERT INTO students VALUES(2,'Priya','Mumbai',92);" +
+    "INSERT INTO students VALUES(3,'Karan','Delhi',74);" +
+    "INSERT INTO students VALUES(4,'Meera','Bangalore',95);" +
+    "INSERT INTO students VALUES(5,'Rohan','Mumbai',61);";
+
+  var RQ_LEVELS = [
+    {concept:'SELECT *',title:'All rows, all columns',
+     instruction:'The complete students table is shown — every row, every column. Write the single simplest query that reproduces this result exactly.',
+     clue:'All 5 rows, all 4 columns, nothing renamed. The shortest possible SELECT statement does the job.',
+     sql:'SELECT * FROM students',hint:'Use * after SELECT to mean "every column"',
+     insight:'In production, SELECT * is a red flag — it fetches columns you don\'t need and breaks views when the schema changes. Always name your columns explicitly.'},
+    {concept:'Specific columns',title:'Two columns only',
+     instruction:'All 5 students are here, but only 2 of the 4 columns appear. Your query must name those two columns explicitly — no wildcard.',
+     clue:'Look at the column headers in the result. Those exact names go after SELECT, separated by a comma. The table has 4 columns; you only want these 2.',
+     sql:'SELECT name, city FROM students',hint:'List exact column names after SELECT, separated by commas',
+     insight:'Naming columns explicitly makes your intent clear, reduces data transfer, and protects your query from breaking when new columns are added to the table.'},
+    {concept:'Column alias',title:'A column was renamed',
+     instruction:'Two columns, all 5 rows — but the second column header is different from its real name in the table. The data values are unchanged; only the label is different.',
+     clue:'The result shows a column called "marks" — but there is no "marks" column in students. The score column was renamed in the output using the AS keyword.',
+     sql:'SELECT name, score AS marks FROM students',hint:'Use AS after a column name to give it a different label: score AS marks',
+     insight:'Aliases are output-only — you can\'t reference them in WHERE or HAVING of the same query. The database evaluates SELECT after filtering, so the alias doesn\'t exist yet.'},
+    {concept:'Computed column',title:'A new column was derived',
+     instruction:'A "bonus_score" column appears — it is not in the students table. Compare its values to the real score column and work out what arithmetic was applied to each row.',
+     clue:'Arjun\'s score is 88, his bonus_score is 98. Priya: 92 → 102. Karan: 74 → 84. What was added? Write that calculation in your SELECT list.',
+     sql:'SELECT name, score + 10 AS bonus_score FROM students',hint:'You can do math in SELECT: score + 10 AS bonus_score',
+     insight:'Computed columns are calculated fresh on every query run — they cost CPU, not storage. Heavy expressions in SELECT on large tables will slow things down.'},
+    {concept:'WHERE — number',title:'Rows were filtered by score',
+     instruction:'Three students appear; Karan (74) and Rohan (61) are not here. Look at the scores of those who do appear — there is a numeric cutoff. Add a WHERE clause on the score column.',
+     clue:'The visible scores are 88, 92, and 95. The missing scores are 74 and 61. What value separates them? Use > or >= in your WHERE clause.',
+     sql:'SELECT * FROM students WHERE score > 75',hint:'WHERE score > [number] — compare the visible vs missing scores to find the threshold',
+     insight:'WHERE is evaluated before SELECT — the database filters rows first, then picks columns. This is why you cannot use a column alias inside WHERE of the same query.'},
+    {concept:'WHERE — text',title:'One city only',
+     instruction:'Only 2 students appear — both from the same city. Three students were excluded because their city did not match. Your WHERE clause must filter by that city name.',
+     clue:'Both visible students live in the same city. Check that city value in the result, then use it in WHERE with single quotes around the text — text values always need quotes.',
+     sql:"SELECT * FROM students WHERE city = 'Delhi'",hint:"Wrap text values in single quotes in WHERE: city = 'Delhi'",
+     insight:"String comparisons are case-sensitive in most databases. 'Delhi' ≠ 'delhi' on SQL Server. Use UPPER() or LOWER() for case-insensitive matching."},
+    {concept:'DISTINCT',title:'Duplicates removed',
+     instruction:'5 students in the table, but only 3 rows and 1 column here — and no WHERE filter was used. Repeated values in that column were collapsed into one.',
+     clue:'Delhi appears twice in the original table, Mumbai appears twice too. DISTINCT removes those duplicates. Your query returns only the city column.',
+     sql:'SELECT DISTINCT city FROM students',hint:'Put DISTINCT right after SELECT to remove duplicate values in a column',
+     insight:'DISTINCT applies to the entire row, not just one column. SELECT DISTINCT a, b removes duplicate (a, b) combinations — not just duplicate values of a alone.'},
+    {concept:'TOP / LIMIT',title:'Row count was capped',
+     instruction:'The first 3 students appear — Meera and Rohan are cut off. There is no WHERE condition. A keyword in the query simply stopped it after 3 rows.',
+     clue:'All 4 columns appear, no filtering. In SQL Server this keyword is TOP 3 (placed after SELECT). In this playground write LIMIT 3 at the end of your query.',
+     sql:'SELECT * FROM students LIMIT 3',hint:'Add LIMIT 3 at the end of your query (SQL Server: SELECT TOP 3 ...)',
+     insight:"Without ORDER BY, TOP/LIMIT returns an arbitrary set — the database picks whatever is fastest. Always pair it with ORDER BY for predictable, repeatable results."},
+    {concept:'CASE WHEN',title:'A label was generated',
+     instruction:'A "result" column shows "Pass" or "Fail" — this column was never in the students table. It was built row-by-row using a condition on the score. Find the rule and write it.',
+     clue:'Scores 88, 92, 95 → "Pass". Scores 74, 61 → "Fail". The dividing line is 75. Use CASE WHEN score >= 75 THEN \'Pass\' ELSE \'Fail\' END AS result in your SELECT.',
+     sql:"SELECT name, score, CASE WHEN score >= 75 THEN 'Pass' ELSE 'Fail' END AS result FROM students",
+     hint:"CASE WHEN condition THEN 'value' ELSE 'other' END AS alias — place it in your SELECT list",
+     insight:'CASE WHEN is evaluated row-by-row and can appear anywhere an expression is valid — SELECT, WHERE, ORDER BY, even inside aggregate functions like SUM().'},
+    {concept:'Combined',title:'Multiple clauses at once',
+     instruction:'Several things changed at once — not all rows appear, not all columns show, and one column was renamed. Break it down one step at a time before writing the full query.',
+     clue:'Step 1: only 3 students are shown (those with score ≥ 75). Step 2: only name and score columns appear. Step 3: the score column is labelled "marks". Combine WHERE + column selection + AS.',
+     sql:"SELECT name, score AS marks FROM students WHERE score >= 75",
+     hint:'Work through it: which rows? (WHERE) → which columns? (SELECT list) → any renames? (AS)',
+     insight:'Execution order: FROM → WHERE → SELECT → ORDER BY → TOP/LIMIT. Always mentally walk through this order — filter first, then shape the output.'}
+  ];
+
+  /* ── EMOJI SETS (one per level, thematic) ── */
+  var RQ_EMOJI_SETS = [
+    ['⭐','✨','🌟','💫','⭐','✨','🌟','💫','⭐','✨','🌟','💫'],  // L0  SELECT *
+    ['🎯','✅','💡','🎯','✅','💡','🎯','✅','💡','🎯','✅','💡'],  // L1  Specific cols
+    ['🏷️','📌','🔖','🏷️','📌','🔖','🏷️','📌','🔖','🏷️','📌','🔖'],  // L2  Alias
+    ['⚡','🔢','💡','⚡','🔢','💡','⚡','🔢','💡','⚡','🔢','💡'],  // L3  Computed col
+    ['🔍','💯','🎯','🔍','💯','🎯','🔍','💯','🎯','🔍','💯','🎯'],  // L4  WHERE number
+    ['💬','📝','✍️','💬','📝','✍️','💬','📝','✍️','💬','📝','✍️'],  // L5  WHERE text
+    ['💎','❄️','🦋','💎','❄️','🦋','💎','❄️','🦋','💎','❄️','🦋'],  // L6  DISTINCT
+    ['🏆','🥇','🎖️','🏅','🏆','🥇','🎖️','🏅','🏆','🥇','🎖️','🏅'],  // L7  TOP/LIMIT
+    ['🎭','🃏','🎨','🎭','🃏','🎨','🎭','🃏','🎨','🎭','🃏','🎨'],  // L8  CASE WHEN
+    ['🎉','🎊','🥳','🎂','🎉','🎊','🥳','🎂','🎉','🎊','🥳','🎂'],  // L9  Combined
+  ];
+
+  /* ── HELPERS ── */
+  function rqN() { return RQ_NAME || 'friend'; }
+  function rqSuffix() { return RQ_NAME ? ', ' + RQ_NAME : ''; }
+
+  var RQ_WRONG_POOL = [
+    function(){ return rqN() + ', the result table disagrees. Read it one more time.'; },
+    function(){ return 'SQL doesn\'t lie, ' + rqN() + '. Your query returned something different.'; },
+    function(){ return 'Close, ' + rqN() + ' — compare your columns and row count with the target.'; },
+    function(){ return 'The data is trying to tell you something, ' + rqN() + '. Listen to it.'; },
+    function(){ return 'Not this time, ' + rqN() + '. What\'s different about the target output?'; },
+    function(){ return rqN() + ', even senior devs misread results. Check each column carefully.'; },
+    function(){ return 'That\'s not it, ' + rqN() + ' — but you\'re thinking in the right direction.'; },
+    function(){ return 'Hmm, ' + rqN() + '. Output doesn\'t match. Try reading the column headers first.'; }
+  ];
+  var RQ_CORRECT_POOL = [
+    function(){ return 'That\'s it' + rqSuffix() + '. Output matches.'; },
+    function(){ return 'Correct' + rqSuffix() + '. You read that result perfectly.'; },
+    function(){ return 'Nailed it' + rqSuffix() + '. Output matches.'; },
+    function(){ return 'Exactly right' + rqSuffix() + '.'; },
+    function(){ return 'Perfect' + rqSuffix() + '. Output matches.'; }
+  ];
+  function rqWrongMsg() { return RQ_WRONG_POOL[RQ_ATTEMPTS[RQ_CURRENT] % RQ_WRONG_POOL.length](); }
+  function rqCorrectMsg() { return RQ_CORRECT_POOL[RQ_CURRENT % RQ_CORRECT_POOL.length](); }
+
+  function rqFmt(s) {
+    var m = Math.floor(s/60), sec = s%60;
+    return (m<10?'0':'')+m+':'+(sec<10?'0':'')+sec;
+  }
+  function rqStartTimer() {
+    if (RQ_TIMER_INT) clearInterval(RQ_TIMER_INT);
+    RQ_TIMER_START = Date.now();
+    var el = document.getElementById('rq-timer');
+    if (el) el.textContent = '00:00';
+    RQ_TIMER_INT = setInterval(function(){
+      var e = document.getElementById('rq-timer');
+      if (e) e.textContent = rqFmt(Math.floor((Date.now()-RQ_TIMER_START)/1000));
+    }, 1000);
+  }
+  function rqStopTimer() {
+    if (RQ_TIMER_INT) { clearInterval(RQ_TIMER_INT); RQ_TIMER_INT = null; }
+    return Math.floor((Date.now()-RQ_TIMER_START)/1000);
+  }
+  function rqPreprocess(sql) {
+    var m = sql.match(/^\s*SELECT\s+TOP\s+(\d+)\s+/i);
+    if (m) {
+      var n = m[1];
+      sql = sql.replace(/^\s*SELECT\s+TOP\s+\d+\s+/i,'SELECT ');
+      sql = sql.replace(/;?\s*$/,'')+' LIMIT '+n;
+    }
+    return sql;
+  }
+  function rqNorm(results) {
+    if (!results||results.length===0) return null;
+    var r = results[0];
+    var cols = r.columns.map(function(c){return c.toLowerCase();});
+    var sortedCols = cols.slice().sort();
+    var colIdx = {}; cols.forEach(function(c,i){colIdx[c]=i;});
+    var rows = r.values.map(function(row){
+      return sortedCols.map(function(c){return String(row[colIdx[c]]);}).join('\x01');
+    }).sort();
+    return sortedCols.join('\x00')+'\x00\x00'+rows.join('\x00');
+  }
+  function rqResultHtml(results) {
+    if (!results||results.length===0) return '<p style="padding:12px 14px;color:var(--muted);font-size:.81rem;margin:0">No rows returned.</p>';
+    var r = results[0];
+    var h = '<table class="rq-tbl"><thead><tr>';
+    r.columns.forEach(function(c){h+='<th scope="col">'+c+'</th>';});
+    h += '</tr></thead><tbody>';
+    r.values.forEach(function(row){
+      h += '<tr>';
+      row.forEach(function(v){h+='<td>'+(v===null?'<em style="color:var(--muted)">NULL</em>':v)+'</td>';});
+      h += '</tr>';
+    });
+    h += '</tbody></table>';
+    return h;
+  }
+
+  /* ── SYNTAX HIGHLIGHT ── */
+  function rqHighlight(raw) {
+    var s = raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    var strs = [];
+    s = s.replace(/'[^']*'/g,function(m){strs.push('<span style="color:#ce9178">'+m+'</span>');return '\x00'+(strs.length-1)+'\x01';});
+    s = s.replace(/\b(\d+(?:\.\d+)?)\b/g,'<span style="color:#b5cea8">$1</span>');
+    s = s.replace(/\b(SELECT|FROM|WHERE|AS|DISTINCT|TOP|LIMIT|CASE|WHEN|THEN|ELSE|END|AND|OR|NOT|NULL|ORDER|BY|GROUP|HAVING|IN|LIKE|BETWEEN|IS|SET|INTO|VALUES|JOIN|ON|INNER|LEFT|RIGHT|OUTER)\b/gi,
+      function(m){return '<span style="color:#5B8DEF;font-weight:600">'+m.toUpperCase()+'</span>';});
+    s = s.replace(/\b(students)\b/gi,'<span style="color:#6EBF8B">$1</span>');
+    s = s.replace(/\x00(\d+)\x01/g,function(_,i){return strs[parseInt(i)];});
+    return s+'\n';
+  }
+  function rqSyncHighlight() {
+    var ed = document.getElementById('rq-editor');
+    var pre = document.getElementById('rq-hl-pre');
+    if (ed&&pre) pre.innerHTML = rqHighlight(ed.value);
+  }
+
+  /* ── EMOJI POPPERS ── */
+  function rqEmojiPoppers(emojis, originEl) {
+    var rect = originEl
+      ? originEl.getBoundingClientRect()
+      : { left: window.innerWidth / 2 - 20, top: window.innerHeight * 0.5, width: 40, height: 20 };
+    var cx = rect.left + rect.width / 2;
+    /* clamp so origin never sits below 68% of viewport — prevents "firing from bottom" on scrolled pages */
+    var cy = Math.min(rect.top + rect.height / 2, window.innerHeight * 0.68);
+    var total = emojis.length;
+
+    emojis.forEach(function(emoji, idx) {
+      var el = document.createElement('span');
+      var size = 16 + Math.random() * 14;
+      el.textContent = emoji;
+      el.style.cssText =
+        'position:fixed;z-index:10002;pointer-events:none;user-select:none;line-height:1;' +
+        'font-size:' + size + 'px;' +
+        'left:' + cx + 'px;top:' + cy + 'px;' +
+        'transform:translate(-50%,-50%)';
+      document.body.appendChild(el);
+
+      /* fan upward only — angles -155° to -25° (all have negative sin → up in CSS) */
+      var spreadAngle = -155 + (idx / Math.max(total - 1, 1)) * 130 + (Math.random() - 0.5) * 22;
+      var dist = 80 + Math.random() * 130;
+      var tx = Math.cos(spreadAngle * Math.PI / 180) * dist;
+      var ty = Math.sin(spreadAngle * Math.PI / 180) * dist - 20;
+      var rot = (Math.random() - 0.5) * 50;
+      var dur = 680 + Math.random() * 380;
+
+      var anim = el.animate([
+        { transform: 'translate(-50%,-50%) scale(0) rotate(0deg)', opacity: 0 },
+        { transform: 'translate(calc(-50% + ' + (tx * 0.25) + 'px), calc(-50% + ' + (ty * 0.25) + 'px)) scale(1.5) rotate(' + (rot * 0.4) + 'deg)', opacity: 1, offset: 0.2 },
+        { transform: 'translate(calc(-50% + ' + tx + 'px), calc(-50% + ' + ty + 'px)) scale(1) rotate(' + rot + 'deg)', opacity: 0.85, offset: 0.65 },
+        { transform: 'translate(calc(-50% + ' + (tx * 1.15) + 'px), calc(-50% + ' + (ty + 36) + 'px)) scale(0.4) rotate(' + (rot * 1.6) + 'deg)', opacity: 0 }
+      ], {
+        duration: dur,
+        delay: idx * 28,
+        easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        fill: 'forwards'
+      });
+
+      anim.onfinish = function() { if (el.parentNode) el.remove(); };
+    });
+  }
+
+  /* ── CONFETTI ── */
+  function rqFireConfetti(type) {
+    var colors = type === 'streak'
+      ? ['#D29922','#f59e0b','#fbbf24','#FF9F43','#ffd700','#ff6b6b']
+      : ['#5B8DEF','#6EBF8B','#BC8CFF','#E06C75','#C9A84C','#ffffff','#a78bfa','#34d399'];
+    var count = type === 'streak' ? 90 : 60;
+    for (var i = 0; i < count; i++) {
+      (function(delay) {
+        setTimeout(function() {
+          var p = document.createElement('div');
+          var size = 4 + Math.random() * 9;
+          var isCircle = Math.random() > 0.45;
+          var duration = 1.4 + Math.random() * 1.5;
+          p.style.cssText =
+            'position:fixed;top:-16px;z-index:10001;pointer-events:none;' +
+            'left:' + (Math.random() * 100) + 'vw;' +
+            'width:' + size + 'px;' +
+            'height:' + (isCircle ? size : size * 1.8) + 'px;' +
+            'background:' + colors[Math.floor(Math.random() * colors.length)] + ';' +
+            'border-radius:' + (isCircle ? '50%' : '2px') + ';' +
+            'opacity:1;' +
+            'animation:rq-fall ' + duration + 's ease-in forwards;' +
+            'transform:rotate(' + (Math.random() * 360) + 'deg)';
+          document.body.appendChild(p);
+          setTimeout(function() { if (p.parentNode) p.remove(); }, (duration + 0.2) * 1000);
+        }, delay);
+      })(Math.random() * 500);
+    }
+  }
+
+  /* ── STREAK BANNER ── */
+  function rqStreakBanner(streak) {
+    var existing = document.getElementById('rq-streak-banner');
+    if (existing) existing.remove();
+    var msgs = {
+      3:{icon:'🔥',title:'3 in a row!',sub:'You\'re on fire, ' + rqN()},
+      5:{icon:'⚡',title:'5 streak!',sub:'Unstoppable, ' + rqN()},
+      7:{icon:'🚀',title:'7 streak!',sub:'SQL wizard mode: activated'},
+      10:{icon:'👑',title:'Perfect run!',sub:'All 10, no hints — legend tier, ' + rqN()}
+    };
+    var m = msgs[streak] || {icon:'🔥',title:streak+' in a row!',sub:'Keep going, '+rqN()};
+    var b = document.createElement('div');
+    b.id = 'rq-streak-banner';
+    b.innerHTML =
+      '<span style="font-size:1.5rem;line-height:1">'+m.icon+'</span>' +
+      '<div><div class="rq-sbanner-title">'+m.title+'</div><div class="rq-sbanner-sub">'+m.sub+'</div></div>';
+    document.body.appendChild(b);
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){ b.classList.add('rq-sbanner-show'); });
+    });
+    setTimeout(function(){
+      b.classList.remove('rq-sbanner-show');
+      setTimeout(function(){ if (b.parentNode) b.remove(); }, 600);
+    }, 2800);
+  }
+
+  /* ── DOTS + TOPBAR STATE ── */
+  function rqRenderDots() {
+    var h = '';
+    for (var i = 0; i < 10; i++) {
+      var cls = 'rq-dot';
+      if (RQ_SOLVED[i]) {
+        cls += ' rq-done';
+        if (RQ_FIRST_TRY[i] && !RQ_HINT_USED[i]) cls += ' rq-crown';
+      } else if (i === RQ_CURRENT) {
+        cls += ' rq-active';
+      }
+      var dotPts = RQ_SOLVED[i] ? '+'+rqLevelScore(i)+'pts' : (i===RQ_CURRENT?'Current':'Locked');
+      h += '<span class="'+cls+'" title="'+dotPts+'"></span>';
+    }
+    document.getElementById('rq-dots').innerHTML = h;
+    document.getElementById('rq-level-num').textContent = RQ_CURRENT + 1;
+
+    /* player name */
+    var nameEl = document.getElementById('rq-player-name');
+    if (nameEl) nameEl.textContent = RQ_NAME ? RQ_NAME + ' ·' : '';
+
+    /* running pts */
+    var totalPts = 0;
+    for (var qi = 0; qi < 10; qi++) totalPts += rqLevelScore(qi);
+    var ptsEl = document.getElementById('rq-pts-display');
+    if (ptsEl) {
+      ptsEl.textContent = totalPts + ' pts';
+      ptsEl.style.display = totalPts > 0 ? 'inline' : 'none';
+    }
+
+    /* streak pill */
+    var streakEl = document.getElementById('rq-streak');
+    if (streakEl) {
+      if (RQ_STREAK >= 2) { streakEl.textContent = '🔥 '+RQ_STREAK; streakEl.style.display = 'inline'; }
+      else streakEl.style.display = 'none';
+    }
+
+    /* nav progress */
+    var np = document.getElementById('nav-progress');
+    if (np) {
+      var done = RQ_SOLVED.filter(Boolean).length;
+      np.textContent = done + ' / 10';
+      np.style.opacity = done > 0 ? '1' : '0';
+    }
+  }
+
+  /* ── SCHEMA PANEL HTML ── */
+  function rqSchemaHtml() {
+    return '<div class="rq-schema-panel">' +
+      '<div class="rq-schema-label">Table schema</div>' +
+      '<div class="rq-schema-row">' +
+      '<span class="rq-schema-table-chip">' +
+      '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>' +
+      'students</span>' +
+      '<div class="rq-schema-cols-wrap">' +
+      '<span class="rq-schema-col-chip">id<span class="col-type">int</span></span>' +
+      '<span class="rq-schema-col-chip">name<span class="col-type">text</span></span>' +
+      '<span class="rq-schema-col-chip">city<span class="col-type">text</span></span>' +
+      '<span class="rq-schema-col-chip">score<span class="col-type">int</span></span>' +
+      '</div>' +
+      '</div>' +
+      '</div>';
+  }
+
+  /* ── RENDER LEVEL ── */
+  function rqRender(idx) {
+    RQ_CURRENT = idx;
+    document.getElementById('rq-topbar').style.display = 'flex';
+    rqRenderDots();
+    rqStartTimer();
+    var lv = RQ_LEVELS[idx];
+    var h =
+      '<div class="rq-body rq-slide-in">' +
+      '<span class="rq-concept-pill">'+lv.concept+'</span>' +
+      '<h2 class="rq-title">'+lv.title+'</h2>' +
+      '<p class="rq-instruction">'+lv.instruction+'</p>' +
+      (lv.clue ? '<div class="rq-clue"><span class="rq-clue-icon">🔍</span><span>'+lv.clue+'</span></div>' : '') +
+      '<div class="rq-section-label">Target output</div>' +
+      '<div class="rq-tbl-wrap">'+rqResultHtml(RQ_DB.exec(lv.sql))+'</div>' +
+      '<div class="rq-section-label">Your query</div>' +
+      rqSchemaHtml() +
+      '<div class="rq-editor-box"><pre class="rq-highlight-pre" id="rq-hl-pre" aria-hidden="true">\n</pre>' +
+      '<textarea class="rq-editor" id="rq-editor" placeholder="SELECT ..." spellcheck="false" autocomplete="off"></textarea></div>' +
+      '<div class="rq-actions">' +
+      '<button class="rq-run-btn" onclick="rqRun()">Run</button>' +
+      '<button class="rq-hint-btn" onclick="rqHint()">Hint</button>' +
+      '<span class="rq-hint-reveal" id="rq-hint-reveal"></span>' +
+      '</div>' +
+      '<div id="rq-output-area" class="rq-output-area" style="display:none">' +
+      '<div class="rq-sep"></div>' +
+      '<div class="rq-section-label">Your output</div>' +
+      '<div id="rq-msg"></div><div id="rq-out-tbl"></div><div id="rq-nav" style="margin-top:12px"></div>' +
+      '</div></div>';
+    document.getElementById('rq-content').innerHTML = h;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    var ed = document.getElementById('rq-editor');
+    if (ed) {
+      ed.addEventListener('keydown', function(e){ if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();rqRun();} });
+      ed.addEventListener('input', rqSyncHighlight);
+      ed.addEventListener('scroll', function(){ var p=document.getElementById('rq-hl-pre'); if(p){p.scrollTop=ed.scrollTop;p.scrollLeft=ed.scrollLeft;} });
+      ed.focus();
+    }
+  }
+
+  /* ── HINT ── */
+  function rqHint() {
+    var el = document.getElementById('rq-hint-reveal');
+    if (el && !RQ_HINT_USED[RQ_CURRENT]) {
+      el.textContent = RQ_LEVELS[RQ_CURRENT].hint;
+      RQ_HINT_USED[RQ_CURRENT] = true;
+      RQ_FIRST_TRY[RQ_CURRENT] = false;
+      RQ_STREAK = 0;
+      rqRenderDots();
+    }
+  }
+
+  /* ── RUN ── */
+  function rqRun() {
+    if (!RQ_DB) return;
+    var ed = document.getElementById('rq-editor');
+    var sql = ed ? ed.value.trim() : '';
+    if (!sql) return;
+    var oa = document.getElementById('rq-output-area');
+    var msgEl = document.getElementById('rq-msg');
+    var tblEl = document.getElementById('rq-out-tbl');
+    var navEl = document.getElementById('rq-nav');
+    oa.style.display = 'block';
+    var userRes, err;
+    try { userRes = RQ_DB.exec(rqPreprocess(sql)); } catch(e) { err = e.message; }
+    if (err) { msgEl.innerHTML='<div class="rq-error-msg">'+err+'</div>'; tblEl.innerHTML=''; navEl.innerHTML=''; return; }
+    var match = rqNorm(userRes) !== null && rqNorm(userRes) === rqNorm(RQ_DB.exec(RQ_LEVELS[RQ_CURRENT].sql));
+    tblEl.innerHTML = '<div class="rq-tbl-wrap" style="margin-bottom:0">'+rqResultHtml(userRes)+'</div>';
+
+    if (match) {
+      var elapsed = rqStopTimer();
+      var firstSolve = !RQ_SOLVED[RQ_CURRENT];
+      if (firstSolve) RQ_TIMES[RQ_CURRENT] = elapsed;
+      if (RQ_ATTEMPTS[RQ_CURRENT] > 0) RQ_FIRST_TRY[RQ_CURRENT] = false;
+      RQ_SOLVED[RQ_CURRENT] = true;
+      if (firstSolve && !RQ_HINT_USED[RQ_CURRENT]) RQ_STREAK++;
+      rqRenderDots();
+      var timerEl = document.getElementById('rq-timer');
+      if (timerEl) timerEl.textContent = rqFmt(elapsed);
+      var ins = RQ_LEVELS[RQ_CURRENT].insight;
+      var insHtml = ins ? '<div class="rq-insight"><div class="rq-insight-label">Key insight</div>'+ins+'</div>' : '';
+      var pts = rqLevelScore(RQ_CURRENT);
+      var floatPts = pts > 0 ? '<span class="rq-float-pts">+'+pts+' pts</span>' : '';
+      msgEl.innerHTML = '<div class="rq-correct" style="position:relative"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none"><polyline points="20 6 9 17 4 12"/></svg>'+rqCorrectMsg()+floatPts+'</div>'+insHtml;
+      var nextLabel = RQ_CURRENT < 9
+        ? 'Next: ' + RQ_LEVELS[RQ_CURRENT + 1].concept + ' →'
+        : 'See your score →';
+      var nextAction = RQ_CURRENT < 9 ? 'rqNext()' : 'rqShowComplete()';
+      navEl.innerHTML = '<button class="rq-next-btn" onclick="'+nextAction+'">'+nextLabel+'</button>';
+
+      /* emoji popper burst from the correct message */
+      var correctEl = msgEl.querySelector('.rq-correct');
+      var isCrown = RQ_FIRST_TRY[RQ_CURRENT] && !RQ_HINT_USED[RQ_CURRENT];
+      var emSet = isCrown
+        ? ['👑','⭐','🌟','👑','💫','⭐','👑','🌟','💫','👑','⭐','🌟']
+        : RQ_EMOJI_SETS[RQ_CURRENT];
+      rqEmojiPoppers(emSet, correctEl);
+
+      /* target table flash */
+      var targetWrap = document.querySelector('.rq-tbl-wrap');
+      if (targetWrap) {
+        targetWrap.classList.remove('rq-flash');
+        void targetWrap.offsetWidth;
+        targetWrap.classList.add('rq-flash');
+        setTimeout(function(){ targetWrap.classList.remove('rq-flash'); }, 900);
+      }
+
+      /* celebrations — only on first solve of this level */
+      if (firstSolve) {
+        var solvedCount = RQ_SOLVED.filter(Boolean).length;
+        if (solvedCount === 1) rqFireConfetti('first');
+        if (RQ_STREAK === 3 || RQ_STREAK === 5 || RQ_STREAK === 7 || RQ_STREAK === 10) {
+          setTimeout(function() {
+            rqStreakBanner(RQ_STREAK);
+            rqFireConfetti('streak');
+          }, 350);
+        }
+      }
+
+    } else {
+      RQ_ATTEMPTS[RQ_CURRENT]++;
+      RQ_FIRST_TRY[RQ_CURRENT] = false;
+      var diffHint = '';
+      var targetData = RQ_DB.exec(RQ_LEVELS[RQ_CURRENT].sql);
+      var tgt0 = targetData && targetData[0];
+      var usr0 = userRes && userRes[0];
+      if (!usr0) {
+        diffHint = 'No rows returned — check your query.';
+      } else if (tgt0) {
+        var tgtRowCount = tgt0.values.length, usrRowCount = usr0.values.length;
+        var tgtCols = tgt0.columns.map(function(c){return c.toLowerCase();}).sort().join(',');
+        var usrCols = usr0.columns.map(function(c){return c.toLowerCase();}).sort().join(',');
+        var colsMatch = tgtCols === usrCols, rowsMatch = tgtRowCount === usrRowCount;
+        if (colsMatch && !rowsMatch) {
+          diffHint = '<strong>Columns look right!</strong> Target has '+tgtRowCount+' row'+(tgtRowCount!==1?'s':'')+' — you returned '+usrRowCount+'.';
+        } else if (!colsMatch && rowsMatch) {
+          diffHint = '<strong>Row count matches!</strong> But columns are off — target wants: <strong>'+tgt0.columns.join(', ')+'</strong>';
+        } else if (!colsMatch && !rowsMatch) {
+          diffHint = 'Target: <strong>'+tgt0.columns.length+' col'+(tgt0.columns.length!==1?'s':'')+', '+tgtRowCount+' row'+(tgtRowCount!==1?'s':'')+'</strong>. You: '+usr0.columns.length+' col'+(usr0.columns.length!==1?'s':'')+', '+usrRowCount+' row'+(usrRowCount!==1?'s':'')+'.';
+        }
+      }
+      msgEl.innerHTML = '<div class="rq-wrong">'+rqWrongMsg()+'</div>'+(diffHint?'<div class="rq-diff-hint">'+diffHint+'</div>':'');
+      navEl.innerHTML = '';
+    }
+  }
+
+  function rqNext() {
+    var next = RQ_CURRENT + 1;
+    if (next === 5) {
+      rqShowHalfway();
+    } else if (next < 10) {
+      rqRender(next);
+    }
+  }
+
+  function rqShowHalfway() {
+    rqStopTimer();
+    var totalSoFar = 0, timeSoFar = 0, hintFreeSoFar = 0;
+    for (var i = 0; i < 5; i++) {
+      totalSoFar += rqLevelScore(i);
+      timeSoFar += RQ_TIMES[i];
+      if (RQ_SOLVED[i] && !RQ_HINT_USED[i]) hintFreeSoFar++;
+    }
+    var msg;
+    if (totalSoFar >= 45) msg = '"Perfect so far. You\'re reading result sets like a pro — keep that pace."';
+    else if (totalSoFar >= 35) msg = '"Solid first half. The next 5 levels introduce trickier patterns. Stay sharp."';
+    else if (totalSoFar >= 20) msg = '"Room to improve — slow down and read each column name carefully before typing."';
+    else msg = '"Second half is a fresh start. Every level from here is winnable. You\'ve got this."';
+    document.getElementById('rq-topbar').style.display = 'none';
+    document.getElementById('rq-content').innerHTML =
+      '<div class="rq-halfway">' +
+      '<div class="rq-halfway-icon">🎯</div>' +
+      '<h2 class="rq-halfway-title">Halfway there' + (RQ_NAME ? ', ' + RQ_NAME : '') + '!</h2>' +
+      '<p class="rq-halfway-sub">5 levels down. 5 to go. Here\'s how you did.</p>' +
+      '<div class="rq-halfway-stats">' +
+      '<div class="rq-halfway-stat"><div class="rq-halfway-stat-num" style="color:var(--green)">'+totalSoFar+'</div><div class="rq-halfway-stat-label">pts / 50</div></div>' +
+      '<div class="rq-halfway-stat"><div class="rq-halfway-stat-num">'+rqFmt(timeSoFar)+'</div><div class="rq-halfway-stat-label">time</div></div>' +
+      '<div class="rq-halfway-stat"><div class="rq-halfway-stat-num" style="color:var(--gold)">'+hintFreeSoFar+'</div><div class="rq-halfway-stat-label">hint-free</div></div>' +
+      '</div>' +
+      '<div class="rq-halfway-msg">'+msg+'</div>' +
+      '<button class="rq-halfway-btn" onclick="rqContinueHalfway()">Keep going →</button>' +
+      '</div>';
+  }
+
+  function rqContinueHalfway() {
+    document.getElementById('rq-topbar').style.display = 'flex';
+    rqRender(5);
+  }
+
+  function rqLevelScore(i) {
+    return RQ_SOLVED[i] ? Math.max(0, 10 - (RQ_HINT_USED[i]?3:0) - RQ_ATTEMPTS[i]) : 0;
+  }
+
+  /* ── COMPLETE ── */
+  function rqShowComplete() {
+    rqStopTimer();
+    rqFireConfetti('first');
+    var total = 0, totalTime = 0;
+    for (var i = 0; i < 10; i++) { total += rqLevelScore(i); totalTime += RQ_TIMES[i]; }
+    var done = RQ_SOLVED.filter(Boolean).length;
+    var hintFree = 0;
+    for (var j = 0; j < 10; j++) { if (RQ_SOLVED[j] && !RQ_HINT_USED[j]) hintFree++; }
+    var grade = total>=90?'Excellent':total>=70?'Good':total>=50?'Getting there':'Keep practicing';
+    var gColor = total>=90?'var(--green)':total>=70?'var(--blue)':total>=50?'var(--gold)':'var(--coral)';
+    var nameLabel = RQ_NAME ? RQ_NAME+'\'s Score' : 'Your Score';
+    var rows = '';
+    for (var k = 0; k < 10; k++) {
+      var pts = rqLevelScore(k);
+      var crownBadge = (RQ_SOLVED[k] && RQ_FIRST_TRY[k] && !RQ_HINT_USED[k]) ? ' <span style="color:var(--gold);font-size:.7rem" title="First try, no hint">★</span>' : '';
+      rows += '<tr>' +
+        '<td style="color:var(--muted);font-size:.72rem">'+(k+1)+'</td>' +
+        '<td>'+RQ_LEVELS[k].concept+crownBadge+'</td>' +
+        '<td style="text-align:center">'+(RQ_SOLVED[k]?(RQ_ATTEMPTS[k]>0?String(RQ_ATTEMPTS[k]+1):'1'):'<span style="color:var(--muted)">—</span>')+'</td>' +
+        '<td style="text-align:center">'+(RQ_HINT_USED[k]?'<span style="color:var(--gold)">hint</span>':'<span style="color:rgba(230,237,243,.22)">—</span>')+'</td>' +
+        '<td style="text-align:center;color:var(--muted);font-size:.74rem">'+(RQ_SOLVED[k]?rqFmt(RQ_TIMES[k]):'—')+'</td>' +
+        '<td class="rq-bd-pts'+((!RQ_SOLVED[k])?' rq-bd-zero':'')+'">'+pts+'</td></tr>';
+    }
+    document.getElementById('rq-topbar').style.display = 'none';
+    document.getElementById('rq-content').innerHTML =
+      '<div class="rq-complete">' +
+      '<div class="rq-complete-glyph">✓</div>' +
+      '<div style="font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-family:var(--fh);margin-bottom:6px">'+nameLabel+'</div>' +
+      '<div class="rq-score-big">'+total+'<span class="rq-score-denom"> / 100</span></div>' +
+      '<div class="rq-score-grade" style="color:'+gColor+'">'+grade+'</div>' +
+      '<div style="display:flex;gap:20px;justify-content:center;margin:14px 0 2px;font-size:.78rem;color:var(--muted);font-family:var(--fh)">' +
+      '<span>⏱ '+rqFmt(totalTime)+'</span><span>★ '+hintFree+'/10 hint-free</span></div>' +
+      '<div style="overflow-x:auto"><table class="rq-breakdown">' +
+      '<thead><tr><th>#</th><th>Concept</th><th style="text-align:center">Tries</th><th style="text-align:center">Hint</th><th style="text-align:center">Time</th><th style="text-align:right">Pts</th></tr></thead>' +
+      '<tbody>'+rows+'</tbody>' +
+      '<tfoot><tr class="rq-breakdown-foot"><td colspan="5" style="color:var(--muted);font-size:.75rem">'+done+' of 10 solved</td><td class="rq-bd-pts">'+total+'</td></tr></tfoot>' +
+      '</table></div>' +
+      '<div class="rq-complete-sub" style="margin-top:8px">10 pts per level &minus;3 hint &minus;1 per wrong attempt. ★ = first try, no hint.</div>' +
+      '<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:4px">' +
+      '<button class="rq-restart-btn" onclick="rqRestart()">Play again</button>' +
+      '<button class="rq-share-btn" id="rq-sb" onclick="rqShare()">Copy result card</button>' +
+      '</div></div>';
+    window._rqShareData = { total:total, totalTime:totalTime, hintFree:hintFree, grade:grade };
+  }
+
+  function rqShare() {
+    var d = window._rqShareData || {};
+    var nameStr = RQ_NAME ? RQ_NAME+"'s" : 'My';
+    var text = nameStr+' SQL Reverse Challenge score\n'+d.total+' / 100 — '+d.grade+'\nTime: '+rqFmt(d.totalTime)+' · Hint-free: '+d.hintFree+'/10\nmarutinovatech.com/sql-unlocked';
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(function(){
+        var btn = document.getElementById('rq-sb');
+        if (btn) { btn.textContent='Copied!'; btn.classList.add('copied'); setTimeout(function(){ if(btn){btn.textContent='Copy result card';btn.classList.remove('copied');} },2000); }
+      });
+    }
+  }
+
+  function rqRestart() {
+    RQ_SOLVED = new Array(10).fill(false);
+    RQ_FIRST_TRY = new Array(10).fill(true);
+    RQ_HINT_USED = new Array(10).fill(false);
+    RQ_ATTEMPTS = new Array(10).fill(0);
+    RQ_TIMES = new Array(10).fill(0);
+    RQ_STREAK = 0;
+    RQ_NAME = '';
+    rqShowNameModal();
+  }
+
+  /* ── MODAL ── */
+  function rqTypeLines(el, lines, onDone) {
+    var i = 0;
+    function nextLine() {
+      if (i >= lines.length) { if (onDone) onDone(); return; }
+      var line = lines[i++];
+      var row = document.createElement('div');
+      el.appendChild(row);
+      var j = 0;
+      var iv = setInterval(function() {
+        if (j < line.text.length) { row.textContent += line.text[j++]; }
+        else {
+          clearInterval(iv);
+          if (line.ok) { var ok=document.createElement('span'); ok.className='rq-terminal-ok'; ok.textContent='✓'; row.appendChild(ok); }
+          setTimeout(nextLine, line.pause||70);
+        }
+      }, 13);
+    }
+    nextLine();
+  }
+
+  function rqShowNameModal() {
+    if (document.getElementById('rq-modal-overlay')) return;
+    var ov = document.createElement('div');
+    ov.className = 'rq-modal-overlay';
+    ov.id = 'rq-modal-overlay';
+    ov.innerHTML =
+      '<div class="rq-modal-card" id="rq-modal-card">' +
+      '<div class="rq-modal-terminal" id="rq-modal-terminal"></div>' +
+      '<div class="rq-modal-question" id="rq-modal-question">' +
+      '<div class="rq-modal-preview rq-empty" id="rq-modal-preview">Hello, stranger</div>' +
+      '<input class="rq-modal-input" id="rq-modal-input" type="text" placeholder="Type your name..." maxlength="24" autocomplete="off" spellcheck="false">' +
+      '<div class="rq-modal-err" id="rq-modal-err"></div>' +
+      '<button class="rq-modal-btn" id="rq-modal-btn" onclick="rqModalSubmit()">Start the challenge →</button>' +
+      '<div class="rq-modal-hint">Press Enter to start · Name is required</div>' +
+      '</div></div>';
+    document.body.appendChild(ov);
+
+    var terminal = document.getElementById('rq-modal-terminal');
+    rqTypeLines(terminal, [
+      { text:'> Connecting to SQL engine...', pause:60, ok:true },
+      { text:'> Loading 10 challenge levels...', pause:60, ok:true },
+      { text:'> Ready. One question before we begin —', pause:40 }
+    ], function() {
+      var q = document.getElementById('rq-modal-question');
+      if (q) q.classList.add('rq-visible');
+      setTimeout(function() {
+        var inp = document.getElementById('rq-modal-input');
+        if (!inp) return;
+        inp.focus();
+        inp.addEventListener('keydown', function(e){ if(e.key==='Enter') rqModalSubmit(); });
+        inp.addEventListener('input', function() {
+          var v = inp.value.trim();
+          var cap = v ? v.charAt(0).toUpperCase()+v.slice(1) : '';
+          var preview = document.getElementById('rq-modal-preview');
+          var btn = document.getElementById('rq-modal-btn');
+          if (preview) { preview.textContent = cap ? 'Hello, '+cap+' 👋' : 'Hello, stranger'; preview.className='rq-modal-preview'+(cap?'':' rq-empty'); }
+          if (btn) btn.textContent = cap ? 'Let\'s go, '+cap+' →' : 'Start the challenge →';
+          var err = document.getElementById('rq-modal-err');
+          if (err) err.textContent = '';
+        });
+      }, 120);
+    });
+  }
+
+  function rqModalSubmit() {
+    var inp = document.getElementById('rq-modal-input');
+    var val = inp ? inp.value.trim() : '';
+    if (!val) {
+      var err = document.getElementById('rq-modal-err');
+      if (err) err.textContent = 'We need a name — even a nickname works!';
+      if (inp) { inp.classList.remove('rq-shake'); void inp.offsetWidth; inp.classList.add('rq-shake'); inp.focus(); }
+      return;
+    }
+    RQ_NAME = val.charAt(0).toUpperCase()+val.slice(1);
+    var btn = document.getElementById('rq-modal-btn');
+    if (btn) { btn.textContent='Launching your challenge...'; btn.disabled=true; }
+    if (inp) inp.disabled = true;
+    setTimeout(function() {
+      var ov = document.getElementById('rq-modal-overlay');
+      if (ov) ov.remove();
+      if (RQ_DB) rqRender(0);
+    }, 700);
+  }
+
+  /* ── LOAD ERROR ── */
+  function rqShowLoadError() {
+    var el = document.getElementById('rq-content');
+    if (el) el.innerHTML =
+      '<div style="padding:48px 28px;text-align:center">' +
+      '<div style="font-size:1.4rem;margin-bottom:12px">⚠️</div>' +
+      '<div style="font-family:var(--fh);font-size:.95rem;font-weight:600;color:var(--text);margin-bottom:8px">Couldn\'t load the SQL engine</div>' +
+      '<div style="font-size:.82rem;color:var(--muted);margin-bottom:20px;line-height:1.6">Check your internet connection and refresh the page.<br>The game requires the sql.js library from jsDelivr CDN.</div>' +
+      '<button onclick="location.reload()" style="font-family:var(--fb);font-size:.8rem;font-weight:600;padding:8px 22px;border-radius:5px;background:var(--text);color:#111;border:none;cursor:pointer">Refresh page</button>' +
+      '</div>';
+  }
+
+  /* ── SQL.JS INIT ── */
+  var _sqlInitCbs = [];
+  var _sqlReady = false;
+  var _sqlLoading = false;
+
+  function loadSQL(cb) {
+    if (_sqlReady) { cb(); return; }
+    _sqlInitCbs.push(cb);
+    if (_sqlLoading) return;
+    _sqlLoading = true;
+    var s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/sql.js@1.10.2/dist/sql-wasm.min.js';
+    s.onerror = function() { rqShowLoadError(); };
+    s.onload = function() {
+      initSqlJs({ locateFile: function(f){ return 'https://cdn.jsdelivr.net/npm/sql.js@1.10.2/dist/'+f; } })
+        .then(function(SQL) {
+          RQ_SQL = SQL;
+          _sqlReady = true;
+          _sqlLoading = false;
+          _sqlInitCbs.forEach(function(fn){ fn(); });
+          _sqlInitCbs = [];
+        })
+        .catch(function() { rqShowLoadError(); });
+    };
+    document.head.appendChild(s);
+  }
+
+  /* ── BOOT ── */
+  loadSQL(function() {
+    RQ_DB = new RQ_SQL.Database();
+    RQ_DB.run(RQ_SCHEMA);
+    rqShowNameModal();
+  });
+  </script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:datalemur.com)",
+      "WebFetch(domain:www.stratascratch.com)",
+      "WebFetch(domain:sqlpad.io)",
+      "WebFetch(domain:www.interviewquery.com)"
+    ]
+  }
+}

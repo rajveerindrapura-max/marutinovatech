@@ -1,0 +1,119 @@
+/* ══════════════════════════════════════════════════════════
+   GLOBAL CODE TERMINAL & SYNTAX HIGHLIGHTING STYLES (macOS Dark IDE)
+   Spacious Typography, Relaxed Line Height & macOS Header Layout
+   ══════════════════════════════════════════════════════════ */
+
+/* Outer Terminal Window Box */
+.terminal-window,
+.code-terminal-card {
+  background-color: #0B0F19 !important; /* Deep navy-black */
+  border: 1px solid #1E293B !important;
+  border-radius: 16px !important;
+  box-shadow: 0 12px 32px -4px rgba(0, 0, 0, 0.35) !important;
+  margin: 24px 0 !important;
+  width: 100% !important;
+  max-width: 860px !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+  padding: 0 !important;
+}
+
+/* Header Bar with Traffic Lights & Filename */
+.terminal-header,
+.code-terminal-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 14px 20px !important;
+  background-color: #0F172A !important;
+  border-bottom: 1px solid #1E293B !important;
+  margin: 0 !important;
+}
+
+.traffic-lights,
+.code-terminal-dots {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.traffic-lights .dot,
+.code-terminal-dots span,
+.code-dots span {
+  width: 10px !important;
+  height: 10px !important;
+  border-radius: 50% !important;
+  display: inline-block !important;
+}
+
+.dot-red, .traffic-lights .dot:nth-child(1), .code-terminal-dots span:nth-child(1), .code-dots span:nth-child(1) { background-color: #EF4444 !important; }
+.dot-yellow, .traffic-lights .dot:nth-child(2), .code-terminal-dots span:nth-child(2), .code-dots span:nth-child(2) { background-color: #F59E0B !important; }
+.dot-green, .traffic-lights .dot:nth-child(3), .code-terminal-dots span:nth-child(3), .code-dots span:nth-child(3) { background-color: #10B981 !important; }
+
+.terminal-filename,
+.code-terminal-filename {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace !important;
+  font-size: 12px !important;
+  color: #64748B !important;
+  letter-spacing: 0.03em !important;
+  user-select: none !important;
+}
+
+/* Code Content Body with Generous Padding & Comfortable Sizing */
+.terminal-body {
+  padding: 24px 28px !important;
+  overflow-x: auto !important;
+  background-color: #0B0F19 !important;
+}
+
+.terminal-code,
+.code-terminal-body {
+  margin: 0 !important;
+  font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Menlo, Consolas, monospace !important;
+  font-size: 13.5px !important;
+  line-height: 1.8 !important;
+  color: #E2E8F0 !important;
+  white-space: pre !important;
+  tab-size: 4 !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+/* Syntax Color Tokens */
+.kw-sql,
+.token-keyword,
+.kw, .dk, .hk {
+  color: #C084FC !important; /* Vibrant Purple */
+  font-weight: 600;
+}
+
+.fn-sql,
+.token-function,
+.fn, .kw-fn, .df, .hb {
+  color: #60A5FA !important; /* Sky Blue */
+}
+
+.str-sql,
+.token-string,
+.str, .str-lit, .ds, .hs {
+  color: #34D399 !important; /* Soft Mint */
+}
+
+.num-sql,
+.token-number,
+.num, .num-lit, .dn, .hn {
+  color: #FBBF24 !important; /* Amber Gold */
+}
+
+.code-comment,
+.token-comment,
+.cmt, .cm, .comment, .hc {
+  color: #64748B !important; /* Muted Slate Gray */
+  font-style: italic !important;
+}
+
+.token-output,
+.output {
+  color: #34D399 !important; /* Bright Green */
+}

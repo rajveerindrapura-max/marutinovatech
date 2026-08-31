@@ -1,0 +1,278 @@
+[
+  {
+    "id": "rajveerindrapura",
+    "name": "Rajveer Singh",
+    "fullName": "Rajveer Singh",
+    "email": "rajveerindrapura@gmail.com",
+    "password": "rajveerindrapura@gmail.com1",
+    "cohort": "Cohort 14",
+    "course": "SQL Bootcamp",
+    "enrolledDate": "2026-08-25",
+    "totalStudyTimeHours": 0,
+    "todayStudyTime": 0,
+    "lastTopic": "Getting Started",
+    "lastTopicUrl": "index.html",
+    "status": "Active",
+    "progressPercent": 12,
+    "streak": 0,
+    "streakDays": 0,
+    "completedTopicsCount": 3,
+    "totalTopicsCount": 25,
+    "avatar": "RS",
+    "labBreakdownHours": {
+      "sqlLab": 0,
+      "pythonSandbox": 0,
+      "pysparkLab": 0
+    },
+    "topicBreakdown": [],
+    "completedQuestions": [
+      "q03",
+      "q04",
+      "q08"
+    ],
+    "solvedQuestions": [
+      "q03",
+      "q04",
+      "q08"
+    ],
+    "pythonCompleted": [
+      "q1",
+      "q2",
+      "q3",
+      "q4"
+    ],
+    "dataAnalystCompleted": [],
+    "enrolledCourses": [
+      "sql"
+    ],
+    "unlockedPlaygrounds": [
+      "sql",
+      "python"
+    ],
+    "unlockedCourses": [
+      "sql",
+      "python"
+    ],
+    "isPaid": true,
+    "isSqlPaid": true,
+    "isPythonPaid": true,
+    "isAnalyticsPaid": false,
+    "createdAt": "2026-08-25T17:29:20.827Z",
+    "activityLog": [
+      {
+        "courseId": "python",
+        "courseName": "Python Fundamentals",
+        "itemId": "q4",
+        "itemTitle": "What does int(\"25\") return?",
+        "solvedAt": "2026-08-25T17:49:14.143Z",
+        "status": "PASSED"
+      },
+      {
+        "courseId": "python",
+        "courseName": "Python Fundamentals",
+        "itemId": "q3",
+        "itemTitle": "What is the data type of name = \"Alice\"?",
+        "solvedAt": "2026-08-25T17:49:10.977Z",
+        "status": "WRONG"
+      },
+      {
+        "courseId": "python",
+        "courseName": "Python Fundamentals",
+        "itemId": "q2",
+        "itemTitle": "What will this print?x = 5 y = 10 print(x + y)",
+        "solvedAt": "2026-08-25T17:49:09.893Z",
+        "status": "PASSED"
+      },
+      {
+        "courseId": "python",
+        "courseName": "Python Fundamentals",
+        "itemId": "q1",
+        "itemTitle": "What will print(\"Hello\" + \"World\") output?",
+        "solvedAt": "2026-08-25T17:49:08.143Z",
+        "status": "PASSED"
+      },
+      {
+        "id": "rajveerindrapura",
+        "name": "Rajveer Singh",
+        "email": "rajveerindrapura@gmail.com",
+        "addedSeconds": 8,
+        "labType": "pythonSandbox",
+        "lastTopic": "Python Fundamentals Sandbox",
+        "lastTopicUrl": "python.html"
+      },
+      {
+        "courseId": "sql",
+        "courseName": "SQL Bootcamp",
+        "itemId": "q08",
+        "itemTitle": "Department Top 3 Salaries",
+        "solvedAt": "2026-08-25T17:48:07.049Z",
+        "status": "SOLVED"
+      },
+      {
+        "courseId": "sql",
+        "courseName": "SQL Bootcamp",
+        "itemId": "q04",
+        "itemTitle": "Average Product Rating Per Category",
+        "solvedAt": "2026-08-25T17:48:03.997Z",
+        "status": "SOLVED"
+      },
+      {
+        "courseId": "sql",
+        "courseName": "SQL Bootcamp",
+        "itemId": "q03",
+        "itemTitle": "Employees Earning More Than Their Manager",
+        "solvedAt": "2026-08-25T17:48:02.748Z",
+        "status": "SOLVED"
+      }
+    ],
+    "isPowerBIPaid": false
+  },
+  {
+    "id": "demo",
+    "name": "demo 1",
+    "fullName": "demo 1",
+    "email": "demo@gmail.com",
+    "password": "demo@gmail.com1",
+    "cohort": "Cohort 14",
+    "course": "SQL Bootcamp",
+    "enrolledDate": "2026-08-25",
+    "totalStudyTimeHours": 0,
+    "todayStudyTime": 0,
+    "lastTopic": "Getting Started",
+    "lastTopicUrl": "index.html",
+    "status": "Active",
+    "progressPercent": 16,
+    "streak": 0,
+    "streakDays": 0,
+    "completedTopicsCount": 4,
+    "totalTopicsCount": 25,
+    "avatar": "D1",
+    "labBreakdownHours": {
+      "sqlLab": 0,
+      "pythonSandbox": 0,
+      "pysparkLab": 0
+    },
+    "topicBreakdown": [],
+    "completedQuestions": [
+      "q06",
+      "q07",
+      "q08",
+      "q01"
+    ],
+    "solvedQuestions": [
+      "q06",
+      "q07",
+      "q08",
+      "q01"
+    ],
+    "pythonCompleted": [
+      "q1",
+      "q2",
+      "q3",
+      "q4",
+      "q5"
+    ],
+    "dataAnalystCompleted": [],
+    "enrolledCourses": [
+      "sql"
+    ],
+    "unlockedPlaygrounds": [
+      "sql",
+      "python"
+    ],
+    "unlockedCourses": [
+      "sql",
+      "python"
+    ],
+    "isPaid": true,
+    "isSqlPaid": true,
+    "isPythonPaid": true,
+    "isAnalyticsPaid": false,
+    "createdAt": "2026-08-25T17:49:50.703Z",
+    "activityLog": [
+      {
+        "courseId": "sql",
+        "courseName": "SQL Bootcamp",
+        "itemId": "q01",
+        "itemTitle": "Find Duplicate Emails",
+        "solvedAt": "2026-08-31T10:16:18.788Z",
+        "status": "SOLVED"
+      },
+      {
+        "courseId": "python",
+        "courseName": "Python Fundamentals",
+        "itemId": "q5",
+        "itemTitle": "What is the result of float(5)?",
+        "solvedAt": "2026-08-25T17:52:11.376Z",
+        "status": "PASSED"
+      },
+      {
+        "courseId": "python",
+        "courseName": "Python Fundamentals",
+        "itemId": "q4",
+        "itemTitle": "What does int(\"25\") return?",
+        "solvedAt": "2026-08-25T17:52:09.559Z",
+        "status": "PASSED"
+      },
+      {
+        "courseId": "python",
+        "courseName": "Python Fundamentals",
+        "itemId": "q3",
+        "itemTitle": "What is the data type of name = \"Alice\"?",
+        "solvedAt": "2026-08-25T17:52:07.693Z",
+        "status": "WRONG"
+      },
+      {
+        "courseId": "python",
+        "courseName": "Python Fundamentals",
+        "itemId": "q2",
+        "itemTitle": "What will this print?x = 5 y = 10 print(x + y)",
+        "solvedAt": "2026-08-25T17:52:04.510Z",
+        "status": "PASSED"
+      },
+      {
+        "courseId": "python",
+        "courseName": "Python Fundamentals",
+        "itemId": "q1",
+        "itemTitle": "What will print(\"Hello\" + \"World\") output?",
+        "solvedAt": "2026-08-25T17:52:02.643Z",
+        "status": "PASSED"
+      },
+      {
+        "courseId": "sql",
+        "courseName": "SQL Bootcamp",
+        "itemId": "q08",
+        "itemTitle": "Department Top 3 Salaries",
+        "solvedAt": "2026-08-25T17:51:15.914Z",
+        "status": "SOLVED"
+      },
+      {
+        "courseId": "sql",
+        "courseName": "SQL Bootcamp",
+        "itemId": "q07",
+        "itemTitle": "Top 5 Customers by Order Count",
+        "solvedAt": "2026-08-25T17:51:14.763Z",
+        "status": "SOLVED"
+      },
+      {
+        "courseId": "sql",
+        "courseName": "SQL Bootcamp",
+        "itemId": "q06",
+        "itemTitle": "Second Highest Salary",
+        "solvedAt": "2026-08-25T17:51:13.585Z",
+        "status": "SOLVED"
+      },
+      {
+        "id": "demo",
+        "name": "demo 1",
+        "email": "demo@gmail.com",
+        "addedSeconds": 29,
+        "labType": "sqlLab",
+        "lastTopic": "SQL Joins & CTEs Playground",
+        "lastTopicUrl": "sql.html",
+        "status": "PASSED"
+      }
+    ],
+    "isPowerBIPaid": false
+  }
+]

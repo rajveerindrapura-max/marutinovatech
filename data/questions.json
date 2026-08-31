@@ -1,0 +1,20 @@
+[
+  { "id": "q01", "title": "01 Find Duplicate Emails", "difficulty": "BEGINNER", "category": "SELECT", "estMinutes": 10 },
+  { "id": "q02", "title": "02 Customers Who Never Ordered", "difficulty": "BEGINNER", "category": "JOINS", "estMinutes": 12 },
+  { "id": "q03", "title": "03 Employees Earning More Than Their Manager", "difficulty": "BEGINNER", "category": "JOINS", "estMinutes": 14 },
+  { "id": "q04", "title": "04 Average Product Rating Per Category", "difficulty": "BEGINNER", "category": "AGGREGATE", "estMinutes": 15 },
+  { "id": "q05", "title": "05 Rising Temperature", "difficulty": "BEGINNER", "category": "DATE FN", "estMinutes": 15 },
+  { "id": "q06", "title": "06 Second Highest Salary", "difficulty": "BEGINNER", "category": "SELECT", "estMinutes": 10 },
+  { "id": "q07", "title": "07 Top 5 Customers by Order Count", "difficulty": "BEGINNER", "category": "AGGREGATE", "estMinutes": 12 },
+  { "id": "q08", "title": "08 Department Top 3 Salaries", "difficulty": "INTERMEDIATE", "category": "WINDOW FN", "estMinutes": 20 },
+  { "id": "q09", "title": "09 Employees with Salary Above Department Average", "difficulty": "INTERMEDIATE", "category": "AGGREGATE", "estMinutes": 18 },
+  { "id": "q10", "title": "10 Month-over-Month Revenue Growth", "difficulty": "INTERMEDIATE", "category": "DATE FN", "estMinutes": 22 },
+  { "id": "q11", "title": "11 7-Day Rolling Average of Daily Active Users", "difficulty": "INTERMEDIATE", "category": "WINDOW FN", "estMinutes": 25 },
+  { "id": "q12", "title": "12 Restaurants with Declining Orders Month-over-Month", "difficulty": "INTERMEDIATE", "category": "SUBQUERY", "estMinutes": 20 },
+  { "id": "q13", "title": "13 Customers Who Ordered in Both 2023 and 2024", "difficulty": "INTERMEDIATE", "category": "SUBQUERY", "estMinutes": 18 },
+  { "id": "q14", "title": "14 Rank Scores Without Gaps (DENSE_RANK)", "difficulty": "INTERMEDIATE", "category": "WINDOW FN", "estMinutes": 15 },
+  { "id": "q15", "title": "15 Running Total of Sales by Date", "difficulty": "INTERMEDIATE", "category": "WINDOW FN", "estMinutes": 18 },
+  { "id": "q16", "title": "16 Median Employee Salary per Department", "difficulty": "EXPERT", "category": "WINDOW FN", "estMinutes": 30 },
+  { "id": "q17", "title": "17 Human Traffic of Stadium — 3+ Consecutive Days", "difficulty": "EXPERT", "category": "SUBQUERY", "estMinutes": 35 },
+  { "id": "q18", "title": "18 Trips and Users — Cancellation Rate", "difficulty": "EXPERT", "category": "JOINS", "estMinutes": 30 }
+]

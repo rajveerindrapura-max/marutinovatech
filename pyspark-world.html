@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PySpark World — Learn PySpark the Human Way | MarutiNovaTech</title>
+  <meta name="description" content="Learn PySpark one concept at a time — story, visual, code, quiz, practice. Chapter 1: Lazy Evaluation & the DAG. Free, no signup.">
+  <meta property="og:title" content="PySpark World — Learn PySpark the Human Way">
+  <meta property="og:description" content="One concept at a time — story, visual, code, quiz, practice. Chapter 1: Lazy Evaluation & the DAG. Free, no signup.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://marutinovatech.com/pyspark-world.html">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="PySpark World — Learn PySpark the Human Way">
+  <meta name="twitter:description" content="One concept at a time — story, visual, code, quiz, practice. Chapter 1: Lazy Evaluation & the DAG. Free, no signup.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230D1117'/%3E%3Ctext x='16' y='22' font-family='monospace' font-size='9' font-weight='700' fill='%23BC8CFF' text-anchor='middle'%3EPW%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Patrick+Hand&display=swap" rel="stylesheet">
+  <style>
+:root{
+  --spark:#E25822; --spark-dim:rgba(226,88,34,.1); --spark-border:rgba(226,88,34,.32);
+  --easy:#3FB950; --easy-dim:rgba(63,185,80,.1); --easy-border:rgba(63,185,80,.32);
+  --medium:#D29922; --medium-dim:rgba(210,153,34,.1); --medium-border:rgba(210,153,34,.3);
+  --hard:#F85149; --hard-dim:rgba(248,81,73,.1); --hard-border:rgba(248,81,73,.28);
+  --purple:#BC8CFF; --purple-dim:rgba(188,140,255,.1); --purple-border:rgba(188,140,255,.3);
+  --blue:#58A6FF; --blue-dim:rgba(88,166,255,.1); --blue-border:rgba(88,166,255,.28);
+  --bg:#0D1117; --bg2:#010409; --surface:#161B22; --elevated:#21262D; --card:#161B22;
+  --text:#E6EDF3; --muted:#8B949E; --border:#30363D; --border2:#484F58;
+  --fh:'Space Grotesk',sans-serif; --fb:'Inter',sans-serif; --fm:'JetBrains Mono',monospace; --fsk:'Patrick Hand',cursive;
+  --body-text:#C4CDD5;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--fb);font-size:16px;line-height:1.65;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+a{color:inherit;text-decoration:none}
+button{font-family:var(--fb);cursor:pointer;border:none;outline:none}
+
+/* Scroll progress */
+#scroll-progress{position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,#BC8CFF 0%,#58A6FF 55%,#BC8CFF 100%);z-index:999;pointer-events:none;transition:width .08s linear;border-radius:0 2px 2px 0}
+
+/* Nav */
+.pw-nav{position:sticky;top:0;z-index:200;background:rgba(6,6,14,.88);backdrop-filter:blur(28px) saturate(180%);border-bottom:1px solid rgba(255,255,255,.07);padding:0 28px;height:64px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 0 rgba(255,255,255,.04),0 4px 32px rgba(0,0,0,.35)}
+.pw-nav::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent 0%,rgba(188,140,255,.35) 40%,rgba(88,166,255,.3) 60%,transparent 100%)}
+.pw-nav-left{display:flex;align-items:center;gap:16px}
+.pw-nav-back{display:flex;align-items:center;gap:7px;font-size:.82rem;color:var(--muted);padding:6px 14px;border-radius:8px;border:1px solid var(--border);transition:.2s;letter-spacing:.01em}
+.pw-nav-back:hover{color:#BC8CFF;border-color:rgba(188,140,255,.4);background:rgba(188,140,255,.06)}
+.pw-nav-back svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.5}
+.pw-nav-brand{font-family:var(--fh);font-weight:800;font-size:1.05rem;letter-spacing:-.03em;display:flex;align-items:center;gap:8px;color:var(--text)}
+.pw-nav-brand span{background:linear-gradient(135deg,#BC8CFF,#58A6FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.pw-nav-badge{font-family:var(--fm);font-size:.6rem;background:rgba(188,140,255,.1);border:1px solid rgba(188,140,255,.28);color:rgba(188,140,255,.75);padding:3px 9px;border-radius:20px;letter-spacing:.07em;text-transform:uppercase}
+.pw-nav-right a{display:flex;align-items:center;gap:8px;font-family:var(--fh);font-size:.82rem;font-weight:600;color:#BC8CFF;padding:7px 16px;border-radius:8px;background:rgba(188,140,255,.08);border:1px solid rgba(188,140,255,.25);transition:.2s}
+.pw-nav-right a:hover{background:rgba(188,140,255,.15);border-color:rgba(188,140,255,.4)}
+
+/* Reveal */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .65s cubic-bezier(.22,1,.36,1),transform .65s cubic-bezier(.22,1,.36,1)}
+.reveal.visible{opacity:1;transform:none}
+
+/* Code blocks */
+.qb-code-wrap{margin-bottom:14px}
+.qb-code-label{display:flex;align-items:center;justify-content:space-between;font-family:var(--fm);font-size:.68rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
+.qb-copy-btn{font-family:var(--fb);font-size:.72rem;color:var(--muted);background:var(--elevated);border:1px solid var(--border);border-radius:6px;padding:3px 9px;cursor:pointer;transition:.18s}
+.qb-copy-btn:hover{color:var(--spark);border-color:var(--spark-border);background:var(--spark-dim)}
+.qb-code{font-family:var(--fm);font-size:.78rem;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;overflow-x:auto;line-height:1.8;color:var(--text);white-space:pre}
+.qb-code .kw{color:#E25822;font-weight:600}
+.qb-code .fn{color:#58A6FF}
+.qb-code .str{color:#3FB950}
+.qb-code .num{color:#D29922}
+.qb-code .cm{color:#586069}
+
+/* ── PySpark World Styles ── */
+.pw-sec{padding:80px 28px;background:linear-gradient(180deg,var(--bg) 0%,rgba(12,8,22,.98) 18%,rgba(12,8,22,.98) 82%,var(--bg) 100%);position:relative;overflow:hidden}
+.pw-sec::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(188,140,255,.045) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;z-index:0}
+.pw-sec::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:600px;height:320px;background:radial-gradient(ellipse at 50% 0%,rgba(188,140,255,.07) 0%,transparent 70%);pointer-events:none;z-index:0}
+.pw-inner{max-width:860px;margin:0 auto;position:relative;z-index:1}
+
+.pw-world-badge{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,rgba(188,140,255,.12),rgba(88,166,255,.08));border:1px solid rgba(188,140,255,.28);border-radius:30px;padding:6px 18px 6px 10px;font-family:var(--fm);font-size:.7rem;color:rgba(188,140,255,.88);letter-spacing:.07em;text-transform:uppercase;margin-bottom:22px}
+.pw-world-badge-dot{width:7px;height:7px;border-radius:50%;background:rgba(188,140,255,.7);animation:pwPulse 2.2s ease-in-out infinite}
+@keyframes pwPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+
+.pw-chapter-card{background:linear-gradient(135deg,rgba(188,140,255,.06) 0%,rgba(88,166,255,.04) 100%);border:1px solid rgba(188,140,255,.18);border-radius:20px;padding:36px 36px 30px;margin-bottom:36px;position:relative;overflow:hidden}
+.pw-chapter-card::before{content:'01';position:absolute;right:28px;top:12px;font-family:var(--fh);font-size:6.5rem;font-weight:900;color:rgba(188,140,255,.06);letter-spacing:-.05em;line-height:1;user-select:none;pointer-events:none}
+.pw-chapter-eyebrow{font-family:var(--fm);font-size:.68rem;color:rgba(188,140,255,.55);text-transform:uppercase;letter-spacing:.12em;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.pw-chapter-eyebrow::before{content:'';width:18px;height:1px;background:rgba(188,140,255,.3)}
+.pw-chapter-title{font-family:var(--fh);font-size:1.72rem;font-weight:800;color:var(--text);letter-spacing:-.04em;line-height:1.2;margin-bottom:10px}
+.pw-chapter-title mark{background:linear-gradient(135deg,#BC8CFF,#58A6FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-style:normal}
+.pw-chapter-sub{font-family:var(--fb);font-size:.9rem;color:var(--muted);line-height:1.65;max-width:540px;margin-bottom:24px}
+.pw-chapter-sub strong{color:rgba(210,195,155,.7)}
+.pw-progress{display:flex;align-items:center;flex-wrap:wrap;gap:2px}
+.pw-prog-item{display:flex;align-items:center}
+.pw-prog-dot{display:flex;align-items:center;gap:6px;padding:5px 12px 5px 8px;border-radius:20px;font-family:var(--fb);font-size:.7rem;color:var(--muted);border:1px solid transparent;transition:.2s}
+.pw-prog-dot-icon{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fm);font-size:.62rem;font-weight:700;flex-shrink:0;transition:.2s}
+.pw-prog-dot.p-story .pw-prog-dot-icon{background:rgba(88,166,255,.12);border:1px solid rgba(88,166,255,.3);color:#58A6FF}
+.pw-prog-dot.p-visual .pw-prog-dot-icon{background:rgba(210,153,34,.12);border:1px solid rgba(210,153,34,.3);color:var(--medium)}
+.pw-prog-dot.p-code .pw-prog-dot-icon{background:rgba(63,185,80,.12);border:1px solid rgba(63,185,80,.3);color:var(--easy)}
+.pw-prog-dot.p-quiz .pw-prog-dot-icon{background:rgba(188,140,255,.12);border:1px solid rgba(188,140,255,.3);color:#BC8CFF}
+.pw-prog-dot.p-practice .pw-prog-dot-icon{background:var(--spark-dim);border:1px solid var(--spark-border);color:var(--spark)}
+.pw-prog-line{width:20px;height:1px;background:rgba(255,255,255,.08);flex-shrink:0}
+
+.pw-step{border-radius:14px;overflow:hidden;margin-bottom:16px}
+.pw-step-hd{display:flex;align-items:center;gap:14px;padding:18px 22px;cursor:default}
+.pw-step-num-badge{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:.78rem;font-weight:700;flex-shrink:0}
+.pw-step-hd-text{flex:1}
+.pw-step-label{font-family:var(--fm);font-size:.62rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;margin-bottom:2px}
+.pw-step-title{font-family:var(--fh);font-size:1.02rem;font-weight:700;color:var(--text)}
+.pw-step-body{padding:0 24px 24px}
+.pw-step-body p{font-family:var(--fb);font-size:.9rem;color:rgba(230,237,243,.88);line-height:1.82;margin-bottom:12px;margin-top:16px}
+.pw-step-body p:last-child{margin-bottom:0}
+.pw-step-body code{font-family:var(--fm);font-size:.8rem;background:var(--elevated);border:1px solid var(--border);padding:1px 7px;border-radius:4px;color:#BC8CFF}
+.pw-step-body strong{color:var(--text);font-family:var(--fh)}
+
+.pw-step.s-story{background:rgba(88,166,255,.03);border:1px solid rgba(88,166,255,.12)}
+.pw-step.s-story .pw-step-hd{border-bottom:1px solid rgba(88,166,255,.1)}
+.pw-step.s-story .pw-step-num-badge{background:rgba(88,166,255,.12);border:1px solid rgba(88,166,255,.3);color:#58A6FF}
+.pw-step.s-story .pw-step-label{color:rgba(88,166,255,.65)}
+.pw-step.s-visual{background:rgba(210,153,34,.03);border:1px solid rgba(210,153,34,.12)}
+.pw-step.s-visual .pw-step-hd{border-bottom:1px solid rgba(210,153,34,.1)}
+.pw-step.s-visual .pw-step-num-badge{background:rgba(210,153,34,.12);border:1px solid rgba(210,153,34,.3);color:var(--medium)}
+.pw-step.s-visual .pw-step-label{color:rgba(210,153,34,.65)}
+.pw-step.s-code{background:rgba(63,185,80,.03);border:1px solid rgba(63,185,80,.12)}
+.pw-step.s-code .pw-step-hd{border-bottom:1px solid rgba(63,185,80,.1)}
+.pw-step.s-code .pw-step-num-badge{background:rgba(63,185,80,.12);border:1px solid rgba(63,185,80,.3);color:var(--easy)}
+.pw-step.s-code .pw-step-label{color:rgba(63,185,80,.65)}
+.pw-step.s-quiz{background:rgba(188,140,255,.03);border:1px solid rgba(188,140,255,.12)}
+.pw-step.s-quiz .pw-step-hd{border-bottom:1px solid rgba(188,140,255,.1)}
+.pw-step.s-quiz .pw-step-num-badge{background:rgba(188,140,255,.12);border:1px solid rgba(188,140,255,.3);color:#BC8CFF}
+.pw-step.s-quiz .pw-step-label{color:rgba(188,140,255,.65)}
+.pw-step.s-practice{background:rgba(226,88,34,.03);border:1px solid rgba(226,88,34,.12)}
+.pw-step.s-practice .pw-step-hd{border-bottom:1px solid rgba(226,88,34,.1)}
+.pw-step.s-practice .pw-step-num-badge{background:var(--spark-dim);border:1px solid var(--spark-border);color:var(--spark)}
+.pw-step.s-practice .pw-step-label{color:rgba(226,88,34,.65)}
+
+.pw-analogy{background:rgba(14,10,20,.8);border:1.5px dashed rgba(210,153,34,.25);border-radius:14px 16px 14px 15px / 15px 14px 16px 14px;padding:20px 22px;margin:16px 0;background-image:radial-gradient(rgba(210,153,34,.04) 1px,transparent 1px);background-size:20px 20px}
+.pw-analogy-tag{font-family:var(--fsk);font-size:.8rem;color:rgba(210,153,34,.6);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.pw-analogy p{font-family:var(--fsk);font-size:.97rem;color:rgba(230,220,190,.82);line-height:1.82;margin:0}
+.pw-analogy p+p{margin-top:10px}
+.pw-keybox{display:grid;grid-template-columns:3px 1fr;gap:14px;background:rgba(88,166,255,.05);border-radius:10px;padding:14px 16px;margin:16px 0;align-items:start}
+.pw-keybox-bar{height:100%;background:linear-gradient(180deg,#58A6FF,rgba(88,166,255,.2));border-radius:2px;min-height:40px}
+.pw-keybox-text{font-family:var(--fb);font-size:.875rem;color:rgba(230,237,243,.88);line-height:1.72}
+
+.pw-mcq-wrap{display:flex;flex-direction:column;gap:16px;margin-top:8px}
+.pw-mcq-card{background:var(--surface);border:1.5px solid var(--border);border-radius:13px;padding:20px 22px;transition:border-color .2s}
+.pw-mcq-card[data-answered="true"]{border-color:rgba(188,140,255,.2)}
+.pw-qnum{font-family:var(--fm);font-size:.65rem;color:rgba(188,140,255,.55);letter-spacing:.08em;text-transform:uppercase;margin-bottom:7px}
+.pw-mcq-q{font-family:var(--fh);font-size:.95rem;font-weight:600;color:var(--text);line-height:1.52;margin-bottom:14px}
+.pw-mcq-opts{display:flex;flex-direction:column;gap:7px}
+.pw-mcq-opt{display:flex;align-items:flex-start;gap:11px;font-family:var(--fb);font-size:.875rem;color:rgba(230,237,243,.85);background:rgba(255,255,255,.03);border:1.5px solid var(--border);border-radius:10px;padding:12px 16px;cursor:pointer;text-align:left;transition:.15s;line-height:1.52;width:100%}
+.pw-mcq-opt:hover:not(:disabled){border-color:rgba(188,140,255,.38);background:rgba(188,140,255,.06);color:var(--text)}
+.pw-mcq-opt:disabled{cursor:default}
+.pw-opt-letter{font-family:var(--fm);font-size:.65rem;font-weight:700;width:20px;height:20px;border-radius:50%;border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;color:var(--muted);transition:.15s}
+.pw-mcq-opt.pw-correct{border-color:var(--easy-border);background:rgba(63,185,80,.07)}
+.pw-mcq-opt.pw-correct .pw-opt-letter{border-color:var(--easy);color:var(--easy);background:rgba(63,185,80,.12)}
+.pw-mcq-opt.pw-wrong{border-color:var(--hard-border);background:rgba(248,81,73,.07)}
+.pw-mcq-opt.pw-wrong .pw-opt-letter{border-color:var(--hard);color:var(--hard);background:rgba(248,81,73,.12)}
+.pw-mcq-opt.pw-dim{opacity:.32}
+.pw-mcq-feedback{display:none;margin-top:12px;padding:10px 14px;background:var(--bg);border-radius:8px;border-left:3px solid var(--easy);font-family:var(--fb);font-size:.82rem;color:var(--body-text);line-height:1.68}
+.pw-mcq-feedback.fb-wrong{border-left-color:var(--hard)}
+
+.pw-score-row{display:none;align-items:center;gap:20px;padding:22px 26px;background:rgba(63,185,80,.05);border:1px solid rgba(63,185,80,.2);border-radius:14px;margin-top:20px}
+.pw-score-big{font-family:var(--fh);font-size:3rem;font-weight:900;color:var(--easy);line-height:1;letter-spacing:-.04em}
+.pw-score-info strong{display:block;font-family:var(--fh);font-size:1rem;color:var(--text);margin-bottom:3px}
+.pw-score-info span{font-family:var(--fb);font-size:.83rem;color:var(--muted)}
+
+.pw-complete{display:none;margin-top:28px;padding:40px 32px;background:linear-gradient(135deg,rgba(188,140,255,.07),rgba(88,166,255,.04));border:1.5px solid rgba(188,140,255,.22);border-radius:20px;text-align:center}
+.pw-complete-ribbon{display:inline-flex;align-items:center;gap:8px;font-family:var(--fm);font-size:.68rem;color:var(--easy);background:var(--easy-dim);border:1px solid var(--easy-border);border-radius:20px;padding:4px 14px;letter-spacing:.07em;text-transform:uppercase;margin-bottom:16px}
+.pw-complete-title{font-family:var(--fh);font-size:1.55rem;font-weight:800;color:var(--text);margin-bottom:8px;letter-spacing:-.03em}
+.pw-complete-sub{font-family:var(--fb);font-size:.88rem;color:var(--muted);margin-bottom:28px;max-width:440px;margin-left:auto;margin-right:auto;line-height:1.6}
+.pw-next-wrap{display:flex;flex-direction:column;align-items:center;gap:10px}
+.pw-next-label{font-family:var(--fm);font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+.pw-next-card{background:var(--surface);border:1.5px dashed var(--border2);border-radius:14px;padding:18px 22px;display:flex;align-items:center;gap:16px;max-width:460px;width:100%;text-align:left;position:relative;overflow:hidden}
+.pw-next-card::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(210,153,34,.04),transparent);pointer-events:none}
+.pw-next-chap-num{font-family:var(--fh);font-size:2.2rem;font-weight:900;color:rgba(210,153,34,.2);letter-spacing:-.05em;line-height:1;flex-shrink:0;width:48px}
+.pw-next-info{flex:1}
+.pw-next-title{font-family:var(--fh);font-size:.92rem;font-weight:700;color:var(--text);margin-bottom:4px}
+.pw-next-desc{font-family:var(--fb);font-size:.78rem;color:var(--muted);line-height:1.5;margin-bottom:8px}
+.pw-soon-pill{font-family:var(--fm);font-size:.62rem;color:rgba(210,153,34,.7);background:rgba(210,153,34,.08);border:1px solid rgba(210,153,34,.22);border-radius:20px;padding:3px 10px;letter-spacing:.06em;text-transform:uppercase;display:inline-block}
+
+.pw-practice-card{display:flex;align-items:center;gap:16px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin-top:16px;cursor:pointer;transition:.2s;text-decoration:none}
+.pw-practice-card:hover{border-color:var(--spark-border);background:var(--spark-dim)}
+.pw-practice-icon{width:36px;height:36px;border-radius:10px;background:var(--spark-dim);border:1px solid var(--spark-border);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pw-practice-info strong{display:block;font-family:var(--fh);font-size:.9rem;font-weight:700;color:var(--text);margin-bottom:3px}
+.pw-practice-info span{font-family:var(--fb);font-size:.78rem;color:var(--muted)}
+.pw-practice-arrow{margin-left:auto;color:var(--muted);flex-shrink:0;transition:transform .2s}
+.pw-practice-card:hover .pw-practice-arrow{transform:translateX(4px);color:var(--spark)}
+
+.pw-locked-chapters{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:12px}
+.pw-locked-chap{background:var(--surface);border:1px dashed var(--border);border-radius:12px;padding:16px 18px;opacity:.5}
+.pw-locked-chap-num{font-family:var(--fm);font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}
+.pw-locked-chap-title{font-family:var(--fh);font-size:.85rem;font-weight:600;color:var(--muted)}
+.pw-locked-chap-lock{font-size:.7rem;color:var(--muted);margin-top:6px}
+
+@media(max-width:640px){.pw-sec{padding:48px 20px}.pw-chapter-card{padding:24px 20px}.pw-step-body{padding:0 16px 20px}.pw-chapter-title{font-size:1.35rem}.pw-score-big{font-size:2.2rem}.pw-prog-line{display:none}.pw-progress{gap:6px}.pw-prog-dot{font-size:.68rem;padding:4px 10px 4px 6px}}
+@media(max-width:680px){
+  .pw-nav{padding:0 16px;height:56px}
+  .pw-nav-left{gap:10px}
+  .pw-nav-badge{display:none}
+  .pw-nav-brand{font-size:.92rem}
+  .pw-nav-back{padding:5px 10px;font-size:.78rem}
+  .pw-nav-right a{padding:6px 12px;font-size:.78rem}
+}
+@media(max-width:420px){
+  .pw-nav-back-lbl{display:none}
+  .pw-nav-back{padding:6px 9px}
+  .pw-nav-qb-lbl{display:none}
+  .pw-nav-right a{padding:7px 10px}
+}
+  </style>
+</head>
+<body>
+
+<div id="scroll-progress"></div>
+
+<!-- NAV -->
+<nav class="pw-nav">
+  <div class="pw-nav-left">
+    <a href="pyspark.html" class="pw-nav-back">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      <span class="pw-nav-back-lbl">PySpark Lab</span>
+    </a>
+    <div class="pw-nav-brand">PySpark <span>World</span></div>
+    <span class="pw-nav-badge">Made for Humans</span>
+  </div>
+  <div class="pw-nav-right">
+    <a href="pyspark.html#question-bank">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="pointer-events:none"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+      <span class="pw-nav-qb-lbl">Question Bank</span>
+    </a>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<section class="pw-sec">
+  <div class="pw-inner">
+
+    <!-- Section Header -->
+    <div class="reveal" style="text-align:center;margin-bottom:48px">
+      <div class="pw-world-badge">
+        <div class="pw-world-badge-dot"></div>
+        PySpark World · Made for Humans
+      </div>
+      <h2 class="pw-chapter-title" style="font-size:2.1rem;margin-top:16px;margin-bottom:14px;text-align:center">Learn PySpark, <mark>the human way</mark></h2>
+      <p class="pw-chapter-sub" style="max-width:520px;margin:0 auto;text-align:center">One concept at a time — story, visual, code, quiz, practice. No dry docs. No setup required.</p>
+    </div>
+
+    <!-- Chapter Card -->
+    <div class="pw-chapter-card reveal">
+      <div class="pw-chapter-eyebrow">Chapter 01</div>
+      <h3 class="pw-chapter-title">Lazy Evaluation <mark>&amp; the DAG</mark></h3>
+      <p class="pw-chapter-sub">Why is Spark so fast? Because it <strong>refuses to work</strong> until you absolutely make it. Understanding this unlocks every other Spark optimization.</p>
+      <div class="pw-progress">
+        <div class="pw-prog-item">
+          <div class="pw-prog-dot p-story"><div class="pw-prog-dot-icon">1</div>Story</div>
+        </div>
+        <div class="pw-prog-line"></div>
+        <div class="pw-prog-item">
+          <div class="pw-prog-dot p-visual"><div class="pw-prog-dot-icon">2</div>Visual</div>
+        </div>
+        <div class="pw-prog-line"></div>
+        <div class="pw-prog-item">
+          <div class="pw-prog-dot p-code"><div class="pw-prog-dot-icon">3</div>Code</div>
+        </div>
+        <div class="pw-prog-line"></div>
+        <div class="pw-prog-item">
+          <div class="pw-prog-dot p-quiz"><div class="pw-prog-dot-icon">4</div>Quiz</div>
+        </div>
+        <div class="pw-prog-line"></div>
+        <div class="pw-prog-item">
+          <div class="pw-prog-dot p-practice"><div class="pw-prog-dot-icon">5</div>Practice</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 1: STORY -->
+    <div class="pw-step s-story reveal">
+      <div class="pw-step-hd">
+        <div class="pw-step-num-badge">1</div>
+        <div class="pw-step-hd-text">
+          <div class="pw-step-label">Story</div>
+          <div class="pw-step-title">The Lazy Chef — Why Spark Waits</div>
+        </div>
+      </div>
+      <div class="pw-step-body">
+        <p>Imagine you walk into a restaurant and give the chef a complex order — <em>"steam the rice, julienne the carrots, simmer the broth, combine them, reduce the sauce, then plate."</em></p>
+        <p>A <strong>normal chef</strong> starts Step 1 immediately. But a <strong>genius chef</strong> pauses, reads the whole order first, realizes — <em>"I can steam the rice while the broth simmers. I only need carrots, so I won't even prep the potatoes."</em> — then starts. The dish arrives faster with less wasted effort.</p>
+        <div class="pw-analogy">
+          <div class="pw-analogy-tag">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="pointer-events:none;flex-shrink:0"><path d="M14 9V5a3 3 0 0 0-6 0v4"/><rect x="2" y="9" width="20" height="13" rx="2" ry="2"/></svg>
+            The Spark Analogy
+          </div>
+          <p><strong>Your code = the order slip.</strong> Every time you write <code>.filter()</code>, <code>.groupBy()</code>, or <code>.select()</code> you're adding a line to the order. Spark reads it and says "noted" — but doesn't cook. Nothing happens. No data is touched. No CPU is used.</p>
+          <p><strong>Calling <code>.show()</code> or <code>.collect()</code> = "Serve it!"</strong> This is an <strong>Action</strong>. Only now does Spark spring into motion. Before touching a single row, it reviews your entire order, builds an optimized plan called the <strong>DAG</strong>, and executes.</p>
+        </div>
+        <div class="pw-keybox">
+          <div class="pw-keybox-bar"></div>
+          <div class="pw-keybox-text"><strong>The core insight:</strong> Spark separates <em>defining work</em> (Transformations — lazy) from <em>doing work</em> (Actions — eager). This separation lets the Catalyst Optimizer rewrite your full pipeline into something far more efficient before touching data.</div>
+        </div>
+        <p>Every Spark operation is one of two types:</p>
+        <ul style="list-style:none;padding-left:0;margin-top:4px">
+          <li style="font-family:var(--fb);font-size:.88rem;color:rgba(230,237,243,.85);line-height:1.7;margin-bottom:10px"><span style="font-family:var(--fm);font-size:.68rem;background:rgba(88,166,255,.1);border:1px solid rgba(88,166,255,.25);color:#58A6FF;padding:2px 8px;border-radius:20px;margin-right:8px">TRANSFORMATION</span>Returns a new DataFrame. <strong>Lazy</strong> — nothing executes. e.g. <code>.filter()</code> <code>.select()</code> <code>.groupBy()</code> <code>.join()</code> <code>.withColumn()</code></li>
+          <li style="font-family:var(--fb);font-size:.88rem;color:rgba(230,237,243,.85);line-height:1.7"><span style="font-family:var(--fm);font-size:.68rem;background:var(--spark-dim);border:1px solid var(--spark-border);color:var(--spark);padding:2px 8px;border-radius:20px;margin-right:8px">ACTION</span>Triggers execution of the full DAG. <strong>Eager</strong>. e.g. <code>.show()</code> <code>.count()</code> <code>.collect()</code> <code>.write()</code></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- STEP 2: VISUAL -->
+    <div class="pw-step s-visual reveal">
+      <div class="pw-step-hd">
+        <div class="pw-step-num-badge">2</div>
+        <div class="pw-step-hd-text">
+          <div class="pw-step-label">Visual</div>
+          <div class="pw-step-title">The DAG — Spark's Optimized Execution Blueprint</div>
+        </div>
+      </div>
+      <div class="pw-step-body">
+        <p>When an Action fires, Spark builds a <strong>DAG</strong> (Directed Acyclic Graph) — a map of every transformation and its dependencies. The Catalyst Optimizer then rewrites it into the most efficient physical plan before execution.</p>
+        <div style="margin:20px 0;border-radius:16px;overflow:hidden">
+          <svg viewBox="0 0 560 386" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block">
+            <defs>
+              <pattern id="pwDagGrid" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+                <circle cx="1" cy="1" r="0.7" fill="rgba(255,255,255,0.05)"/>
+              </pattern>
+            </defs>
+            <rect width="560" height="386" fill="rgba(8,4,14,0.95)"/>
+            <rect width="560" height="386" fill="url(#pwDagGrid)"/>
+            <text x="147" y="18" text-anchor="middle" font-family="Patrick Hand, cursive" font-size="11" fill="rgba(255,255,255,0.22)">you write this (nothing executes yet)</text>
+            <rect x="27" y="26" width="240" height="48" rx="10" fill="rgba(88,166,255,0.07)" stroke="rgba(88,166,255,0.3)" stroke-width="1.5" stroke-dasharray="7,3"/>
+            <text x="147" y="46" text-anchor="middle" font-family="Patrick Hand, cursive" font-size="13.5" fill="#58A6FF">employees.parquet</text>
+            <text x="147" y="63" text-anchor="middle" font-family="Patrick Hand, cursive" font-size="10.5" fill="rgba(88,166,255,0.5)">10 million rows · 8 columns · on disk</text>
+            <line x1="147" y1="74" x2="147" y2="97" stroke="rgba(88,166,255,0.22)" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <polygon points="142,97 152,97 147,106" fill="rgba(88,166,255,0.35)"/>
+            <rect x="27" y="107" width="240" height="44" rx="10" fill="rgba(88,166,255,0.05)" stroke="rgba(88,166,255,0.2)" stroke-width="1.5"/>
+            <text x="54" y="123" font-family="Patrick Hand, cursive" font-size="9.5" fill="rgba(88,166,255,0.38)" letter-spacing="0.06em">TRANSFORMATION</text>
+            <text x="147" y="141" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#7CC8FF">.filter(dept == "Engineering")</text>
+            <line x1="147" y1="151" x2="147" y2="172" stroke="rgba(88,166,255,0.22)" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <polygon points="142,172 152,172 147,181" fill="rgba(88,166,255,0.35)"/>
+            <rect x="27" y="182" width="240" height="44" rx="10" fill="rgba(88,166,255,0.05)" stroke="rgba(88,166,255,0.2)" stroke-width="1.5"/>
+            <text x="54" y="198" font-family="Patrick Hand, cursive" font-size="9.5" fill="rgba(88,166,255,0.38)" letter-spacing="0.06em">TRANSFORMATION</text>
+            <text x="147" y="216" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#7CC8FF">.groupBy("dept")</text>
+            <line x1="147" y1="226" x2="147" y2="247" stroke="rgba(88,166,255,0.22)" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <polygon points="142,247 152,247 147,256" fill="rgba(88,166,255,0.35)"/>
+            <rect x="27" y="257" width="240" height="44" rx="10" fill="rgba(88,166,255,0.05)" stroke="rgba(88,166,255,0.2)" stroke-width="1.5"/>
+            <text x="54" y="273" font-family="Patrick Hand, cursive" font-size="9.5" fill="rgba(88,166,255,0.38)" letter-spacing="0.06em">TRANSFORMATION</text>
+            <text x="147" y="291" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#7CC8FF">.count()</text>
+            <line x1="147" y1="301" x2="147" y2="322" stroke="rgba(226,88,34,0.55)" stroke-width="2.5"/>
+            <polygon points="141,322 153,322 147,332" fill="#E25822"/>
+            <rect x="19" y="333" width="256" height="46" rx="12" fill="rgba(226,88,34,0.11)" stroke="#E25822" stroke-width="2"/>
+            <text x="50" y="350" font-family="Patrick Hand, cursive" font-size="10" fill="rgba(226,88,34,0.65)" letter-spacing="0.05em">★  ACTION — triggers the whole DAG!</text>
+            <text x="147" y="369" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="14" fill="#E25822" font-weight="700">.show()</text>
+            <text x="419" y="42" text-anchor="middle" font-family="Patrick Hand, cursive" font-size="10.5" fill="rgba(63,185,80,0.38)">Catalyst rewrites your plan before any data is read</text>
+            <rect x="297" y="56" width="245" height="296" rx="14" fill="rgba(63,185,80,0.04)" stroke="rgba(63,185,80,0.2)" stroke-width="1.5" stroke-dasharray="9,4"/>
+            <text x="419" y="76" text-anchor="middle" font-family="Patrick Hand, cursive" font-size="13" fill="rgba(63,185,80,0.65)">⚙  Catalyst Optimizer</text>
+            <rect x="311" y="90" width="217" height="76" rx="9" fill="rgba(63,185,80,0.07)" stroke="rgba(63,185,80,0.2)" stroke-width="1"/>
+            <text x="327" y="108" font-family="Patrick Hand, cursive" font-size="12.5" fill="rgba(63,185,80,0.85)">↑  Filter Pushdown</text>
+            <text x="327" y="126" font-family="Patrick Hand, cursive" font-size="10.5" fill="rgba(63,185,80,0.55)">Moves filter to scan time.</text>
+            <text x="327" y="142" font-family="Patrick Hand, cursive" font-size="10.5" fill="rgba(63,185,80,0.55)">10M rows → ~3K at the disk.</text>
+            <text x="327" y="158" font-family="Patrick Hand, cursive" font-size="10.5" fill="rgba(63,185,80,0.45)">97% less data processed.</text>
+            <rect x="311" y="178" width="217" height="64" rx="9" fill="rgba(63,185,80,0.07)" stroke="rgba(63,185,80,0.2)" stroke-width="1"/>
+            <text x="327" y="196" font-family="Patrick Hand, cursive" font-size="12.5" fill="rgba(63,185,80,0.85)">✂  Column Pruning</text>
+            <text x="327" y="214" font-family="Patrick Hand, cursive" font-size="10.5" fill="rgba(63,185,80,0.55)">Only reads "dept" from disk.</text>
+            <text x="327" y="231" font-family="Patrick Hand, cursive" font-size="10.5" fill="rgba(63,185,80,0.55)">8 columns → 1 column read.</text>
+            <rect x="311" y="254" width="217" height="64" rx="9" fill="rgba(63,185,80,0.07)" stroke="rgba(63,185,80,0.2)" stroke-width="1"/>
+            <text x="327" y="272" font-family="Patrick Hand, cursive" font-size="12.5" fill="rgba(63,185,80,0.85)">⚡  Stage Fusion</text>
+            <text x="327" y="290" font-family="Patrick Hand, cursive" font-size="10.5" fill="rgba(63,185,80,0.55)">Filter + partial agg merged</text>
+            <text x="327" y="307" font-family="Patrick Hand, cursive" font-size="10.5" fill="rgba(63,185,80,0.55)">into one pipeline pass.</text>
+            <line x1="267" y1="204" x2="297" y2="210" stroke="rgba(63,185,80,0.28)" stroke-width="1.5" stroke-dasharray="5,3"/>
+            <polygon points="293,207 301,210 293,213" fill="rgba(63,185,80,0.4)"/>
+          </svg>
+        </div>
+        <div class="pw-keybox">
+          <div class="pw-keybox-bar"></div>
+          <div class="pw-keybox-text"><strong>DAG = Directed Acyclic Graph.</strong> "Directed" = each step flows forward only. "Acyclic" = no loops. Spark builds this graph silently as you chain transformations — then the Catalyst Optimizer rewrites it into something far more efficient before any execution begins.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3: CODE -->
+    <div class="pw-step s-code reveal">
+      <div class="pw-step-hd">
+        <div class="pw-step-num-badge">3</div>
+        <div class="pw-step-hd-text">
+          <div class="pw-step-label">Code</div>
+          <div class="pw-step-title">See It Live — Annotated Real Code</div>
+        </div>
+      </div>
+      <div class="pw-step-body">
+        <p>The transformations chain silently with no output, no logs, no data movement. Only <code>.show()</code> fires the engine. Then <code>.explain()</code> reveals the optimized plan Spark built.</p>
+        <div class="qb-code-wrap" style="margin-top:18px">
+          <div class="qb-code-label">Lazy Evaluation Demo <button class="qb-copy-btn" onclick="qbCopy(this)">⧉ Copy</button></div>
+          <pre class="qb-code"><span class="kw">from</span> pyspark.sql <span class="kw">import</span> SparkSession
+<span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> col
+
+spark = SparkSession.builder.appName(<span class="str">"lazy-demo"</span>).getOrCreate()
+
+<span class="cm"># ── Step 1: Load data ─────────────────────────────────────────────────</span>
+<span class="cm"># Nothing happens here. Spark just notes "read from this file".</span>
+df = spark.read.parquet(<span class="str">"employees.parquet"</span>)
+<span class="fn">print</span>(<span class="fn">type</span>(df))  <span class="cm"># &lt;class 'pyspark.sql.dataframe.DataFrame'&gt;  ← just a plan!</span>
+
+<span class="cm"># ── Step 2: Chain Transformations ────────────────────────────────────</span>
+<span class="cm"># Still nothing. Spark is collecting your recipe, not cooking it.</span>
+filtered = df.filter(col(<span class="str">"dept"</span>) == <span class="str">"Engineering"</span>)  <span class="cm"># lazy</span>
+grouped  = filtered.groupBy(<span class="str">"dept"</span>)               <span class="cm"># lazy</span>
+result   = grouped.count()                           <span class="cm"># lazy (count here = transform)</span>
+<span class="cm"># Zero bytes read from disk. Zero rows processed. Zero CPU used.</span>
+
+<span class="cm"># ── Step 3: ACTION ───────────────────────────────────────────────────</span>
+<span class="cm"># ★ Only NOW does Spark execute everything at once ★</span>
+result.show()     <span class="cm"># triggers the full DAG</span>
+result.explain()  <span class="cm"># reveals the physical plan Spark built</span></pre>
+        </div>
+        <div class="qb-code-wrap" style="margin-top:14px">
+          <div class="qb-code-label">Output</div>
+          <pre class="qb-code" style="color:rgba(200,220,195,.82)">+-----------+-----+
+|       dept|count|
++-----------+-----+
+|Engineering| 3421|
++-----------+-----+
+
+== Physical Plan ==
+*(2) HashAggregate(keys=[dept#5], functions=[count(1)])
++- Exchange hashpartitioning(dept#5, 200)
+   +- *(1) HashAggregate(keys=[dept#5], functions=[partial_count(1)])
+      +- *(1) Filter (isnotnull(dept#5) AND (dept#5 = Engineering))
+         +- FileScan parquet [dept#5]
+                PushedFilters: [IsNotNull(dept), EqualTo(dept,Engineering)]
+                ReadSchema: struct&lt;dept:string&gt;   ← only 1 of 8 columns!</pre>
+        </div>
+        <div class="pw-keybox" style="margin-top:18px">
+          <div class="pw-keybox-bar" style="background:linear-gradient(180deg,var(--easy),rgba(63,185,80,.2))"></div>
+          <div class="pw-keybox-text">Look at the last two lines: <code>PushedFilters</code> moved the filter to scan time, and <code>ReadSchema: struct&lt;dept:string&gt;</code> means Spark read only 1 column instead of 8. You didn't write that optimization — Spark inferred it from your lazy pipeline.</div>
+        </div>
+        <div style="margin-top:22px;padding:18px 20px;background:rgba(248,81,73,.05);border:1px solid rgba(248,81,73,.18);border-left:3px solid rgba(248,81,73,.45);border-radius:0 10px 10px 0">
+          <p style="margin:0 0 10px;font-family:var(--fh);font-size:.9rem;font-weight:700;color:rgba(248,81,73,.85)">⚠ Common Mistake — The Loop Trap</p>
+          <pre class="qb-code"><span class="cm"># ✗ BAD: 4 Actions = 4 full scans of the entire dataset</span>
+<span class="kw">for</span> dept <span class="kw">in</span> [<span class="str">"Engineering"</span>, <span class="str">"HR"</span>, <span class="str">"Finance"</span>, <span class="str">"Sales"</span>]:
+    df.filter(col(<span class="str">"dept"</span>) == dept).count()   <span class="cm"># 4 × .count() = 4 jobs!</span>
+
+<span class="cm"># ✓ GOOD: 1 Action = 1 scan, all departments answered at once</span>
+df.groupBy(<span class="str">"dept"</span>).count().show()</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4: QUIZ -->
+    <div class="pw-step s-quiz reveal">
+      <div class="pw-step-hd">
+        <div class="pw-step-num-badge">4</div>
+        <div class="pw-step-hd-text">
+          <div class="pw-step-label">Quiz · 5 Questions</div>
+          <div class="pw-step-title">Test Your Understanding</div>
+        </div>
+      </div>
+      <div class="pw-step-body">
+        <p>Answer all 5 to reveal your score. Think before you click — no retries per question.</p>
+        <div class="pw-mcq-wrap">
+
+          <div class="pw-mcq-card" id="pwq1">
+            <div class="pw-qnum">Question 1 / 5</div>
+            <div class="pw-mcq-q">When does Spark actually execute the transformations you've written?</div>
+            <div class="pw-mcq-opts">
+              <button class="pw-mcq-opt" onclick="pwMCQ(this,'pwq1',2)"><span class="pw-opt-letter">A</span>When you define the DataFrame with <code>spark.read</code></button>
+              <button class="pw-mcq-opt" onclick="pwMCQ(this,'pwq1',2)"><span class="pw-opt-letter">B</span>Immediately when you call <code>.filter()</code> or <code>.groupBy()</code></button>
+              <button class="pw-mcq-opt" onclick="pwMCQ(this,'pwq1',2)"><span class="pw-opt-letter">C</span>Only when you call an Action like <code>.show()</code>, <code>.count()</code>, or <code>.collect()</code></button>
+              <button class="pw-mcq-opt" onclick="pwMCQ(this,'pwq1',2)"><span class="pw-opt-letter">D</span>When the SparkSession is first created</button>
+            </div>
+            <div class="pw-mcq-feedback" id="pwq1-fb">Transformations are lazy — they just extend the plan. Spark executes only when an Action is called. This delay is what lets Catalyst optimize your full pipeline before touching a single row of data.</div>
+          </div>
+
+          <div class="pw-mcq-card" id="pwq2">
+            <div class="pw-qnum">Question 2 / 5</div>
+            <div class="pw-mcq-q">What is the DAG in Apache Spark?</div>
+            <div class="pw-mcq-opts">
+              <button class="pw-mcq-opt" onclick="pwMCQ(this,'pwq2',1)"><span class="pw-opt-letter">A</span>A distributed file format used for large-scale storage</button>
+              <button class="pw-mcq-opt" onclick="pwMCQ(this,'pwq2',1)"><span class="pw-opt-letter">B</span>A graph of transformation dependencies — Spark's recorded plan of all pending work</button>
+              <button class="pw-mcq-opt" onclick="pwMCQ(this,'pwq2',1)"><span class="pw-opt-letter">C</span>A special type of join operation between two DataFrames</button>
+              <button class="pw-mcq-opt" onclick="pwMCQ(this,'pwq2',1)"><span class="pw-opt-letter">D</span>A memory caching strategy for frequently accessed partitions</button>
+            </div>
+            <div class="pw-mcq-feedback" id="pwq2-fb">DAG = Directed Acyclic Graph. It maps every transformation and its dependencies, built silently during the lazy phase. The Catalyst Optimizer rewrites it into the most efficient physical plan before any execution begins.</div>
+          </div>
+
+          <div class="pw-mcq-card" id="pwq3">
+            <div class="pw-qnum">Question 3 / 5</div>
+            <div class="pw-mcq-q">Which of these is an <strong>Action</strong> (not a Transformation)?</div>
+            <div class="pw-mcq-opts">
+              <button class="pw-mcq-opt" onclick="pwMCQ(this,'pwq3',3)"><span class="pw-opt-letter">A</span><code>.filter(col("age") &gt; 30)</code></button>
+              <button class="pw-mcq-opt" onclick="pwMCQ(this,'pwq3',3)"><span class="pw-opt-letter">B</span><code>.select("name", "salary")</code></button>
+              <button class="pw-mcq-opt" onclick="pwMCQ(this,'pwq3',3)"><span class="pw-opt-letter">C</span><code>.groupBy("dept").agg(avg("salary"))</code></button>
+              <button class="pw-mcq-opt" onclick="pwMCQ(this,'pwq3',3)"><span class="pw-opt-letter">D</span><code>.collect()</code></button>
+            </div>
+            <div class="pw-mcq-feedback" id="pwq3-fb"><code>.collect()</code> is an Action — it triggers execution and returns all rows to the driver as a Python list. Warning: never call <code>.collect()</code> on a huge DataFrame; it pulls everything into driver memory and will crash it.</div>
+          </div>
+
+          <div class="pw-mcq-card" id="pwq4">
+            <div class="pw-qnum">Question 4 / 5</div>
+            <div class="pw-mcq-q">You run <code>df.select("name","salary").filter(col("salary") &gt; 50000).show()</code>. The Parquet file has 50 columns. How many columns does Spark read from disk?</div>
+            <div class="pw-mcq-opts">
+              <button class="pw-mcq-opt" onclick="pwMCQ(this,'pwq4',1)"><span class="pw-opt-letter">A</span>All 50 — Spark reads everything then drops the unwanted ones in memory</button>
+              <button class="pw-mcq-opt" onclick="pwMCQ(this,'pwq4',1)"><span class="pw-opt-letter">B</span>Only 2 — "name" and "salary" (Catalyst's column pruning optimization)</button>
+              <button class="pw-mcq-opt" onclick="pwMCQ(this,'pwq4',1)"><span class="pw-opt-letter">C</span>Reads in fixed batches of 10 columns at a time</button>
+              <button class="pw-mcq-opt" onclick="pwMCQ(this,'pwq4',1)"><span class="pw-opt-letter">D</span>Depends on file size, not column count</button>
+            </div>
+            <div class="pw-mcq-feedback" id="pwq4-fb">Column pruning is one of Catalyst's most impactful tricks. Because Parquet is a columnar format, Spark skips the 48 unneeded columns entirely at the I/O level — never reading them from disk at all.</div>
+          </div>
+
+          <div class="pw-mcq-card" id="pwq5">
+            <div class="pw-qnum">Question 5 / 5</div>
+            <div class="pw-mcq-q">A junior engineer writes this code. What's the problem?<br><code style="display:block;margin-top:8px;padding:8px 12px;background:var(--bg);border-radius:6px;white-space:pre;font-size:.78rem;overflow-x:auto;max-width:100%">for dept in ["Eng","HR","Finance","Sales"]:
+    df.filter(col("dept") == dept).count()</code></div>
+            <div class="pw-mcq-opts">
+              <button class="pw-mcq-opt" onclick="pwMCQ(this,'pwq5',1)"><span class="pw-opt-letter">A</span>The variable name <code>dept</code> conflicts with a Spark keyword</button>
+              <button class="pw-mcq-opt" onclick="pwMCQ(this,'pwq5',1)"><span class="pw-opt-letter">B</span>Each <code>.count()</code> is a separate Action — 4 separate Spark jobs (full scans) instead of 1</button>
+              <button class="pw-mcq-opt" onclick="pwMCQ(this,'pwq5',1)"><span class="pw-opt-letter">C</span>Spark automatically merges these 4 iterations into one optimized job</button>
+              <button class="pw-mcq-opt" onclick="pwMCQ(this,'pwq5',1)"><span class="pw-opt-letter">D</span><code>.filter()</code> inside a for-loop doesn't work in PySpark</button>
+            </div>
+            <div class="pw-mcq-feedback" id="pwq5-fb">Every <code>.count()</code> is an Action = a new Spark job = a full scan of all partitions. The fix: <code>df.groupBy("dept").count().show()</code> — one pass through the data, one optimized job, all four answers at once.</div>
+          </div>
+
+        </div>
+
+        <div class="pw-score-row" id="pw-score-row">
+          <div class="pw-score-big" id="pw-score-num">0/5</div>
+          <div class="pw-score-info">
+            <strong id="pw-score-label">Calculating...</strong>
+            <span id="pw-score-sub">Answer all 5 questions to see your result.</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- STEP 5: PRACTICE -->
+    <div class="pw-step s-practice reveal">
+      <div class="pw-step-hd">
+        <div class="pw-step-num-badge">5</div>
+        <div class="pw-step-hd-text">
+          <div class="pw-step-label">Practice</div>
+          <div class="pw-step-title">Now Write It Yourself</div>
+        </div>
+      </div>
+      <div class="pw-step-body">
+        <p>Theory absorbed, quiz done — time to write real code. Q06 in the Question Bank is dedicated to lazy evaluation. Open it, run <code>.explain()</code>, and watch filter pushdown appear yourself.</p>
+        <a class="pw-practice-card" href="pyspark.html#question-bank" target="_blank" rel="noopener noreferrer">
+          <div class="pw-practice-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--spark)" stroke-width="2" style="pointer-events:none"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          </div>
+          <div class="pw-practice-info">
+            <strong>Go to Question Bank → find Q06</strong>
+            <span>Opens PySpark Lab · look for Q06 "What is lazy evaluation?" · run explain() live</span>
+          </div>
+          <svg class="pw-practice-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="pointer-events:none"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+        <div class="pw-analogy" style="margin-top:20px">
+          <div class="pw-analogy-tag">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="pointer-events:none;flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Go Deeper
+          </div>
+          <p>After running the basic example, try these in the playground:</p>
+          <p>1. Call <code>.count()</code> twice on the same DataFrame — does Spark run 2 jobs?<br>2. Add <code>.cache()</code> before the second call — what changes in the plan?<br>3. Use <code>.explain("extended")</code> to see both the logical and physical plans side-by-side.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chapter Complete (revealed on perfect score) -->
+    <div class="pw-complete" id="pw-complete">
+      <div class="pw-complete-ribbon">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="pointer-events:none"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        Chapter Complete
+      </div>
+      <div class="pw-complete-title">You understand Lazy Evaluation!</div>
+      <div class="pw-complete-sub">You know why Spark is fast, what the DAG is, and the most common performance trap to avoid. You're thinking like a data engineer now.</div>
+      <div class="pw-next-wrap">
+        <div class="pw-next-label">Up Next</div>
+        <div class="pw-next-card">
+          <div class="pw-next-chap-num">02</div>
+          <div class="pw-next-info">
+            <div class="pw-next-title">Partitions &amp; Shuffles</div>
+            <div class="pw-next-desc">Why <code>.groupBy()</code> on millions of rows can be painfully slow — and how controlling partitions fixes it.</div>
+            <span class="pw-soon-pill">Coming Soon</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Locked Chapters Teaser -->
+    <div style="margin-top:52px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+        <span style="font-family:var(--fm);font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em">More Chapters</span>
+        <span style="flex:1;height:1px;background:var(--border)"></span>
+        <span style="font-family:var(--fb);font-size:.75rem;color:var(--muted)">Releasing one by one</span>
+      </div>
+      <div class="pw-locked-chapters">
+        <div class="pw-locked-chap"><div class="pw-locked-chap-num">Chapter 02</div><div class="pw-locked-chap-title">Partitions &amp; Shuffles</div><div class="pw-locked-chap-lock">🔒 Coming Soon</div></div>
+        <div class="pw-locked-chap"><div class="pw-locked-chap-num">Chapter 03</div><div class="pw-locked-chap-title">DataFrames &amp; Schemas</div><div class="pw-locked-chap-lock">🔒 Coming Soon</div></div>
+        <div class="pw-locked-chap"><div class="pw-locked-chap-num">Chapter 04</div><div class="pw-locked-chap-title">Joins &amp; Broadcast</div><div class="pw-locked-chap-lock">🔒 Coming Soon</div></div>
+        <div class="pw-locked-chap"><div class="pw-locked-chap-num">Chapter 05</div><div class="pw-locked-chap-title">Window Functions</div><div class="pw-locked-chap-lock">🔒 Coming Soon</div></div>
+        <div class="pw-locked-chap"><div class="pw-locked-chap-num">Chapter 06</div><div class="pw-locked-chap-title">Performance Tuning</div><div class="pw-locked-chap-lock">🔒 Coming Soon</div></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+/* Scroll progress */
+window.addEventListener('scroll', () => {
+  const bar = document.getElementById('scroll-progress');
+  if (!bar) return;
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  bar.style.width = (docHeight > 0 ? (scrollTop / docHeight * 100) : 0) + '%';
+});
+
+/* Reveal on scroll */
+(function() {
+  var els = document.querySelectorAll('.reveal');
+  var obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+    });
+  }, { threshold: 0, rootMargin: '0px 0px 60px 0px' });
+  els.forEach(function(el) { obs.observe(el); });
+  setTimeout(function() {
+    els.forEach(function(el) { if (!el.classList.contains('visible')) el.classList.add('visible'); });
+  }, 2500);
+})();
+
+/* Copy code button */
+function qbCopy(btn) {
+  const wrap = btn.closest('.qb-code-wrap');
+  const pre = wrap ? wrap.querySelector('pre') : null;
+  const text = pre ? pre.innerText : '';
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copied';
+    setTimeout(() => btn.textContent = orig, 1500);
+  }).catch(() => {});
+}
+
+/* MCQ System */
+let pwScore = 0;
+let pwAnswered = 0;
+const PW_TOTAL_Q = 5;
+
+function pwMCQ(optEl, qId, correctIdx) {
+  const card = document.getElementById(qId);
+  if (!card || card.dataset.answered === 'true') return;
+
+  const opts = card.querySelectorAll('.pw-mcq-opt');
+  const clickedIdx = Array.from(opts).indexOf(optEl);
+  const isCorrect = clickedIdx === correctIdx;
+
+  opts.forEach((o, i) => {
+    o.disabled = true;
+    if (i === correctIdx) o.classList.add('pw-correct');
+    else if (i === clickedIdx) o.classList.add('pw-wrong');
+    else o.classList.add('pw-dim');
+  });
+
+  const fb = document.getElementById(qId + '-fb');
+  if (fb) {
+    const prefix = isCorrect
+      ? '<span style="color:var(--easy);font-weight:700;font-family:var(--fh)">✓ Correct! </span>'
+      : '<span style="color:var(--hard);font-weight:700;font-family:var(--fh)">✗ Not quite. </span>';
+    fb.innerHTML = prefix + fb.innerHTML;
+    fb.style.display = 'block';
+    if (!isCorrect) fb.classList.add('fb-wrong');
+  }
+
+  card.dataset.answered = 'true';
+  if (isCorrect) pwScore++;
+  pwAnswered++;
+
+  if (pwAnswered === PW_TOTAL_Q) setTimeout(pwShowResults, 600);
+}
+
+function pwShowResults() {
+  const scoreRow = document.getElementById('pw-score-row');
+  const scoreNum = document.getElementById('pw-score-num');
+  const scoreLabel = document.getElementById('pw-score-label');
+  const scoreSub = document.getElementById('pw-score-sub');
+  const complete = document.getElementById('pw-complete');
+
+  if (scoreNum) scoreNum.textContent = pwScore + ' / 5';
+
+  if (pwScore === 5) {
+    if (scoreLabel) scoreLabel.textContent = 'Perfect score!';
+    if (scoreSub) scoreSub.textContent = 'You have a solid grasp of lazy evaluation and the DAG.';
+    if (complete) {
+      complete.style.display = 'block';
+      setTimeout(() => complete.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 500);
+    }
+  } else if (pwScore >= 3) {
+    if (scoreLabel) scoreLabel.textContent = 'Good work!';
+    if (scoreSub) scoreSub.textContent = "Review the Story and Visual steps above, then you'll have it solid.";
+  } else {
+    if (scoreLabel) scoreLabel.textContent = 'Keep going!';
+    if (scoreSub) scoreSub.textContent = 'Re-read the Story and Code sections — the concepts will click.';
+  }
+
+  if (scoreRow) {
+    scoreRow.style.display = 'flex';
+    setTimeout(() => scoreRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 200);
+  }
+}
+</script>
+</body>
+</html>

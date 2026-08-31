@@ -1,0 +1,2428 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <script>
+    (function () {
+      try {
+        function getVal(k) {
+          try { var v = localStorage.getItem(k); if (v) return v; } catch (e) { }
+          try { var v = sessionStorage.getItem(k); if (v) return v; } catch (e) { }
+          try { var m = document.cookie.match(new RegExp('(?:^|; )' + encodeURIComponent(k) + '=([^;]*)')); if (m && m[1]) return decodeURIComponent(m[1]); } catch (e) { }
+          return null;
+        }
+        var raw = getVal('currentUser') || getVal('mnt_user');
+        var isLoggedIn = getVal('isLoggedIn') === 'true' || getVal('isLoggedIn') === '1';
+        if (!raw && !isLoggedIn) {
+          // No authenticated session — redirect to sign-in
+          window.location.replace('index.html?auth=signin&redirect=dashboard.html');
+        } else if (raw) {
+          try {
+            var parsed = JSON.parse(raw);
+            if (!parsed || !parsed.email) {
+              window.location.replace('index.html?auth=signin&redirect=dashboard.html');
+            }
+          } catch(e) {
+            window.location.replace('index.html?auth=signin&redirect=dashboard.html');
+          }
+        }
+      } catch (e) { }
+    })();
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Student Dashboard | MarutiNovaTech">
+  <title>MarutiNovaTech | Student Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%230B0F17'/><path d='M18 42V24l7 10 7-12 7 12 7-10v18' stroke='%2306B6D4' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/><circle cx='32' cy='18' r='3.5' fill='%2306B6D4'/></svg>">
+  <style>
+    :root {
+      /* Clean White/Light Theme Aligned with admin.html */
+      --bg-base: #F1F5F9;
+      /* Light slate gray canvas */
+      --bg-surface: #FFFFFF;
+      /* Crisp white card surface */
+      --bg-surface-hover: #F8FAFC;
+      /* Soft hover state */
+      --border-glass: 1px solid rgba(0, 0, 0, 0.08);
+
+      --accent-cyan: #06B6D4;
+      --accent-emerald: #10B981;
+      --accent-amber: #F59E0B;
+
+      --text-main: #0F172A;
+      /* High-contrast dark navy/slate */
+      --text-muted: #475569;
+      /* Slate gray subtext */
+
+      --fh: 'Plus Jakarta Sans', sans-serif;
+      --fb: 'Inter', sans-serif;
+      --fm: 'JetBrains Mono', monospace;
+
+      --r-card: 14px;
+      --r-pill: 9999px;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      font-family: var(--fb);
+      line-height: 1.5;
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      cursor: pointer;
+      font-family: inherit;
+      border: none;
+      outline: none;
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-base);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94A3B8;
+    }
+
+    /* ── EXECUTIVE TOP NAVIGATION BAR (Matches admin.html Header) ───────────────── */
+    .top-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 40px;
+      background: #111827 !important;
+      /* Dark charcoal slate */
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-title {
+      font-family: var(--fh);
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #FFFFFF !important;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-title .status-dot {
+      width: 8px;
+      height: 8px;
+      background-color: #10B981;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #10B981;
+    }
+
+    .brand-sub {
+      font-size: 0.85rem;
+      color: #E5E7EB !important;
+      font-weight: 500;
+      padding-left: 10px;
+      border-left: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .user-connection-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      color: #E5E7EB !important;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 6px 14px;
+      border-radius: var(--r-pill);
+    }
+
+    .conn-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10B981;
+      box-shadow: 0 0 8px #10B981;
+    }
+
+    .btn-nav-home {
+      padding: 7px 16px;
+      border-radius: var(--r-pill);
+      background: rgba(255, 255, 255, 0.1) !important;
+      border: 1px solid rgba(255, 255, 255, 0.25) !important;
+      color: #FFFFFF !important;
+      font-size: 0.82rem;
+      font-weight: 600;
+      transition: background 0.15s ease-in-out;
+    }
+
+    .btn-nav-home:hover {
+      background: rgba(255, 255, 255, 0.2) !important;
+    }
+
+    .btn-nav-logout {
+      padding: 7px 16px;
+      border-radius: var(--r-pill);
+      background: rgba(239, 68, 68, 0.18) !important;
+      border: 1px solid rgba(239, 68, 68, 0.35) !important;
+      color: #FCA5A5 !important;
+      font-size: 0.82rem;
+      font-weight: 600;
+      transition: background 0.15s ease-in-out;
+    }
+
+    .btn-nav-logout:hover {
+      background: rgba(239, 68, 68, 0.28) !important;
+    }
+
+    /* ── DASHBOARD CONTAINER ─────────────────────────────────── */
+    .dashboard-container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 28px 40px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    /* ── PROFILE HEADER SECTION ──────────────────────────────── */
+    .profile-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .profile-info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .avatar-circle {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: #0284C7;
+      color: #FFFFFF;
+      font-family: var(--fh);
+      font-size: 1.15rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+    }
+
+    .profile-details h2 {
+      font-family: var(--fh);
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: #0F172A;
+      line-height: 1.2;
+    }
+
+    .profile-details p {
+      font-size: 0.88rem;
+      color: #475569;
+      margin-top: 2px;
+    }
+
+    /* ── HERO "WHERE YOU LEFT OFF" CARD ──────────────────────── */
+    .hero-resume-card {
+      background: #FFFFFF;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: var(--r-card);
+      padding: 24px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+      transition: background 0.15s ease-in-out;
+    }
+
+    .hero-resume-card:hover {
+      background: #F8FAFC;
+    }
+
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .hero-badge {
+      font-family: var(--fm);
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      color: #0284C7;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .hero-title {
+      font-family: var(--fh);
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #0F172A;
+      line-height: 1.2;
+    }
+
+    .hero-meta {
+      font-size: 0.88rem;
+      color: #475569;
+    }
+
+    .btn-resume {
+      padding: 12px 26px;
+      background: linear-gradient(135deg, #00F2FE 0%, #00C6FF 100%);
+      color: #0F172A;
+      font-family: var(--fh);
+      font-weight: 700;
+      font-size: 0.92rem;
+      border-radius: var(--r-pill);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.15s ease-in-out;
+      box-shadow: 0 4px 16px rgba(0, 198, 255, 0.3);
+      white-space: nowrap;
+    }
+
+    .btn-resume:hover {
+      transform: translateY(-2px);
+    }
+
+    /* ── METRIC CARDS BAR (3 COLUMNS) ────────────────────────── */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .metric-card {
+      background: #FFFFFF;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: var(--r-card);
+      padding: 20px 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 125px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+      transition: background 0.15s ease-in-out;
+    }
+
+    .metric-card:hover {
+      background: #F8FAFC;
+    }
+
+    .metric-label {
+      font-family: var(--fm);
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      color: #1E293B;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .metric-value {
+      font-family: var(--fh);
+      font-size: 1.7rem;
+      font-weight: 800;
+      color: #0F172A;
+      line-height: 1.1;
+      margin: 6px 0 4px 0;
+    }
+
+    .metric-subtext {
+      font-size: 0.82rem;
+      color: #475569;
+    }
+
+    .progress-bar-track {
+      height: 6px;
+      background: rgba(0, 0, 0, 0.08);
+      border-radius: 999px;
+      margin-top: 10px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: #0284C7;
+      border-radius: 999px;
+      transition: width 0.4s ease-in-out;
+    }
+
+    /* ── MAIN WORKSPACE GRID (2 COLUMNS) ─────────────────────── */
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .workspace-card {
+      background: var(--bg-surface);
+      border: var(--border-glass);
+      border-radius: var(--r-card);
+      padding: 24px 26px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-heading {
+      font-family: var(--fm);
+      font-size: 0.76rem;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Playground Module Cards List */
+    .modules-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .module-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      background: rgba(255, 255, 255, 0.02);
+      border: var(--border-glass);
+      border-radius: 10px;
+      transition: background 0.15s ease-in-out;
+    }
+
+    .module-item:hover {
+      background: var(--bg-surface-hover);
+    }
+
+    .module-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .module-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .module-name {
+      font-family: var(--fb);
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .status-badge {
+      font-family: var(--fm);
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .status-badge.completed {
+      background: var(--accent-emerald-glow);
+      color: #34D399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .status-badge.in-progress {
+      background: var(--accent-amber-glow);
+      color: #FBBF24;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .status-badge.available {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .status-badge.locked {
+      background: rgba(245, 158, 11, 0.1);
+      color: #F59E0B;
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .btn-launch-lab.locked-btn {
+      background: #FFFBEB;
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: #D97706;
+      font-weight: 500;
+      font-size: 0.82rem;
+      padding: 8px 16px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+      flex-shrink: 0;
+      cursor: pointer;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      transition: all 0.15s ease-in-out;
+    }
+
+    .btn-launch-lab.locked-btn:hover {
+      background: #FEF3C7;
+      border-color: #F59E0B;
+      color: #B45309;
+      box-shadow: 0 2px 6px rgba(245, 158, 11, 0.15);
+    }
+
+    .playground-pill-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #F1F5F9;
+      border: 1px solid #E2E8F0;
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .playground-pill-badge .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .playground-pill-badge .badge-dot.unlocked {
+      background-color: #10B981;
+      box-shadow: 0 0 6px rgba(16, 185, 129, 0.4);
+    }
+
+    .playground-pill-badge .badge-dot.locked {
+      background-color: #F59E0B;
+      box-shadow: 0 0 6px rgba(245, 158, 11, 0.4);
+    }
+
+    .playground-pill-badge .badge-sep {
+      color: #94A3B8;
+      font-size: 10px;
+      margin: 0 2px;
+    }
+
+    .bar-column:hover .chart-tooltip, .group:hover .chart-tooltip {
+      opacity: 1 !important;
+    }
+
+    /* ── COURSE PROGRESS TABLE ───────────────────────────── */
+    .course-table-container {
+      max-height: 400px;
+      overflow-y: auto;
+      border: 1px solid #E2E8F0;
+      border-radius: 12px;
+      background: #FFFFFF;
+    }
+
+    .course-table-container::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .course-table-container::-webkit-scrollbar-track {
+      background: #F8FAFC;
+      border-radius: 4px;
+    }
+
+    .course-table-container::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 4px;
+    }
+
+    .course-table-container::-webkit-scrollbar-thumb:hover {
+      background: #94A3B8;
+    }
+
+    .course-progress-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      text-align: left;
+    }
+
+    .course-progress-table th {
+      background: #F8FAFC;
+      color: #475569;
+      font-weight: 700;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 12px 16px;
+      border-bottom: 1px solid #E2E8F0;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+
+    .course-progress-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid #F1F5F9;
+      color: #0F172A;
+      vertical-align: middle;
+    }
+
+    .course-progress-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .course-progress-table tr:hover td {
+      background: #F8FAFC;
+    }
+
+    .course-name-cell {
+      font-weight: 600;
+      color: #0F172A;
+    }
+
+    .course-progress-val {
+      font-weight: 600;
+      color: #059669;
+    }
+
+    .course-dash {
+      color: #94A3B8;
+      font-weight: 500;
+    }
+
+    /* ── UNLOCK MODAL ─────────────────────────────────────── */
+    .unlock-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(6px);
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      padding: 16px;
+    }
+
+    .unlock-modal-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .unlock-modal-card {
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 440px;
+      padding: 28px 24px;
+      position: relative;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+      transform: translateY(12px) scale(0.96);
+      transition: transform 0.25s ease;
+      color: #0F172A;
+    }
+
+    .unlock-modal-overlay.open .unlock-modal-card {
+      transform: translateY(0) scale(1);
+    }
+
+    .unlock-modal-close {
+      position: absolute;
+      top: 14px;
+      right: 18px;
+      background: transparent;
+      border: none;
+      color: #64748B;
+      font-size: 1.5rem;
+      cursor: pointer;
+      line-height: 1;
+      transition: color 0.15s ease;
+    }
+
+    .unlock-modal-close:hover {
+      color: #0F172A;
+    }
+
+    .unlock-modal-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      background: #FEF3C7;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .unlock-modal-tag {
+      font-family: var(--fm, monospace);
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #D97706;
+      background: #FEF3C7;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 6px;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+
+    .unlock-modal-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin: 0 0 6px 0;
+      color: #0F172A;
+    }
+
+    .unlock-modal-sub {
+      font-size: 0.85rem;
+      color: #475569;
+      margin-bottom: 20px;
+      line-height: 1.45;
+    }
+
+    .unlock-modal-price-box {
+      background: #FFFBEB;
+      border: 1px dashed rgba(245, 158, 11, 0.4);
+      border-radius: 12px;
+      padding: 14px 18px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .unlock-price-label {
+      font-size: 0.75rem;
+      color: #92400E;
+      font-weight: 600;
+    }
+
+    .unlock-price-val {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #D97706;
+      margin: 2px 0;
+    }
+
+    .unlock-price-sub {
+      font-size: 0.72rem;
+      color: #78350F;
+      font-weight: 500;
+    }
+
+    .unlock-modal-features {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 24px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 0.82rem;
+      color: #334155;
+    }
+
+    .unlock-modal-features li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .unlock-modal-features .check-icon {
+      color: #059669;
+      font-weight: bold;
+    }
+
+    .unlock-modal-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .unlock-btn-confirm {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      color: #FFFFFF;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .unlock-btn-confirm:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.45);
+    }
+
+    .unlock-btn-cancel {
+      background: transparent;
+      border: none;
+      color: #64748B;
+      font-size: 0.82rem;
+      cursor: pointer;
+      padding: 6px;
+      transition: color 0.15s ease;
+    }
+
+    .unlock-btn-cancel:hover {
+      color: #0F172A;
+    }
+
+    .module-sub {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .btn-launch-lab {
+      padding: 7px 16px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      border: var(--border-glass);
+      color: var(--text-main);
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: background 0.15s ease-in-out, border-color 0.15s ease-in-out;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn-launch-lab:hover {
+      background: var(--accent-cyan);
+      color: #FFFFFF;
+      border-color: var(--accent-cyan);
+    }
+
+    /* Activity Feed List */
+    .activity-feed-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .activity-feed-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.02);
+      border: var(--border-glass);
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+
+    .activity-feed-item .act-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .activity-feed-item .act-title {
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .activity-feed-item .act-time {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+    }
+
+    .act-badge {
+      font-family: var(--fm);
+      font-size: 0.62rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .act-badge.passed {
+      background: var(--accent-emerald-glow);
+      color: #34D399;
+    }
+
+    .act-badge.solving {
+      background: var(--accent-cyan-glow);
+      color: #38BDF8;
+    }
+
+    @media (max-width: 992px) {
+      .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .workspace-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .top-header {
+        padding: 16px 20px;
+      }
+
+      .dashboard-container {
+        padding: 20px 20px 40px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .metrics-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ═══ EXECUTIVE TOP NAVIGATION BAR ═══════════════════════════ -->
+  <header class="top-header">
+    <div class="brand-group">
+      <div class="brand-title">
+        <span class="status-dot"></span>
+        <span>MarutiNovaTech</span>
+      </div>
+      <span class="brand-sub">Student Dashboard</span>
+    </div>
+    <div class="header-actions" style="position: relative; z-index: 101; pointer-events: auto;">
+      <div class="user-connection-badge">
+        <span class="conn-dot"></span>
+        <span id="navUserTrack">Connected</span>
+      </div>
+      <button class="btn-nav-signin" id="btnNavSignIn" onclick="handleSignIn(event)" title="Sign In"
+        style="cursor: pointer; position: relative; z-index: 102; pointer-events: auto; display: none; align-items: center; gap: 6px; padding: 7px 16px; border-radius: var(--r-pill, 999px); background: rgba(6, 182, 212, 0.15); border: 1px solid rgba(6, 182, 212, 0.35); color: #38BDF8; font-size: 0.82rem; font-weight: 600; transition: all 0.15s ease-in-out;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+          stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
+          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+          <polyline points="10 17 15 12 10 7"></polyline>
+          <line x1="15" y1="12" x2="3" y2="12"></line>
+        </svg>
+        <span>Sign In</span>
+      </button>
+      <a href="index.html" class="btn-nav-home"
+        style="cursor: pointer; position: relative; z-index: 102; pointer-events: auto;">&larr; Home</a>
+      <button class="btn-nav-logout" id="btnNavSignOut" onclick="logoutStudent()"
+        style="cursor: pointer; position: relative; z-index: 102; pointer-events: auto;">Sign Out</button>
+    </div>
+  </header>
+  <script>
+    (function() {
+      try {
+        const u = localStorage.getItem('currentUser') || localStorage.getItem('mnt_user') || localStorage.getItem('authToken') || localStorage.getItem('mnt_token') || (localStorage.getItem('isLoggedIn') === 'true');
+        const sIn = document.getElementById('btnNavSignIn');
+        const sOut = document.getElementById('btnNavSignOut');
+        if (sIn) sIn.style.setProperty('display', u ? 'none' : 'inline-flex', 'important');
+        if (sOut) sOut.style.setProperty('display', u ? 'inline-flex' : 'none', 'important');
+      } catch(e) {}
+    })();
+  </script>
+
+  <!-- ═══ MAIN DASHBOARD CONTAINER ═══════════════════════════════ -->
+  <main class="dashboard-container">
+
+    <!-- Profile Header Info -->
+    <section class="profile-header-row">
+      <div class="profile-info">
+        <div class="avatar-circle" id="dashAvatar">ST</div>
+        <div class="profile-details">
+          <h2 id="dashName">Rahul Sharma</h2>
+          <p id="dashMeta">Student &bull; Cohort 14 &bull; Data &amp; Cloud Engineering</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Metric Cards Bar (3 Columns) -->
+    <section class="metrics-grid">
+
+      <!-- Card 2: Completion Progress -->
+      <div class="metric-card">
+        <span class="metric-label">COMPLETION PROGRESS</span>
+        <div class="metric-value" id="cardProgress">0%</div>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="cardProgressFill" style="width: 0%;"></div>
+        </div>
+      </div>
+
+      <!-- Card 3: Streak Count -->
+      <div class="metric-card">
+        <span class="metric-label">STREAK COUNT</span>
+        <div class="metric-value" id="cardStreakCount">0 Days</div>
+        <span class="metric-subtext" id="cardStreakSub">Active Streak</span>
+      </div>
+
+      <!-- Card 4: Resume Status -->
+      <div class="metric-card"
+        style="display:flex; flex-direction:column; justify-content:space-between; align-items:flex-start;">
+        <span class="metric-label">RESUME STATUS</span>
+        <div style="margin: 10px 0 12px 0;">
+          <a href="sql.html" class="btn-resume" id="heroResumeBtn">Resume Topic &rarr;</a>
+        </div>
+        <span class="metric-subtext" id="cardResumeSub">Updated Recently</span>
+      </div>
+    </section>
+
+    <!-- Main Workspace Grid (2 Columns) -->
+    <section class="workspace-grid">
+
+      <!-- Left Column: Course Progress Table -->
+      <div class="workspace-card" style="padding: 22px;">
+        <div class="card-heading" style="margin-bottom: 16px;">
+          <span>COURSE PROGRESS &amp; LAB ACCESS</span>
+          <div class="playground-pill-badge" id="playgroundHeaderCount">
+            <span class="badge-dot unlocked"></span><span>0 UNLOCKED</span>
+            <span class="badge-sep">•</span>
+            <span class="badge-dot locked"></span><span>4 LOCKED</span>
+          </div>
+        </div>
+
+        <div class="course-table-container">
+          <table class="course-progress-table">
+            <thead>
+              <tr>
+                <th style="width: 32%;">Course Name</th>
+                <th style="width: 20%;">Total Questions</th>
+                <th style="width: 24%;">Progress</th>
+                <th style="width: 24%; text-align: right;">Access Status</th>
+              </tr>
+            </thead>
+            <tbody id="courseTableBody">
+              <!-- Dynamic Rows Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Right Column: Multi-Course Weekly Activity Card -->
+      <div class="workspace-card" style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:16px; padding:24px; box-shadow:0 1px 3px rgba(0,0,0,0.02); display:flex; flex-direction:column; justify-content:space-between;">
+        
+        <!-- Header & Telemetry Pill -->
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="font-family:'JetBrains Mono',monospace; font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:#64748B;">WEEKLY ACTIVITY</span>
+            <span style="font-size:0.7rem; font-weight:700; color:#059669; text-transform:uppercase; letter-spacing:0.05em; display:inline-flex; align-items:center; gap:4px;">
+              <span style="width:6px; height:6px; border-radius:50%; background:#10B981; display:inline-block; box-shadow:0 0 6px rgba(16,185,129,0.5);"></span> LIVE TELEMETRY
+            </span>
+          </div>
+          <span id="dashWeeklyCountBadge" style="font-family:'JetBrains Mono',monospace; font-size:0.72rem; font-weight:700; color:#047857; background:#ECFDF5; padding:3px 10px; border-radius:999px; border:1px solid #A7F3D0;">
+            0 Solved This Week
+          </span>
+        </div>
+
+        <!-- Course Color Legend (2-Course Color System) -->
+        <div style="display:flex; align-items:center; gap:16px; font-size:0.75rem; font-weight:600; color:#475569; margin-bottom:16px; font-family:'JetBrains Mono',monospace;">
+          <span style="display:flex; align-items:center; gap:6px;"><span style="width:10px; height:10px; border-radius:3px; background:#10B981; display:inline-block;"></span> SQL</span>
+          <span style="display:flex; align-items:center; gap:6px;"><span style="width:10px; height:10px; border-radius:3px; background:#3B82F6; display:inline-block;"></span> Python</span>
+        </div>
+
+        <!-- 7-Day Stacked Bars Canvas Container -->
+        <div id="dash7DayBarChart" style="display:flex; align-items:flex-end; justify-content:space-between; height:130px; gap:8px; padding-top:12px; padding-bottom:6px; border-bottom:1px dashed #E2E8F0;">
+          <!-- Populated Dynamically via JS -->
+        </div>
+
+
+
+      </div>
+
+    </section>
+
+    <!-- Detailed Solved Activity Timeline -->
+    <div class="workspace-card" style="margin-top: 24px; padding: 24px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <div>
+          <h3 style="font-size: 1rem; font-weight: 700; color: #0F172A; margin: 0;">Recent Submissions & Completed Items</h3>
+          <p style="font-size: 0.78rem; color: #64748B; margin-top: 2px; margin-bottom: 0;">Detailed breakdown of questions and lessons solved across all courses.</p>
+        </div>
+        <span id="total-solved-badge" style="font-size: 0.75rem; padding: 4px 10px; border-radius: 9999px; background: #F1F5F9; color: #334155; font-weight: 600; border: 1px solid #E2E8F0;">
+          0 Total Submissions
+        </span>
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; text-align: left; font-size: 0.8rem; border-collapse: collapse;">
+          <thead>
+            <tr style="border-bottom: 1px solid #E2E8F0; color: #64748B; text-transform: uppercase; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em;">
+              <th style="padding: 10px 12px;">Course</th>
+              <th style="padding: 10px 12px;">Question / Lesson Name</th>
+              <th style="padding: 10px 12px;">Item ID</th>
+              <th style="padding: 10px 12px;">Time Completed</th>
+              <th style="padding: 10px 12px;">Status</th>
+            </tr>
+          </thead>
+          <tbody id="student-activity-tbody" style="color: #334155;">
+            <!-- Dynamically Populated -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    /* ── TIME FORMATTER HELPER ──────────────────────────────────── */
+    function formatStudyTime(decimalHours) {
+      if (!decimalHours || decimalHours <= 0) return '0 min';
+      const totalMinutes = Math.round(decimalHours * 60);
+      const hrs = Math.floor(totalMinutes / 60);
+      const mins = totalMinutes % 60;
+      if (hrs === 0) return `${mins} min`;
+      if (mins === 0) return `${hrs} hr`;
+      return `${hrs} hr ${mins} min`;
+    }
+
+    /* ── STORAGE HELPERS ────────────────────────────────────────── */
+    function getStorageItem(k) {
+      try { var v = localStorage.getItem(k); if (v) return v; } catch (e) { }
+      try { var v = sessionStorage.getItem(k); if (v) return v; } catch (e) { }
+      try { var m = document.cookie.match(new RegExp('(?:^|; )' + encodeURIComponent(k) + '=([^;]*)')); if (m && m[1]) return decodeURIComponent(m[1]); } catch (e) { }
+      return null;
+    }
+    function removeStorageItem(k) {
+      try { localStorage.removeItem(k); } catch (e) { }
+      try { sessionStorage.removeItem(k); } catch (e) { }
+      try { document.cookie = encodeURIComponent(k) + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;'; } catch (e) { }
+    }
+    /* ── SHARED FRONTEND API HELPER & STABLE STUDENT ID ─────────── */
+    async function apiFetch(url, options = {}) {
+      options.headers = options.headers || {};
+      const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+      if (token && !options.headers['Authorization']) {
+        options.headers['Authorization'] = 'Bearer ' + token;
+      }
+      try {
+        const res = await fetch(url, options);
+        if (res.status === 401) {
+          removeStorageItem('currentUser');
+          removeStorageItem('mnt_user');
+          removeStorageItem('isLoggedIn');
+          removeStorageItem('userRole');
+          removeStorageItem('authToken');
+          window.location.href = 'index.html';
+        }
+        return res;
+      } catch (err) {
+        throw err;
+      }
+    }
+
+    function getStableStudentId(user) {
+      if (!user) return 'rahul-sharma';
+      if (user.id && !user.id.startsWith('USER-') && !user.id.startsWith('student-17')) {
+        return user.id;
+      }
+      if (user.email) {
+        const prefix = user.email.split('@')[0];
+        return prefix.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      }
+      if (user.name || user.fullName) {
+        return (user.name || user.fullName).toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      }
+      return 'rahul-sharma';
+    }
+
+    function handleSignIn(e) {
+      if (e && typeof e.preventDefault === 'function') e.preventDefault();
+      if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
+      try {
+        if (typeof openAuthModal === 'function') {
+          openAuthModal('signin');
+        } else {
+          window.location.href = 'index.html?auth=signin';
+        }
+      } catch (err) {
+        console.error('Sign-In navigation error:', err);
+        window.location.href = 'index.html?auth=signin';
+      }
+    }
+
+    /* ── AUTH BUTTON VISIBILITY TOGGLE ──────────────────────────── */
+    function updateAuthHeaderState() {
+      const isLoggedIn = Boolean(
+        getStorageItem('currentUser') ||
+        getStorageItem('mnt_user') ||
+        getStorageItem('authToken') ||
+        (getStorageItem('isLoggedIn') === 'true')
+      );
+
+      const signInBtn = document.getElementById('btnNavSignIn') || document.querySelector('.header-actions .btn-nav-signin');
+      const signOutBtn = document.getElementById('btnNavSignOut') || document.querySelector('.header-actions .btn-nav-logout');
+
+      if (signInBtn) {
+        if (isLoggedIn) {
+          signInBtn.style.setProperty('display', 'none', 'important');
+        } else {
+          signInBtn.style.setProperty('display', 'inline-flex', 'important');
+        }
+      }
+      if (signOutBtn) {
+        if (isLoggedIn) {
+          signOutBtn.style.setProperty('display', 'inline-flex', 'important');
+        } else {
+          signOutBtn.style.setProperty('display', 'none', 'important');
+        }
+      }
+    }
+
+    function logoutStudent(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      try {
+        removeStorageItem('currentUser');
+        removeStorageItem('mnt_user');
+        removeStorageItem('isLoggedIn');
+        removeStorageItem('userRole');
+        removeStorageItem('authToken');
+        removeStorageItem('student_activity_telemetry');
+        localStorage.removeItem('currentUser');
+        localStorage.removeItem('mnt_user');
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('userRole');
+        localStorage.removeItem('authToken');
+        sessionStorage.clear();
+      } catch (err) { }
+      updateAuthHeaderState();
+      window.location.href = 'index.html';
+    }
+    function logoutUser(e) { logoutStudent(e); }
+
+    /* ── 145 QUESTION CATALOG DEFINITION ────────────────────────── */
+    const BASE_QUESTIONS = [
+      { title: 'Find Duplicate Emails', difficulty: 'BEGINNER', category: 'SELECT' },
+      { title: 'Customers Who Never Ordered', difficulty: 'BEGINNER', category: 'JOINS' },
+      { title: 'Employees Earning More Than Their Manager', difficulty: 'BEGINNER', category: 'JOINS' },
+      { title: 'Average Product Rating Per Category', difficulty: 'BEGINNER', category: 'AGGREGATE' },
+      { title: 'Rising Temperature', difficulty: 'BEGINNER', category: 'DATE FN' },
+      { title: 'Second Highest Salary', difficulty: 'BEGINNER', category: 'SELECT' },
+      { title: 'Top 5 Customers by Order Count', difficulty: 'BEGINNER', category: 'AGGREGATE' },
+      { title: 'Department Top 3 Salaries', difficulty: 'INTERMEDIATE', category: 'WINDOW FN' },
+      { title: 'Employees with Salary Above Department Average', difficulty: 'INTERMEDIATE', category: 'AGGREGATE' },
+      { title: 'Month-over-Month Revenue Growth', difficulty: 'INTERMEDIATE', category: 'DATE FN' },
+      { title: '7-Day Rolling Average of Daily Active Users', difficulty: 'INTERMEDIATE', category: 'WINDOW FN' },
+      { title: 'Restaurants with Declining Orders Month-over-Month', difficulty: 'INTERMEDIATE', category: 'SUBQUERY' },
+      { title: 'Customers Who Ordered in Both 2023 and 2024', difficulty: 'INTERMEDIATE', category: 'SUBQUERY' },
+      { title: 'Rank Scores Without Gaps (DENSE_RANK)', difficulty: 'INTERMEDIATE', category: 'WINDOW FN' },
+      { title: 'Running Total of Sales by Date', difficulty: 'INTERMEDIATE', category: 'WINDOW FN' },
+      { title: 'Median Employee Salary per Department', difficulty: 'EXPERT', category: 'WINDOW FN' },
+      { title: 'Human Traffic of Stadium — 3+ Consecutive Days', difficulty: 'EXPERT', category: 'SUBQUERY' },
+      { title: 'Trips and Users — Cancellation Rate', difficulty: 'EXPERT', category: 'JOINS' }
+    ];
+
+    const DASH_CATALOG = [];
+    for (let i = 1; i <= 145; i++) {
+      const base = BASE_QUESTIONS[(i - 1) % BASE_QUESTIONS.length];
+      const numPrefix = String(i).padStart(2, '0');
+      let diff = i <= 45 ? 'BEGINNER' : (i <= 110 ? 'INTERMEDIATE' : 'EXPERT');
+      DASH_CATALOG.push({
+        id: 'q' + String(i).padStart(2, '0'),
+        title: `${numPrefix} ${base.title}${i > 18 ? ' (' + i + ')' : ''}`,
+        difficulty: diff,
+        category: base.category
+      });
+    }
+
+    // Active question bank array (dynamically updated if questions are added/removed)
+    window.questionsArray = DASH_CATALOG.slice();
+
+    /* ── DEFENSIVE FALLBACK DATA RESTORATION ───────────────────── */
+    function ensureDefaultData() {
+      // 1. Non-destructive Fallback questions check
+      try {
+        const rawQ = localStorage.getItem('questions') || localStorage.getItem('mnt_questions') || localStorage.getItem('questionsBank');
+        let existingQuestions = [];
+        if (rawQ && rawQ !== 'null' && rawQ !== 'undefined') {
+          try { existingQuestions = JSON.parse(rawQ); } catch (e) { }
+        }
+
+        if (!Array.isArray(existingQuestions) || existingQuestions.length < DASH_CATALOG.length) {
+          const mergedQuestions = DASH_CATALOG.slice();
+          if (Array.isArray(existingQuestions) && existingQuestions.length > 0) {
+            existingQuestions.forEach(q => {
+              const idx = mergedQuestions.findIndex(mq => mq.id === q.id || mq.title === q.title);
+              if (idx >= 0) {
+                mergedQuestions[idx] = { ...mergedQuestions[idx], ...q };
+              } else {
+                mergedQuestions.push(q);
+              }
+            });
+          }
+          localStorage.setItem('questions', JSON.stringify(mergedQuestions));
+          localStorage.setItem('mnt_questions', JSON.stringify(mergedQuestions));
+          window.questionsArray = mergedQuestions.slice();
+        } else {
+          window.questionsArray = existingQuestions.slice();
+        }
+      } catch (e) {
+        localStorage.setItem('questions', JSON.stringify(DASH_CATALOG));
+        window.questionsArray = DASH_CATALOG.slice();
+      }
+
+      // 2. Defensive fallback check (Non-destructive)
+      try {
+        const rawP = localStorage.getItem('studentProgress') || localStorage.getItem('registeredUsers') || localStorage.getItem('mnt_registered_users');
+      } catch (e) { }
+    }
+
+    function normalizeQuestionId(item) {
+      if (item === null || item === undefined) return '';
+      const str = String(item).trim();
+      if (!str) return '';
+      const m = str.match(/\d+/);
+      if (m) {
+        const num = parseInt(m[0], 10);
+        if (!isNaN(num) && num >= 1) {
+          return 'q' + (num < 10 ? '0' : '') + num;
+        }
+      }
+      return str.toLowerCase();
+    }
+
+    /* ── AUTOMATED DAILY LOGIN STREAK TRACKING ─────────────────── */
+    /* ── AUTOMATED DAILY LOGIN STREAK TRACKING (STRICT REAL-DATA BINDING) ── */
+    function calculateAndUpdateStreak(currentUser) {
+      const today = new Date();
+      const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+      let completedQuestions = [];
+      if (currentUser && Array.isArray(currentUser.completedQuestions)) {
+        completedQuestions = currentUser.completedQuestions;
+      } else {
+        try {
+          const raw = getStorageItem('completedQuestions') || getStorageItem('solvedQuestions');
+          if (raw) completedQuestions = JSON.parse(raw);
+        } catch (e) { }
+      }
+
+      let lastActiveDate = currentUser ? (currentUser.lastActiveDate || currentUser.lastLoginDate) : getStorageItem('mnt_last_active_date');
+      let storedStreak = currentUser ? (currentUser.currentStreak !== undefined ? currentUser.currentStreak : currentUser.streakDays) : undefined;
+      if (storedStreak === undefined || storedStreak === null || isNaN(storedStreak)) {
+        const s1 = getStorageItem('mnt_current_streak');
+        storedStreak = parseInt(s1 || '0', 10);
+      }
+      if (isNaN(storedStreak)) storedStreak = 0;
+
+      // Strict Real-Data Binding: If student is brand new with 0 activity logs & 0 solved questions, render 0 Days
+      if ((!completedQuestions || completedQuestions.length === 0) && (!lastActiveDate || storedStreak === 0)) {
+        return { count: 0, text: "0 Days", sub: "0 Days (Streak Reset)", isReset: true };
+      }
+
+      let currentStreak = storedStreak;
+      let isReset = false;
+
+      if (!lastActiveDate) {
+        currentStreak = completedQuestions.length > 0 ? 1 : 0;
+        lastActiveDate = todayStr;
+      } else if (lastActiveDate === todayStr) {
+        currentStreak = Math.max(completedQuestions.length > 0 ? 1 : 0, storedStreak || (completedQuestions.length > 0 ? 1 : 0));
+      } else {
+        const lastDate = new Date(lastActiveDate + 'T00:00:00');
+        const todayDate = new Date(todayStr + 'T00:00:00');
+        const diffTime = todayDate.getTime() - lastDate.getTime();
+        const diffDays = Math.round(diffTime / (1000 * 3600 * 24));
+
+        if (diffDays === 1) {
+          currentStreak = (storedStreak || 1) + 1;
+        } else if (diffDays > 1) {
+          currentStreak = completedQuestions.length > 0 ? 1 : 0;
+          isReset = true;
+        } else {
+          currentStreak = Math.max(completedQuestions.length > 0 ? 1 : 0, storedStreak || 0);
+        }
+        lastActiveDate = todayStr;
+      }
+
+      if (currentUser) {
+        currentUser.lastActiveDate = todayStr;
+        currentUser.lastLoginDate = todayStr;
+        currentUser.currentStreak = currentStreak;
+        currentUser.streakDays = currentStreak;
+      }
+
+      try {
+        setStorageItem('mnt_last_active_date', todayStr);
+        setStorageItem('mnt_last_login_date', todayStr);
+        setStorageItem('mnt_current_streak', currentStreak.toString());
+        setStorageItem('sql_streak_date', todayStr);
+        setStorageItem('sql_streak_count', currentStreak.toString());
+
+        const raw = getStorageItem('currentUser') || getStorageItem('mnt_user');
+        if (raw) {
+          let userObj = typeof raw === 'string' ? JSON.parse(raw) : raw;
+          userObj.lastActiveDate = todayStr;
+          userObj.lastLoginDate = todayStr;
+          userObj.currentStreak = currentStreak;
+          userObj.streakDays = currentStreak;
+          const str = JSON.stringify(userObj);
+          setStorageItem('currentUser', str);
+          setStorageItem('mnt_user', str);
+        }
+      } catch (e) { }
+
+      const streakDisplay = `${currentStreak} ${currentStreak === 1 ? 'Day' : 'Days'}`;
+      const streakSub = (isReset || currentStreak === 0) ? (currentStreak === 0 ? "0 Days (Streak Reset)" : "Streak Reset (Start fresh today!)") : "Active Streak";
+
+      return { count: currentStreak, text: streakDisplay, sub: streakSub, isReset: isReset };
+    }
+
+    /* ── DYNAMIC SOLVED QUESTION CALCULATOR ──────────────────────── */
+    function getSolvedCountForUser(user) {
+      if (user) {
+        if (Array.isArray(user.solvedQuestions) && user.solvedQuestions.length > 0) {
+          return user.solvedQuestions.length;
+        }
+        if (Array.isArray(user.completedQuestions) && user.completedQuestions.length > 0) {
+          return user.completedQuestions.length;
+        }
+        if (user.progress && typeof user.progress === 'object') {
+          if (Array.isArray(user.progress)) return user.progress.length;
+          const passed = Object.keys(user.progress).filter(k => {
+            const v = user.progress[k];
+            return v === 'completed' || v === 'PASSED' || v === 'passed' || v === true || v === 'COMPLETED';
+          });
+          if (passed.length > 0) return passed.length;
+        }
+        if (Array.isArray(user.topicBreakdown) && user.topicBreakdown.length > 0) {
+          const doneTopics = user.topicBreakdown.filter(t => t && (t.status === 'completed' || t.status === 'PASSED' || t.completed === true));
+          if (doneTopics.length > 0) return doneTopics.length;
+        }
+        if (typeof user.completedTopicsCount === 'number' && user.completedTopicsCount > 0) {
+          return user.completedTopicsCount;
+        }
+        if (typeof user.solvedCount === 'number' && user.solvedCount > 0) {
+          return user.solvedCount;
+        }
+      }
+
+      try {
+        const c1 = JSON.parse(localStorage.getItem('completedQuestions') || '[]');
+        const c2 = JSON.parse(localStorage.getItem('sql_qb_done') || '[]');
+        const c3 = JSON.parse(localStorage.getItem('solvedQuestions') || '[]');
+        const set = new Set([
+          ...(Array.isArray(c1) ? c1 : []),
+          ...(Array.isArray(c2) ? c2 : []),
+          ...(Array.isArray(c3) ? c3 : [])
+        ]);
+        return set.size;
+      } catch (e) {
+        return 0;
+      }
+    }
+    window.getSolvedCountForUser = getSolvedCountForUser;
+
+    (function enforceCleanServerState() {
+      try {
+        const raw = localStorage.getItem('currentUser') || localStorage.getItem('mnt_user');
+        if (raw) {
+          const u = typeof raw === 'string' ? JSON.parse(raw) : raw;
+          if (u && u.email) {
+            const cleanEmail = u.email.toLowerCase().trim();
+            // If new or unpaid student, ensure flags are clean
+            if (!u.isSqlPaid && !u.isPythonPaid && (!Array.isArray(u.unlockedCourses) || u.unlockedCourses.length === 0)) {
+              u.unlockedCourses = [];
+              u.unlockedPlaygrounds = [];
+              u.isSqlPaid = false;
+              u.isPythonPaid = false;
+              u.isPaid = false;
+              localStorage.removeItem('mnt_paid_unlocks_' + cleanEmail);
+              const str = JSON.stringify(u);
+              localStorage.setItem('currentUser', str);
+              localStorage.setItem('mnt_user', str);
+            }
+          }
+        }
+      } catch(e) {}
+    })();
+
+    /* ── REAL-TIME DASHBOARD HYDRATION & RE-RENDER ──────────────── */
+    function loadAndRenderStudentDashboard() {
+      let currentUser = null;
+      try {
+        const raw = getStorageItem('currentUser') || getStorageItem('mnt_user');
+        if (raw) {
+          currentUser = typeof raw === 'string' ? JSON.parse(raw) : raw;
+        }
+      } catch (e) { }
+
+      if (!currentUser || !currentUser.email) {
+        // No authenticated user — redirect to sign-in (should not reach here due to head guard)
+        window.location.replace('index.html?auth=signin&redirect=dashboard.html');
+        return;
+      }
+
+      if (currentUser && (currentUser.id || currentUser.email)) {
+        const fetchId = currentUser.id || currentUser.email;
+        apiFetch('/api/v1/students/' + encodeURIComponent(fetchId))
+          .then(res => { if (!res.ok) throw new Error('HTTP ' + res.status); return res.json(); })
+          .then(data => {
+            if (data && currentUser) {
+              currentUser.unlockedPlaygrounds = Array.isArray(data.unlockedPlaygrounds) ? data.unlockedPlaygrounds : [];
+              currentUser.unlockedCourses = Array.isArray(data.unlockedCourses) ? data.unlockedCourses : [];
+              currentUser.isSqlPaid = Boolean(data.isSqlPaid);
+              currentUser.isPythonPaid = Boolean(data.isPythonPaid);
+              currentUser.isPaid = Boolean(data.isPaid);
+              currentUser.solvedQuestions = Array.isArray(data.solvedQuestions) ? data.solvedQuestions : [];
+              currentUser.completedQuestions = Array.isArray(data.completedQuestions) ? data.completedQuestions : [];
+              currentUser.pythonCompleted = Array.isArray(data.pythonCompleted) ? data.pythonCompleted : [];
+              currentUser.activityLog = Array.isArray(data.activityLog) ? data.activityLog : [];
+
+              const cleanEmail = (currentUser.email || '').toLowerCase().trim();
+              if (cleanEmail) {
+                const paidList = [];
+                if (currentUser.isSqlPaid) paidList.push('sql');
+                if (currentUser.isPythonPaid) paidList.push('python');
+                if (paidList.length > 0) {
+                  localStorage.setItem('mnt_paid_unlocks_' + cleanEmail, JSON.stringify(paidList));
+                } else {
+                  localStorage.removeItem('mnt_paid_unlocks_' + cleanEmail);
+                  if (currentUser.solvedQuestions.length === 0 && currentUser.completedQuestions.length === 0) {
+                    localStorage.removeItem('python_done_' + cleanEmail);
+                    localStorage.removeItem('activity_log_' + cleanEmail);
+                  }
+                }
+              }
+              const str = JSON.stringify(currentUser);
+              localStorage.setItem('currentUser', str);
+              localStorage.setItem('mnt_user', str);
+
+              // Trigger re-render of course table, 7-day chart & activity log with fresh server data
+              setTimeout(() => {
+                renderStudentCourseCatalog(currentUser);
+                render7DayActivityChart(currentUser);
+                renderStudentActivityLog(currentUser);
+              }, 50);
+            }
+          })
+          .catch(() => {});
+      }
+
+      // Calculate completed questions strictly from authenticated user's confirmed solve arrays
+      let rawCompleted = [];
+      try {
+        if (currentUser) {
+          if (Array.isArray(currentUser.solvedQuestions)) {
+            rawCompleted = rawCompleted.concat(currentUser.solvedQuestions);
+          } else if (Array.isArray(currentUser.completedQuestions)) {
+            rawCompleted = rawCompleted.concat(currentUser.completedQuestions);
+          }
+        }
+      } catch (e) { }
+
+      const uniqueSet = new Set();
+      rawCompleted.forEach(item => {
+        if (!item || item === 'undefined' || item === 'null') return;
+        const norm = normalizeQuestionId(item);
+        if (norm && /^q\d+$/i.test(norm)) uniqueSet.add(norm);
+      });
+
+      const uniqueCompletedList = Array.from(uniqueSet);
+      const qArray = window.questionsArray || DASH_CATALOG;
+      const totalQuestions = Math.max(145, qArray.length);
+
+      const validDoneSet = new Set(uniqueCompletedList);
+      window.validDoneSet = validDoneSet;
+
+      // Dynamic calculation prioritizing logged-in user's active submission history
+      let doneQuestions = validDoneSet.size;
+      const remainingQuestions = Math.max(0, totalQuestions - doneQuestions);
+      const progressPct = totalQuestions > 0 ? Math.min(100, Math.round((doneQuestions / totalQuestions) * 100)) : 0;
+
+      let name = currentUser ? (currentUser.fullName || currentUser.name || currentUser.studentName || currentUser.username) : null;
+      if (!name || name === "Student Profile") {
+        if (currentUser && currentUser.email) {
+          name = currentUser.email.split('@')[0];
+        }
+      }
+      if (!name || name === "Student Profile") {
+        name = currentUser.email ? currentUser.email.split('@')[0] : 'Student';
+      }
+
+      const email = currentUser.email || '';
+      const cohort = currentUser.cohort || '—';
+      const course = currentUser.course || '—';
+
+      let initials = currentUser.avatar || '';
+      if (!initials || initials === 'ST') {
+        initials = name.trim().split(/\s+/).map(w => w[0]).join('').toUpperCase().substring(0, 2) || 'U';
+      }
+
+      const el = id => document.getElementById(id);
+
+      if (el('dashName')) el('dashName').textContent = name;
+      if (el('dashAvatar')) el('dashAvatar').textContent = initials;
+      if (el('dashMeta')) el('dashMeta').textContent = `Student \u2022 ${cohort} \u2022 ${course} \u2022 ${email}`;
+      if (el('navUserTrack')) el('navUserTrack').textContent = `${name} (${cohort})`;
+
+      if (el('cardProgress')) el('cardProgress').textContent = `${progressPct}%`;
+      if (el('cardProgressFill')) el('cardProgressFill').style.width = `${progressPct}%`;
+
+      if (el('cardTopics')) el('cardTopics').textContent = `${doneQuestions} / ${totalQuestions}`;
+      if (el('cardTopicsSub')) el('cardTopicsSub').textContent = `${remainingQuestions} exercises remaining`;
+
+      if (el('dashDoneBadge')) el('dashDoneBadge').textContent = `${doneQuestions} / ${totalQuestions} Done (${remainingQuestions} Left)`;
+
+      const streakInfo = calculateAndUpdateStreak(currentUser);
+      const streakDisplay = streakInfo.text;
+      const streakSub = streakInfo.sub;
+
+      if (el('cardStreakCount')) el('cardStreakCount').textContent = streakDisplay;
+      if (el('cardTotalTime')) el('cardTotalTime').textContent = streakDisplay;
+      if (el('cardStreakSub')) el('cardStreakSub').textContent = streakSub;
+      if (el('cardTodayTime')) el('cardTodayTime').textContent = streakSub;
+
+      const resumeStatusVal = currentUser ? (currentUser.resumeStatus || currentUser.resumeTopic || (currentUser.resumeUploaded ? "Resume Uploaded" : null) || currentUser.course || "Data Analytics") : "Data Analytics";
+      if (el('cardResumeStatus')) el('cardResumeStatus').textContent = resumeStatusVal;
+      if (el('cardStreak')) el('cardStreak').textContent = resumeStatusVal;
+      if (el('cardResumeSub')) el('cardResumeSub').textContent = "Updated Recently";
+
+      let unlocked = [];
+      if (currentUser && Array.isArray(currentUser.unlockedPlaygrounds)) {
+        const validUserUnlocks = currentUser.unlockedPlaygrounds.filter(m => m !== 'analytics_default');
+        unlocked = Array.from(new Set(validUserUnlocks));
+      }
+      if (currentUser && currentUser.email) {
+        try {
+          const userKey = `mnt_paid_unlocks_${currentUser.email.toLowerCase().trim()}`;
+          const paidUnlocked = JSON.parse(localStorage.getItem(userKey) || '[]');
+          if (Array.isArray(paidUnlocked)) {
+            unlocked = Array.from(new Set([...unlocked, ...paidUnlocked]));
+          }
+        } catch (e) { }
+      }
+
+      const isSqlUnlocked = unlocked.includes('sql');
+
+      if (el('heroResumeBtn')) {
+        if (!isSqlUnlocked) {
+          el('heroResumeBtn').removeAttribute('href');
+          el('heroResumeBtn').style.cursor = 'pointer';
+          el('heroResumeBtn').onclick = (e) => {
+            e.preventDefault();
+            openUnlockModal('sql', 'SQL Bootcamp', 399);
+          };
+        } else {
+          el('heroResumeBtn').href = 'sql.html';
+          el('heroResumeBtn').onclick = null;
+        }
+      }
+
+      // Master Course Catalog for Student Dashboard
+      const DASHBOARD_COURSES = [
+        {
+          id: 'sql',
+          key: 'sql',
+          name: 'SQL Bootcamp',
+          title: 'SQL Bootcamp',
+          totalUnits: 145,
+          unitType: 'Questions',
+          route: 'sql.html',
+          targetUrl: 'sql.html',
+          price: '₹399',
+          priceNum: 399
+        },
+        {
+          id: 'python',
+          key: 'python',
+          name: 'Python Fundamentals',
+          title: 'Python Fundamentals',
+          totalUnits: 33,
+          unitType: 'Questions',
+          route: 'python.html',
+          targetUrl: 'python.html',
+          price: '₹399',
+          priceNum: 399
+        }
+      ];
+
+      let unlockedCount = 0;
+      let lockedCount = 0;
+
+      const tbody = el('courseTableBody') || document.getElementById('dashboard-courses-tbody');
+      if (tbody) {
+        tbody.innerHTML = DASHBOARD_COURSES.map(course => {
+          // Check paid / unlocked access status — registration enrollment alone does not grant lab access until unlocked
+          const isEnrolled = (Array.isArray(unlocked) && (unlocked.includes(course.id) || unlocked.includes(course.key))) ||
+                             (Array.isArray(currentUser?.unlockedCourses) && (currentUser.unlockedCourses.includes(course.id) || currentUser.unlockedCourses.includes(course.key))) ||
+                             (Array.isArray(currentUser?.unlockedPlaygrounds) && (currentUser.unlockedPlaygrounds.includes(course.id) || currentUser.unlockedPlaygrounds.includes(course.key))) ||
+                             (course.id === 'sql' && currentUser?.isSqlPaid === true) ||
+                             (course.id === 'python' && currentUser?.isPythonPaid === true) ||
+                             false;
+
+          // Calculate solved units strictly from authenticated user confirmed arrays
+          let solvedCount = 0;
+          if (course.id === 'sql') {
+            solvedCount = Array.isArray(currentUser?.solvedQuestions) ? currentUser.solvedQuestions.length : (Array.isArray(currentUser?.completedQuestions) ? currentUser.completedQuestions.length : 0);
+          } else if (course.id === 'python') {
+            solvedCount = Array.isArray(currentUser?.pythonCompleted) ? currentUser.pythonCompleted.length : 0;
+          }
+
+          const progressPct = course.totalUnits > 0 ? Math.min(100, Math.round((solvedCount / course.totalUnits) * 100)) : 0;
+
+          if (isEnrolled) {
+            unlockedCount++;
+            return `
+              <tr>
+                <td class="course-name-cell font-semibold text-slate-900">${course.name}</td>
+                <td style="font-weight: 600; color: #475569;" class="font-mono">${course.totalUnits} ${course.unitType}</td>
+                <td class="course-progress-val font-semibold text-slate-700">${solvedCount}/${course.totalUnits} (${progressPct}%)</td>
+                <td style="text-align: right;">
+                  <a href="${course.route}" class="btn-launch-lab inline-flex items-center px-4 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold hover:bg-emerald-100 transition-colors" style="padding: 7px 16px; border-radius: 8px; background: #059669; color: #FFFFFF; font-size: 0.82rem; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; white-space: nowrap;">Open Lab &rarr;</a>
+                </td>
+              </tr>
+            `;
+          } else {
+            lockedCount++;
+            return `
+              <tr>
+                <td class="course-name-cell font-semibold text-slate-900">${course.name}</td>
+                <td class="course-dash font-mono text-slate-400">&mdash;</td>
+                <td class="course-dash text-slate-400">&mdash;</td>
+                <td style="text-align: right;">
+                  <button onclick="openUnlockModal('${course.key}', '${course.name}', ${course.priceNum})" class="btn-launch-lab locked-btn inline-flex items-center px-4 py-1.5 rounded-lg bg-amber-50 text-amber-800 border border-amber-200 text-xs font-semibold hover:bg-amber-100 transition-colors" style="cursor: pointer;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px; flex-shrink:0;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Unlock for ${course.price}</button>
+                </td>
+              </tr>
+            `;
+          }
+        }).join('');
+      }
+
+      if (el('playgroundHeaderCount')) {
+        el('playgroundHeaderCount').innerHTML = `<span class="badge-dot unlocked"></span><span id="unlocked-badge-count">${unlockedCount} UNLOCKED</span><span class="badge-sep">•</span><span class="badge-dot locked"></span><span id="locked-badge-count">${lockedCount} LOCKED</span>`;
+      }
+      if (el('unlocked-badge-count')) el('unlocked-badge-count').textContent = `• ${unlockedCount} UNLOCKED`;
+      if (el('locked-badge-count')) el('locked-badge-count').textContent = `• ${lockedCount} LOCKED`;
+
+      // Render Question Bank List
+      renderQuestionBank(qArray);
+
+      // Fetch authenticated student's own profile from /api/v1/students/me
+      apiFetch('/api/v1/students/me')
+        .then(res => { if (!res.ok) throw new Error('HTTP ' + res.status); return res.json(); })
+        .then(data => {
+          if (data) {
+            const serverName = data.fullName || data.name || data.studentName;
+            if (serverName && serverName !== 'Student Profile' && el('dashName')) {
+              el('dashName').textContent = serverName;
+              const initials = serverName.trim().split(/\s+/).map(w => w[0]).join('').toUpperCase().substring(0, 2) || "ST";
+              if (el('dashAvatar')) el('dashAvatar').textContent = initials;
+              if (el('navUserTrack')) el('navUserTrack').textContent = `${serverName} (${data.cohort || 'Cohort 14'})`;
+            }
+            const resStatus = data.resumeStatus || data.resumeTopic || (data.resumeUploaded ? "Resume Uploaded" : null);
+            if (resStatus) {
+              if (el('cardResumeStatus')) el('cardResumeStatus').textContent = resStatus;
+              if (el('cardStreak')) el('cardStreak').textContent = resStatus;
+              if (el('cardResumeSub')) el('cardResumeSub').textContent = "Updated Recently";
+            }
+          }
+        })
+        .catch(() => { });
+
+      render7DayActivityChart(currentUser);
+      renderStudentActivityLog(currentUser);
+    }
+
+    /* ── RECENT SUBMISSIONS & ACTIVITY LOG RENDERER ───────────── */
+    function renderStudentActivityLog(currentUser) {
+      const tbody = document.getElementById('student-activity-tbody');
+      const countBadge = document.getElementById('total-solved-badge');
+      let rawList = Array.isArray(currentUser?.activityLog) ? [...currentUser.activityLog] : [];
+
+      // Calculate total confirmed solves
+      const sqlSolves = (Array.isArray(currentUser?.solvedQuestions) ? currentUser.solvedQuestions.length : 0) ||
+                        (Array.isArray(currentUser?.completedQuestions) ? currentUser.completedQuestions.length : 0);
+      const pythonSolves = (Array.isArray(currentUser?.pythonCompleted) ? currentUser.pythonCompleted.length : 0);
+      const totalSolves = sqlSolves + pythonSolves;
+
+      // If user has 0 solves, clean up any stale local storage logs
+      if (totalSolves === 0) {
+        rawList = [];
+        if (currentUser?.email) {
+          try {
+            localStorage.removeItem(`activity_log_${currentUser.email.toLowerCase().trim()}`);
+          } catch(e) {}
+        }
+      } else if (rawList.length === 0 && currentUser?.email) {
+        try {
+          const localLog = JSON.parse(localStorage.getItem(`activity_log_${currentUser.email.toLowerCase().trim()}`) || '[]');
+          if (Array.isArray(localLog)) rawList = localLog;
+        } catch(e) {}
+      }
+
+      // Deduplicate by course + normalized question ID so 1 solved question per course only appears ONCE
+      const seenKeys = new Set();
+      let activityList = [];
+
+      rawList.forEach(item => {
+        if (!item) return;
+        const title = item.itemTitle || item.title || item.itemId;
+        if (!title || title === 'undefined' || title === 'null') return;
+
+        const rawItemId = String(item.itemId || '').trim();
+        const normId = normalizeQuestionId(rawItemId || title) || title.toLowerCase().trim();
+
+        // Normalize course attribution
+        let isSql = item.courseId === 'sql' || 
+                    (item.courseName && item.courseName.toLowerCase().includes('sql')) || 
+                    (item.module && item.module.toLowerCase().includes('sql')) ||
+                    (item.labType && item.labType.toLowerCase().includes('sql'));
+        let isPython = item.courseId === 'python' || 
+                       (item.courseName && item.courseName.toLowerCase().includes('python')) ||
+                       (item.labType && item.labType.toLowerCase().includes('python')) ||
+                       (!item.courseId && normId.startsWith('py_'));
+
+        if (!isSql && !isPython) {
+          isSql = true; // Default unknown question items to SQL Bootcamp rather than locked Python
+        }
+
+        const courseKey = isPython ? 'python' : 'sql';
+        const dedupeKey = `${courseKey}_${normId}`;
+        if (seenKeys.has(dedupeKey)) return;
+        seenKeys.add(dedupeKey);
+
+        const displayCourse = isPython ? 'Python Fundamentals' : 'SQL Bootcamp';
+        const displayItemId = (item.itemId && item.itemId !== '—') ? normalizeQuestionId(item.itemId) : (normId.startsWith('q') ? normId : '—');
+        const displayTitle = item.itemTitle || (item.title ? item.title.replace(/^\d+\s+/, '') : item.itemId);
+
+        activityList.push({
+          ...item,
+          courseId: courseKey,
+          courseName: displayCourse,
+          itemId: displayItemId,
+          itemTitle: displayTitle || title
+        });
+      });
+
+      // Update cached currentUser.activityLog with clean deduplicated list
+      if (currentUser && currentUser.email) {
+        currentUser.activityLog = activityList;
+        try {
+          localStorage.setItem('currentUser', JSON.stringify(currentUser));
+          localStorage.setItem('mnt_user', JSON.stringify(currentUser));
+          localStorage.setItem(`activity_log_${currentUser.email.toLowerCase().trim()}`, JSON.stringify(activityList));
+        } catch(e) {}
+      }
+
+      if (countBadge) countBadge.textContent = `${activityList.length} Total Submissions`;
+
+      if (!tbody) return;
+
+      if (activityList.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" style="padding: 24px; text-align: center; color: #94A3B8; font-size: 0.85rem;">
+              No questions or lessons solved yet. Open a lab above to start practicing!
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = activityList.map(item => {
+        const isSql = item.courseId === 'sql';
+        const timeFormatted = item.solvedAt ? new Date(item.solvedAt).toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        }) : 'Recently';
+
+        const badgeStyle = isSql
+          ? 'background: #EFF6FF; color: #1D4ED8; border: 1px solid #BFDBFE;'
+          : 'background: #ECFDF5; color: #047857; border: 1px solid #A7F3D0;';
+
+        const isWrong = String(item.status || '').toUpperCase() === 'WRONG' || String(item.status || '').toUpperCase() === 'FAILED' || item.isWrong === true;
+        const statusHTML = isWrong ? `
+          <span style="display: inline-flex; align-items: center; gap: 4px; color: #DC2626; font-weight: 600; font-size: 0.78rem;">
+            <svg style="width: 14px; height: 14px;" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+            </svg>
+            Wrong
+          </span>
+        ` : `
+          <span style="display: inline-flex; align-items: center; gap: 4px; color: #059669; font-weight: 600; font-size: 0.78rem;">
+            <svg style="width: 14px; height: 14px;" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+            Passed
+          </span>
+        `;
+
+        return `
+          <tr style="border-bottom: 1px solid #F1F5F9; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#F8FAFC'" onmouseout="this.style.backgroundColor='transparent'">
+            <td style="padding: 12px;">
+              <span style="display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: 600; ${badgeStyle}">
+                ${item.courseName || (isSql ? 'SQL Bootcamp' : 'Python Fundamentals')}
+              </span>
+            </td>
+            <td style="padding: 12px; font-weight: 600; color: #0F172A;">${item.itemTitle || item.title || item.itemId}</td>
+            <td style="padding: 12px; font-family: monospace; font-size: 0.75rem; color: #64748B;">${item.itemId || '—'}</td>
+            <td style="padding: 12px; color: #64748B; font-size: 0.78rem;">${timeFormatted}</td>
+            <td style="padding: 12px;">
+              ${statusHTML}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    /* ── RESTORE QUESTION BANK LIST RENDERER ───────────────────── */
+    function renderQuestionBank(customQuestions) {
+      const qListContainer = document.getElementById('dashQuestionList');
+      if (!qListContainer) return;
+
+      const qArray = (Array.isArray(customQuestions) && customQuestions.length > 0)
+        ? customQuestions
+        : (window.questionsArray && window.questionsArray.length > 0 ? window.questionsArray : DASH_CATALOG);
+
+      const searchVal = (document.getElementById('dashQSearch')?.value || '').toLowerCase().trim();
+
+      const filtered = qArray.filter(q => {
+        if (!q) return false;
+        const title = String(q.title || '').toLowerCase();
+        const diff = String(q.difficulty || '').toLowerCase();
+        const cat = String(q.category || '').toLowerCase();
+        return title.includes(searchVal) || diff.includes(searchVal) || cat.includes(searchVal);
+      });
+
+      if (filtered.length === 0) {
+        qListContainer.innerHTML = `<div style="padding:18px; text-align:center; color:var(--text-muted); font-size:0.85rem;">No exercises found matching "${searchVal}".</div>`;
+        return;
+      }
+
+      const doneSet = window.validDoneSet || new Set();
+
+      qListContainer.innerHTML = filtered.map(q => {
+        const qTitle = q.title || `Exercise ${q.id || ''}`;
+        const qDiff = String(q.difficulty || 'BEGINNER').toUpperCase();
+        const qCat = String(q.category || 'SELECT').toUpperCase();
+
+        const isDone = doneSet.has(q.id) ||
+                       doneSet.has(normalizeQuestionId(qTitle)) ||
+                       doneSet.has(normalizeQuestionId(q.id));
+
+        let statusBadge = `<span style="font-family:var(--fm); font-size:0.75rem; font-weight:700; color:#6B7280; background:rgba(156,163,175,0.1); border:1px solid rgba(156,163,175,0.2); padding:3px 10px; border-radius:999px;">⏳ Pending</span>`;
+        if (isDone) {
+          statusBadge = `<span style="font-family:var(--fm); font-size:0.75rem; font-weight:700; color:#059669; background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); padding:3px 10px; border-radius:999px;">✓ Completed</span>`;
+        }
+
+        let diffStyle = 'background:rgba(16,185,129,0.1); color:#059669; border:1px solid rgba(16,185,129,0.25);';
+        if (qDiff === 'INTERMEDIATE') {
+          diffStyle = 'background:rgba(245,158,11,0.1); color:#D97706; border:1px solid rgba(245,158,11,0.25);';
+        } else if (qDiff === 'EXPERT' || qDiff === 'ADVANCED') {
+          diffStyle = 'background:rgba(244,63,94,0.1); color:#E11D48; border:1px solid rgba(244,63,94,0.25);';
+        }
+
+        return `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:#FAFAFA; border:1px solid rgba(0,0,0,0.06); border-radius:8px; font-size:0.85rem;">
+          <div style="display:flex; flex-direction:column; gap:3px;">
+            <span style="font-weight:600; color:var(--text-main);">${qTitle}</span>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <span style="font-family:var(--fm); font-size:0.62rem; font-weight:700; padding:1px 6px; border-radius:4px; ${diffStyle}">${qDiff}</span>
+              <span style="font-family:var(--fm); font-size:0.62rem; font-weight:600; padding:1px 6px; border-radius:4px; background:rgba(0,0,0,0.05); color:#6B7280;">${qCat}</span>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:12px;">
+            ${statusBadge}
+            ${(function() {
+              try {
+                let cUser = null;
+                const rawU = localStorage.getItem('currentUser') || localStorage.getItem('mnt_user');
+                if (rawU) cUser = JSON.parse(rawU);
+                let userUnlocked = cUser && Array.isArray(cUser.unlockedPlaygrounds) ? cUser.unlockedPlaygrounds.filter(m => m !== 'analytics_default') : [];
+                let userPaid = [];
+                if (cUser && cUser.email) {
+                  userPaid = JSON.parse(localStorage.getItem(`mnt_paid_unlocks_${cUser.email.toLowerCase().trim()}`) || '[]');
+                }
+                const isUnlocked = userPaid.includes('sql') || userUnlocked.includes('sql');
+                if (!isUnlocked) {
+                  return `<button onclick="openUnlockModal('sql', 'SQL Bootcamp', 399)" style="background:#FFFBEB; border:1px solid rgba(245,158,11,0.4); padding:5px 12px; font-size:0.78rem; font-weight:500; color:#D97706; border-radius:6px; cursor:pointer; display:inline-flex; align-items:center; white-space:nowrap;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Unlock for ₹399</button>`;
+                }
+              } catch(e) {}
+              return `<a href="sql.html" style="font-size:0.78rem; font-weight:600; color:#0891B2; text-decoration:none;">Practice &rarr;</a>`;
+            })()}
+          </div>
+        </div>
+      `;
+      }).join('');
+    }
+    window.renderQuestionBank = renderQuestionBank;
+
+    // Render only top 2 recent items in activity feed
+    function renderActivityFeed(feedItems) {
+      const feedContainer = document.getElementById('activityFeedList');
+      if (!feedContainer) return;
+
+      let items = feedItems;
+      if (!items || !Array.isArray(items) || items.length === 0) {
+        try {
+          const raw = localStorage.getItem('studentActivityLog') || localStorage.getItem('mnt_activity_feed');
+          if (raw) items = JSON.parse(raw);
+        } catch (e) { }
+      }
+      if (!items || !Array.isArray(items) || items.length === 0) {
+        items = [
+          { title: 'SQL Joins & CTEs', status: 'PASSED', time: 'Just now', module: 'SQL Bootcamp' },
+          { title: 'Find Duplicate Emails', status: 'PASSED', time: '10 min ago', module: 'SQL Bootcamp' }
+        ];
+      }
+
+      // Strictly slice top 2 items
+      const displayItems = items.slice(0, 2);
+
+      feedContainer.innerHTML = displayItems.map(item => `
+      <div class="activity-feed-item">
+        <div class="act-left">
+          <span class="act-badge ${item.status ? item.status.toLowerCase() : 'passed'}">${item.status || 'PASSED'}</span>
+          <div>
+            <div class="act-title">${item.title || item.topic || 'Exercise Completed'}</div>
+            <div class="act-time">${item.time || item.timestamp || 'Just now'}</div>
+          </div>
+        </div>
+        <span style="font-size:0.75rem; color:var(--text-muted);">${item.module || 'SQL Lab'}</span>
+      </div>
+    `).join('');
+    }
+
+    /* ── WEEKLY ACTIVITY BAR CHART RENDERER (Mon–Sun Fixed Calendar Week) ── */
+
+    /** Return the local date string YYYY-MM-DD */
+    function toLocalDateStr(d) {
+      if (!d) return '';
+      const dateObj = (d instanceof Date) ? d : new Date(d);
+      if (isNaN(dateObj.getTime())) return '';
+      const year = dateObj.getFullYear();
+      const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+      const day = String(dateObj.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+    window.toLocalDateStr = toLocalDateStr;
+
+    function getWeekBounds() {
+      const now = new Date();
+      const dayOfWeek = now.getDay(); // 0=Sun, 1=Mon …
+      const distanceToMon = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+
+      const monday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + distanceToMon, 0, 0, 0, 0);
+      const sunday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + distanceToMon + 6, 23, 59, 59, 999);
+
+      return {
+        now,
+        nowTime: now.getTime(),
+        todayStr: toLocalDateStr(now),
+        weekStart: monday.getTime(),
+        weekEnd: sunday.getTime(),
+        monday,
+        sunday
+      };
+    }
+
+    function getCurrentWeekDays() {
+      const bounds = getWeekBounds();
+      const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      return days.map((dayLabel, index) => {
+        const date = new Date(bounds.monday.getFullYear(), bounds.monday.getMonth(), bounds.monday.getDate() + index);
+        const dateStr = toLocalDateStr(date); // YYYY-MM-DD (local time)
+        return { dayLabel, dateStr, date };
+      });
+    }
+    window.getCurrentWeekDays = getCurrentWeekDays;
+
+    function renderWeeklyMultiCourseTelemetry(user, containerId = 'dash7DayBarChart', badgeId = 'dashWeeklyCountBadge') {
+      const container = document.getElementById(containerId) || document.getElementById('weekly-bars-container');
+      const badge = document.getElementById(badgeId) || document.getElementById('weekly-total-badge');
+      if (!container) return;
+
+      let activeUser = user;
+      if (!activeUser) {
+        try {
+          const raw = localStorage.getItem('currentUser') || localStorage.getItem('mnt_user');
+          if (raw) activeUser = typeof raw === 'string' ? JSON.parse(raw) : raw;
+        } catch (e) {}
+      }
+
+      let activityLog = (activeUser && Array.isArray(activeUser.activityLog)) ? activeUser.activityLog : [];
+      if (activityLog.length === 0 && activeUser && activeUser.email) {
+        try {
+          const localLog = JSON.parse(localStorage.getItem(`activity_log_${activeUser.email.toLowerCase().trim()}`) || '[]');
+          if (Array.isArray(localLog)) activityLog = localLog;
+        } catch (e) {}
+      }
+
+      const bounds = getWeekBounds();
+      const weekDays = getCurrentWeekDays();
+
+      // Daily mapping keyed by dateStr (YYYY-MM-DD)
+      const dailyMap = {};
+      weekDays.forEach(wd => {
+        dailyMap[wd.dateStr] = {
+          dayLabel: wd.dayLabel,
+          dateStr: wd.dateStr,
+          isToday: wd.dateStr === bounds.todayStr,
+          isFuture: wd.dateStr > bounds.todayStr,
+          sql: new Set(),
+          python: new Set(),
+          da: new Set()
+        };
+      });
+
+      // Strict Date Gating Rule: Only include logs where solvedAt >= weekStart AND solvedAt <= now
+      activityLog.forEach(entry => {
+        if (!entry) return;
+        const ts = entry.solvedAt || entry.timestamp || entry.date || entry.createdAt || entry.time || entry.lastActive;
+        const rawId = entry.itemId || entry.id || entry.questionId || entry.itemTitle || entry.title;
+        if (!ts || !rawId) return;
+
+        const dateObj = new Date(ts);
+        if (isNaN(dateObj.getTime())) return;
+        const entryTime = dateObj.getTime();
+
+        if (entryTime < bounds.weekStart || entryTime > bounds.nowTime) return;
+
+        const entryDateStr = toLocalDateStr(dateObj);
+        const dayRecord = dailyMap[entryDateStr];
+        if (!dayRecord || dayRecord.isFuture) return;
+
+        const normKey = (typeof normalizeQuestionId === 'function' ? normalizeQuestionId(rawId) : null) || String(rawId).toLowerCase().trim();
+        const cId = String(entry.courseId || entry.course || entry.courseName || entry.labType || '').toLowerCase();
+        const title = String(entry.itemTitle || entry.title || rawId).toLowerCase();
+
+        if (cId.includes('analyst') || cId.includes('analytics') || cId.includes('powerbi') || cId.includes('excel') || normKey.startsWith('da_') || title.includes('analyst') || title.includes('powerbi')) {
+          dayRecord.da.add(normKey);
+        } else if (cId === 'python' || cId.includes('python') || cId.includes('pythonsandbox') || title.includes('python') || normKey.startsWith('py_') || normKey.startsWith('py')) {
+          dayRecord.python.add(normKey);
+        } else {
+          dayRecord.sql.add(normKey);
+        }
+      });
+
+      // Calculate deduplicated counts per day (future days are strictly 0)
+      const dayCounts = weekDays.map(wd => {
+        const d = dailyMap[wd.dateStr];
+        const sqlCount = d.isFuture ? 0 : d.sql.size;
+        const pyCount = d.isFuture ? 0 : d.python.size;
+        const daCount = d.isFuture ? 0 : d.da.size;
+        const total = sqlCount + pyCount + daCount;
+        return {
+          dayLabel: d.dayLabel,
+          dateStr: d.dateStr,
+          isToday: d.isToday,
+          isFuture: d.isFuture,
+          sql: sqlCount,
+          py: pyCount,
+          da: daCount,
+          total: total
+        };
+      });
+
+      const weekTotalCount = dayCounts.reduce((acc, curr) => acc + curr.total, 0);
+
+      // Header Badge Sync: Exactly equals sum of the 7 daily bar values
+      if (badge) badge.textContent = `${weekTotalCount} Solved This Week`;
+
+      // Determine max scale for chart height
+      const maxBar = Math.max(5, ...dayCounts.map(d => d.total));
+
+      // Render bars with clean deduplicated numbers & 3-color breakdown
+      container.innerHTML = dayCounts.map(d => {
+        const isToday = d.isToday;
+        const isZero = d.total === 0;
+
+        const totalHeightPct = isZero ? 5 : Math.max(15, Math.round((d.total / maxBar) * 100));
+        const sqlHeight = d.total > 0 ? ((d.sql / d.total) * 100) : 0;
+        const pyHeight = d.total > 0 ? ((d.py / d.total) * 100) : 0;
+        const daHeight = d.total > 0 ? ((d.da / d.total) * 100) : 0;
+
+        const tooltipText = `${d.total} Solved (SQL: ${d.sql}, Py: ${d.py}, DA: ${d.da})`;
+
+        return `
+          <div class="bar-column group" title="${tooltipText}" style="flex:1; display:flex; flex-direction:column; align-items:center; height:100%; justify-content:flex-end; cursor:pointer; position:relative;"
+               onmouseenter="var t=this.querySelector('.chart-tooltip'); if(t) t.style.opacity='1';"
+               onmouseleave="var t=this.querySelector('.chart-tooltip'); if(t) t.style.opacity='0';">
+            <!-- Exact Solved Breakdown Tooltip -->
+            <div class="chart-tooltip" style="position:absolute; top:-34px; background:#0F172A; color:#FFFFFF; font-size:10px; font-family:'JetBrains Mono',monospace; padding:3px 8px; border-radius:6px; white-space:nowrap; pointer-events:none; z-index:20; opacity:0; transition:opacity 0.2s; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);">
+              ${tooltipText}
+            </div>
+
+            <!-- Number Label on Top -->
+            <div style="font-size:0.68rem; font-weight:700; color:${isZero ? '#94A3B8' : '#0F172A'}; margin-bottom:4px; font-family:'JetBrains Mono', monospace; min-height:14px;">
+              ${d.total > 0 ? d.total : ''}
+            </div>
+
+            <!-- Stacked Column Bar (SQL #10B981, Python #3B82F6, DA #8B5CF6) -->
+            <div class="bar-pill" style="width:100%; max-width:28px; height:${totalHeightPct}%; background:${isZero ? '#F1F5F9' : 'transparent'}; border-radius:6px 6px 3px 3px; overflow:hidden; display:flex; flex-direction:column-reverse; transition:all 0.3s ease;">
+              ${d.sql > 0 ? `<div style="height:${sqlHeight}%; background:#10B981; width:100%; transition:height 0.3s ease;" title="SQL: ${d.sql}"></div>` : ''}
+              ${d.py > 0 ? `<div style="height:${pyHeight}%; background:#3B82F6; width:100%; transition:height 0.3s ease;" title="Python: ${d.py}"></div>` : ''}
+              ${d.da > 0 ? `<div style="height:${daHeight}%; background:#8B5CF6; width:100%; transition:height 0.3s ease;" title="Data Analyst: ${d.da}"></div>` : ''}
+            </div>
+
+            <!-- Day Label -->
+            <div style="font-size:0.7rem; font-weight:${isToday ? '800' : '600'}; color:${isToday ? '#059669' : '#64748B'}; margin-top:6px; font-family:'JetBrains Mono', monospace; ${isToday ? 'text-decoration:underline; text-underline-offset:3px;' : ''}">
+              ${d.dayLabel}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+    window.renderWeeklyMultiCourseTelemetry = renderWeeklyMultiCourseTelemetry;
+    window.render7DayActivityChart = renderWeeklyMultiCourseTelemetry;
+
+    function syncDashboardTelemetryAndProgress() {
+      updateMetricsUI();
+    }
+    window.syncDashboardTelemetryAndProgress = syncDashboardTelemetryAndProgress;
+
+    function updateMetricsUI() {
+      loadAndRenderStudentDashboard();
+      renderActivityFeed();
+      render7DayActivityChart();
+    }
+    window.updateMetricsUI = updateMetricsUI;
+
+    /* ── LIVE BROADCAST & EVENT LISTENERS ───────────────────────── */
+    try {
+      const liveChannel = new BroadcastChannel('student_activity_channel');
+      liveChannel.onmessage = (event) => {
+        if (event.data && (event.data.type === 'QUESTION_COMPLETED' || event.data.type === 'TELEMETRY_SYNC')) {
+          syncDashboardTelemetryAndProgress();
+        }
+      };
+    } catch (e) { }
+
+    window.addEventListener('storage', (e) => {
+      updateAuthHeaderState();
+      syncDashboardTelemetryAndProgress();
+    });
+    window.addEventListener('telemetry-updated', (e) => {
+      syncDashboardTelemetryAndProgress();
+    });
+    window.addEventListener('studentProgressUpdated', (e) => {
+      syncDashboardTelemetryAndProgress();
+    });
+    window.addEventListener('questionBankUpdated', (e) => {
+      syncDashboardTelemetryAndProgress();
+    });
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        syncDashboardTelemetryAndProgress();
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      updateAuthHeaderState();
+      ensureDefaultData();
+      updateMetricsUI();
+      const searchInput = document.getElementById('dashQSearch');
+      if (searchInput) {
+        searchInput.addEventListener('input', () => {
+          updateMetricsUI();
+        });
+      }
+    });
+  </script>
+  <!-- Playground Module Unlock Modal -->
+  <div id="unlockModal" class="unlock-modal-overlay" onclick="if(event.target===this) closeUnlockModal()">
+    <div class="unlock-modal-card">
+      <button class="unlock-modal-close" onclick="closeUnlockModal()">&times;</button>
+      <div class="unlock-modal-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+        </svg>
+      </div>
+      <div class="unlock-modal-tag">PREMIUM PLAYGROUND MODULE</div>
+      <h3 class="unlock-modal-title" id="unlockTitle">Unlock Course</h3>
+      <p class="unlock-modal-sub" id="unlockSub">Get full lifetime access to interactive playgrounds, guided hands-on
+        labs, and real-world practice problems.</p>
+
+      <div class="unlock-modal-price-box">
+        <div class="unlock-price-label">One-Time Unlock Fee</div>
+        <div class="unlock-price-val" id="unlockPrice">₹399</div>
+        <div class="unlock-price-sub">Instant Access &bull; Lifetime Validity</div>
+      </div>
+
+      <ul class="unlock-modal-features">
+        <li><span class="check-icon">✓</span> Full access to interactive code playground &amp; exercises</li>
+        <li><span class="check-icon">✓</span> Real-time execution sandbox with telemetry tracking</li>
+        <li><span class="check-icon">✓</span> Industry case studies &amp; interview-ready projects</li>
+      </ul>
+
+      <div class="unlock-modal-actions">
+        <button class="unlock-btn-confirm" id="unlockConfirmBtn" onclick="confirmUnlockModule()">Pay ₹399 &amp; Unlock
+          Instantly &rarr;</button>
+        <button class="unlock-btn-cancel" onclick="closeUnlockModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentUnlockModule = null;
+
+    window.openUnlockModal = function (modKey, modTitle, price) {
+      currentUnlockModule = { key: modKey, title: modTitle, price: price };
+      const el = id => document.getElementById(id);
+      if (el('unlockTitle')) el('unlockTitle').textContent = `Unlock ${modTitle}`;
+      if (el('unlockPrice')) el('unlockPrice').textContent = `₹${price}`;
+      if (el('unlockConfirmBtn')) el('unlockConfirmBtn').textContent = `Pay ₹${price} & Unlock Instantly →`;
+      const modal = el('unlockModal');
+      if (modal) modal.classList.add('open');
+    };
+
+    window.closeUnlockModal = function () {
+      const modal = document.getElementById('unlockModal');
+      if (modal) modal.classList.remove('open');
+      currentUnlockModule = null;
+    };
+
+    window.confirmUnlockModule = function () {
+      if (!currentUnlockModule) return;
+      const modKey = currentUnlockModule.key;
+      const modTitle = currentUnlockModule.title;
+
+      // Safely save unlocked module to user profile without modifying any other user data
+      try {
+        let currentUser = null;
+        const raw = localStorage.getItem('currentUser') || localStorage.getItem('mnt_user');
+        if (raw) currentUser = JSON.parse(raw);
+
+        if (currentUser && typeof currentUser === 'object') {
+          currentUser.unlockedPlaygrounds = currentUser.unlockedPlaygrounds || [];
+          if (!currentUser.unlockedPlaygrounds.includes(modKey)) {
+            currentUser.unlockedPlaygrounds.push(modKey);
+          }
+          currentUser.unlockedCourses = currentUser.unlockedCourses || [];
+          if (!currentUser.unlockedCourses.includes(modKey)) {
+            currentUser.unlockedCourses.push(modKey);
+          }
+          if (modKey === 'sql') currentUser.isSqlPaid = true;
+          if (modKey === 'analytics' || modKey === 'pyspark') currentUser.isAnalyticsPaid = true;
+          if (modKey === 'powerbi') currentUser.isPowerBIPaid = true;
+          if (modKey === 'python') currentUser.isPythonPaid = true;
+
+          const str = JSON.stringify(currentUser);
+          localStorage.setItem('currentUser', str);
+          localStorage.setItem('mnt_user', str);
+
+          if (currentUser.email) {
+            const userKey = `mnt_paid_unlocks_${currentUser.email.toLowerCase().trim()}`;
+            let paidUnlocked = [];
+            try {
+              paidUnlocked = JSON.parse(localStorage.getItem(userKey) || '[]');
+            } catch (e) { }
+            if (!paidUnlocked.includes(modKey)) {
+              paidUnlocked.push(modKey);
+              localStorage.setItem(userKey, JSON.stringify(paidUnlocked));
+            }
+
+            // Asynchronous sync to backend server database
+            const studentId = currentUser.id || currentUser.email;
+            fetch(`/api/v1/students/${encodeURIComponent(studentId)}/progress`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                email: currentUser.email,
+                unlockedPlaygrounds: currentUser.unlockedPlaygrounds,
+                unlockedCourses: currentUser.unlockedCourses,
+                solvedQuestions: currentUser.solvedQuestions || currentUser.completedQuestions || [],
+                completedQuestions: currentUser.completedQuestions || currentUser.solvedQuestions || [],
+                isSqlPaid: currentUser.isSqlPaid || false,
+                isAnalyticsPaid: currentUser.isAnalyticsPaid || false,
+                isPowerBIPaid: currentUser.isPowerBIPaid || false,
+                isPythonPaid: currentUser.isPythonPaid || false
+              })
+            }).catch(function(e) {});
+
+            try {
+              const liveChannel = new BroadcastChannel('student_activity_channel');
+              liveChannel.postMessage({
+                type: 'STUDENT_UNLOCKED',
+                studentName: currentUser.name || currentUser.fullName || 'Student',
+                email: currentUser.email,
+                courseId: modKey,
+                courseName: modTitle,
+                currentUser: currentUser
+              });
+            } catch(e) {}
+          }
+        }
+      } catch (e) { }
+
+      alert(`🎉 Congratulations! ${modTitle} has been successfully unlocked.`);
+      closeUnlockModal();
+
+      if (window.loadAndRenderStudentDashboard) window.loadAndRenderStudentDashboard();
+      if (window.updateMetricsUI) window.updateMetricsUI();
+    };
+  </script>
+<script src="telemetry-heartbeat.js"></script>
+</body>
+
+</html>

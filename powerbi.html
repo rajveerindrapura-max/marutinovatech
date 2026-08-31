@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Power BI Beginner Course — Marutinovatech. Learn to build dashboards, transform data, and tell stories with data. 8 Weeks · ₹14,000.">
+  <meta name="theme-color" content="#0A0A10">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%230A0A10'/><path d='M18 42V24l7 10 7-12 7 12 7-10v18' stroke='%2300E5C8' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/><circle cx='32' cy='18' r='3.5' fill='%2300E5C8'/></svg>">
+  <title>Power BI Beginner Course — Marutinovatech</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <script>
+  (function() {
+    try {
+      let currentUser = null;
+      try {
+        const raw = localStorage.getItem('currentUser') || localStorage.getItem('mnt_user');
+        if (raw) currentUser = JSON.parse(raw);
+      } catch(e) {}
+      const userUnlocked = currentUser && Array.isArray(currentUser.unlockedPlaygrounds) ? currentUser.unlockedPlaygrounds.filter(m => m !== 'analytics_default') : [];
+      let userPaid = [];
+      if (currentUser && currentUser.email) {
+        try {
+          userPaid = JSON.parse(localStorage.getItem(`mnt_paid_unlocks_${currentUser.email.toLowerCase().trim()}`) || '[]');
+        } catch(e) {}
+      }
+      const isUnlocked = userPaid.includes('powerbi') || userUnlocked.includes('powerbi') || (currentUser && (currentUser.isPowerBIPaid || currentUser.isPaid || (Array.isArray(currentUser.unlockedCourses) && currentUser.unlockedCourses.includes('powerbi'))));
+      if (!isUnlocked) {
+        alert('🔒 The Power BI Bootcamp lab is locked. Please unlock it for ₹399 from your Student Dashboard.');
+        window.location.href = 'dashboard.html';
+      }
+    } catch(e) {}
+  })();
+  </script>
+<style>
+:root{
+  --bg:#0D1117;--surface:#161B22;--elevated:#21262D;--border:#30363D;
+  --text:#E6EDF3;--muted:#8B949E;
+  --teal:#00E5C8;--teal-dim:rgba(0,229,200,.1);--teal-border:rgba(0,229,200,.28);
+  --gold:#D29922;--gold-dim:rgba(210,153,34,.1);
+  --purple:#BC8CFF;
+  --fh:'Space Grotesk',sans-serif;--fb:'Inter',sans-serif;--fm:'JetBrains Mono',monospace;
+  --r:14px;--r-lg:18px;--r-xl:22px;--r-pill:999px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--fb);font-size:16px;line-height:1.65;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font-family:var(--fb);cursor:pointer;border:none;outline:none}
+
+/* ── NAV ── */
+.nav{position:sticky;top:0;z-index:200;background:rgba(13,17,23,.88);backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,255,255,.07);padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{font-family:var(--fh);font-weight:700;font-size:1rem;letter-spacing:-.02em;display:flex;align-items:center;gap:8px;color:var(--text)}
+.nav-brand span{color:var(--teal)}
+.nav-back{display:flex;align-items:center;gap:6px;font-size:.82rem;color:var(--muted);padding:6px 14px;border-radius:8px;border:1px solid var(--border);transition:.2s}
+.nav-back:hover{color:var(--teal);border-color:var(--teal-border);background:var(--teal-dim)}
+.nav-back svg{stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.nav-enroll{background:var(--teal);color:#0a0a10;font-family:var(--fh);font-weight:700;font-size:.82rem;padding:8px 18px;border-radius:var(--r-pill);transition:.2s}
+.nav-enroll:hover{opacity:.88;transform:translateY(-1px)}
+
+/* ── HERO ── */
+.hero{padding:72px 28px 60px;text-align:center;max-width:900px;margin:0 auto;position:relative}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--teal-dim);border:1px solid var(--teal-border);border-radius:var(--r-pill);padding:5px 14px;font-family:var(--fm);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);margin-bottom:20px}
+.hero-badge-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:hdot 2s ease-in-out infinite}
+@keyframes hdot{0%,100%{opacity:1}50%{opacity:.35}}
+.hero h1{font-family:var(--fh);font-size:clamp(2rem,5vw,3.2rem);font-weight:800;letter-spacing:-.04em;line-height:1.1;margin-bottom:16px}
+.hero h1 em{font-style:normal;color:var(--teal)}
+.hero-sub{color:var(--muted);font-size:1.05rem;line-height:1.75;max-width:580px;margin:0 auto 32px}
+.hero-pills{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:36px}
+.hero-pill{display:flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-pill);padding:7px 16px;font-family:var(--fm);font-size:.72rem;color:var(--muted)}
+.hero-pill svg{flex-shrink:0;opacity:.65}
+.hero-cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-cta{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:var(--r-pill);font-family:var(--fh);font-weight:700;font-size:.96rem;transition:.24s;cursor:pointer;border:none}
+.btn-cta-primary{background:var(--teal);color:#0a0a10;box-shadow:0 4px 24px rgba(0,229,200,.28)}
+.btn-cta-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,229,200,.38)}
+.btn-cta-wa{background:rgba(37,211,102,.1);border:1.5px solid rgba(37,211,102,.4);color:#25D366;padding:13px 28px}
+.btn-cta-wa:hover{background:rgba(37,211,102,.18);border-color:rgba(37,211,102,.7);transform:translateY(-2px)}
+
+/* ── STATS STRIP ── */
+.stats-strip{display:flex;justify-content:center;flex-wrap:wrap;gap:0;max-width:640px;margin:0 auto 80px;border:1px solid rgba(255,255,255,.09);border-radius:14px;background:rgba(255,255,255,.03);overflow:hidden}
+.stat-item{flex:1;min-width:120px;padding:20px 16px;text-align:center;border-right:1px solid rgba(255,255,255,.07)}
+.stat-item:last-child{border-right:none}
+.stat-num{font-family:var(--fh);font-size:1.5rem;font-weight:800;color:var(--teal)}
+.stat-lbl{font-family:var(--fm);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:3px}
+
+/* ── CONTAINER ── */
+.container{max-width:860px;margin:0 auto;padding:0 28px}
+
+/* ── SECTION LABEL ── */
+.section-label{font-family:var(--fm);font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);margin-bottom:10px;display:block}
+.section-title{font-family:var(--fh);font-size:clamp(1.4rem,3vw,1.9rem);font-weight:700;letter-spacing:-.03em;margin-bottom:10px}
+.section-sub{color:var(--muted);font-size:.9rem;line-height:1.72;margin-bottom:40px}
+
+/* ── WHAT YOU WILL LEARN ── */
+.outcomes{padding:60px 0}
+.outcomes-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.outcome-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;display:flex;gap:13px;align-items:flex-start}
+.outcome-icon{width:32px;height:32px;border-radius:8px;background:var(--teal-dim);border:1px solid var(--teal-border);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.outcome-icon svg{stroke:var(--teal);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.outcome-text{font-size:.875rem;color:var(--text);line-height:1.6}
+.outcome-text strong{font-family:var(--fh);font-size:.82rem;display:block;margin-bottom:3px;color:var(--text)}
+
+/* ── CURRICULUM ACCORDION ── */
+.curriculum{padding:60px 0}
+.module{border:1px solid var(--border);border-radius:var(--r-lg);margin-bottom:10px;overflow:hidden;transition:border-color .2s}
+.module.open{border-color:rgba(0,229,200,.28)}
+.module-hd{display:flex;align-items:center;gap:14px;padding:18px 22px;cursor:pointer;user-select:none;transition:background .18s}
+.module-hd:hover{background:rgba(255,255,255,.03)}
+.module-num{font-family:var(--fm);font-size:.68rem;font-weight:600;color:var(--teal);background:var(--teal-dim);border:1px solid var(--teal-border);border-radius:6px;padding:3px 9px;flex-shrink:0;letter-spacing:.04em}
+.module-info{flex:1;min-width:0}
+.module-title{font-family:var(--fh);font-size:.95rem;font-weight:700;color:var(--text)}
+.module-meta{font-family:var(--fm);font-size:.68rem;color:var(--muted);margin-top:2px}
+.module-chevron{color:var(--muted);transition:transform .3s cubic-bezier(.4,0,.2,1);flex-shrink:0}
+.module-chevron svg{stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.module.open .module-chevron{transform:rotate(180deg);color:var(--teal)}
+.module-body{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.4,0,.2,1)}
+.module-body-inner{padding:0 22px 20px;border-top:1px solid rgba(255,255,255,.06)}
+.lesson-list{list-style:none;margin-top:16px;display:flex;flex-direction:column;gap:10px}
+.lesson{display:flex;align-items:flex-start;gap:10px;font-size:.875rem;color:var(--muted);line-height:1.55}
+.lesson-dot{width:20px;height:20px;border-radius:50%;border:1.5px solid rgba(0,229,200,.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.lesson-dot svg{stroke:var(--teal);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.lesson-tag{display:inline-block;font-family:var(--fm);font-size:.6rem;letter-spacing:.06em;text-transform:uppercase;background:rgba(188,140,255,.1);border:1px solid rgba(188,140,255,.22);color:var(--purple);border-radius:4px;padding:2px 7px;margin-left:6px;vertical-align:middle}
+.lesson-tag.hands{background:rgba(0,229,200,.08);border-color:rgba(0,229,200,.22);color:var(--teal)}
+.capstone{margin-top:12px;padding:14px 16px;border-radius:10px;background:rgba(210,153,34,.06);border:1px solid rgba(210,153,34,.2)}
+.capstone-label{font-family:var(--fm);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.capstone p{font-size:.85rem;color:var(--muted);line-height:1.6}
+
+/* ── WHO IS THIS FOR ── */
+.audience{padding:60px 0;border-top:1px solid var(--border)}
+.audience-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.aud-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;display:flex;gap:10px;align-items:flex-start;font-size:.875rem;color:var(--muted);line-height:1.55}
+.aud-icon{font-size:1.2rem;flex-shrink:0;line-height:1.4}
+
+/* ── TOOLS ── */
+.tools{padding:40px 0 60px}
+.tools-row{display:flex;flex-wrap:wrap;gap:10px}
+.tool-chip{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-pill);padding:8px 16px;font-family:var(--fm);font-size:.75rem;color:var(--text);transition:.2s}
+.tool-chip:hover{border-color:rgba(0,229,200,.3);color:var(--teal)}
+
+/* ── PRICING ── */
+.pricing{padding:60px 0;border-top:1px solid var(--border)}
+.price-card{background:var(--surface);border:1.5px solid rgba(0,229,200,.28);border-radius:var(--r-xl);padding:40px 44px;max-width:520px;margin:0 auto;text-align:center;position:relative;overflow:hidden}
+.price-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 0%,rgba(0,229,200,.06),transparent 70%);pointer-events:none}
+.price-badge{display:inline-block;font-family:var(--fm);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);background:var(--teal-dim);border:1px solid var(--teal-border);border-radius:var(--r-pill);padding:4px 12px;margin-bottom:18px}
+.price-amount{font-family:var(--fh);font-size:3rem;font-weight:800;color:var(--text);letter-spacing:-.04em;line-height:1}
+.price-amount span{font-size:1.5rem;vertical-align:top;margin-top:8px;display:inline-block;font-weight:600;color:var(--muted)}
+.price-note{color:var(--muted);font-family:var(--fm);font-size:.75rem;margin:8px 0 24px}
+.price-includes{list-style:none;text-align:left;margin-bottom:32px;display:flex;flex-direction:column;gap:10px}
+.price-inc{display:flex;align-items:center;gap:10px;font-size:.875rem;color:var(--muted)}
+.price-inc svg{flex-shrink:0;stroke:var(--teal);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.price-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:15px 24px;border-radius:var(--r-pill);background:var(--teal);color:#0a0a10;font-family:var(--fh);font-weight:700;font-size:.96rem;transition:.2s;cursor:pointer;border:none;margin-bottom:12px}
+.price-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,229,200,.3)}
+.price-btn-wa{background:transparent;border:1.5px solid rgba(37,211,102,.4);color:#25D366}
+.price-btn-wa:hover{background:rgba(37,211,102,.1);border-color:rgba(37,211,102,.7)}
+
+/* ── ENROLL MODAL ── */
+.modal-ov{position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.72);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .25s}
+.modal-ov.open{opacity:1;pointer-events:all}
+.modal-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:36px 32px;max-width:420px;width:100%;position:relative;transform:translateY(16px);transition:transform .28s cubic-bezier(.34,1.2,.64,1)}
+.modal-ov.open .modal-card{transform:translateY(0)}
+.modal-close{position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.85rem;transition:.2s}
+.modal-close:hover{background:rgba(255,255,255,.12);color:var(--text)}
+.modal-title{font-family:var(--fh);font-size:1.15rem;font-weight:700;margin-bottom:6px}
+.modal-sub{font-size:.82rem;color:var(--muted);margin-bottom:24px;line-height:1.6}
+.fg{margin-bottom:16px}
+.fg label{display:block;font-size:.78rem;font-weight:600;color:var(--muted);margin-bottom:6px;font-family:var(--fb)}
+.fg input,.fg select,.fg textarea{width:100%;background:var(--elevated);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:var(--fb);font-size:.875rem;padding:10px 14px;transition:border-color .2s;outline:none}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--teal-border)}
+.fg textarea{resize:vertical;min-height:72px}
+.fg select option{background:var(--elevated)}
+.submit-btn{width:100%;padding:13px;border-radius:var(--r-pill);background:var(--teal);color:#0a0a10;font-family:var(--fh);font-weight:700;font-size:.96rem;cursor:pointer;border:none;transition:.2s;margin-top:4px}
+.submit-btn:hover{opacity:.88}
+
+/* ── FOOTER ── */
+.footer{border-top:1px solid var(--border);padding:32px 28px;text-align:center;font-family:var(--fm);font-size:.72rem;color:var(--muted)}
+.footer a{color:var(--teal);text-decoration:none}
+
+/* ── MOBILE ── */
+/* ── Performance: remove backdrop-filter on mobile ── */
+@media(max-width:768px){
+  .nav{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  .modal-ov{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+}
+@media(max-width:640px){
+  .nav{padding:0 16px}
+  .hero{padding:48px 18px 40px}
+  .container{padding:0 18px}
+  .hero h1{font-size:1.85rem}
+  .hero-sub{font-size:.92rem}
+  .hero-cta-row{flex-direction:column;align-items:stretch}
+  .btn-cta{justify-content:center}
+  .stats-strip{border-radius:12px;margin-bottom:48px}
+  .stat-item{min-width:100px;padding:16px 10px}
+  .stat-num{font-size:1.25rem}
+  .outcomes-grid{grid-template-columns:1fr}
+  .audience-grid{grid-template-columns:1fr}
+  .module-hd{padding:14px 16px}
+  .module-body-inner{padding:0 16px 16px}
+  .price-card{padding:28px 22px}
+  .price-amount{font-size:2.4rem}
+  .modal-card{padding:28px 22px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="index.html" class="nav-back">
+    <svg width="15" height="15" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    Back
+  </a>
+  <div class="nav-brand">maruti<span>nova</span>tech</div>
+  <button class="nav-enroll" onclick="openModal()">Enroll Now</button>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge"><span class="hero-badge-dot"></span>Power BI · Beginner Level</div>
+  <h1>Turn Data Into<br><em>Decisions That Matter</em></h1>
+  <p class="hero-sub">An 8-week hands-on course in Power BI — from zero to building real dashboards. No prior experience needed.</p>
+  <div class="hero-pills">
+    <div class="hero-pill">
+      <svg width="13" height="13" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      8 Weeks
+    </div>
+    <div class="hero-pill">
+      <svg width="13" height="13" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Beginner Friendly
+    </div>
+    <div class="hero-pill">
+      <svg width="13" height="13" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      Power BI Desktop & Service
+    </div>
+    <div class="hero-pill">
+      <svg width="13" height="13" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Live Projects
+    </div>
+    <div class="hero-pill">
+      <svg width="13" height="13" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Certificate
+    </div>
+  </div>
+  <div class="hero-cta-row">
+    <button class="btn-cta btn-cta-primary" onclick="openModal()">Enroll for ₹14,000 →</button>
+    <a href="https://wa.me/919079622142?text=Hi!%20I%20want%20to%20join%20the%20Power%20BI%20Beginner%20course.%20Can%20you%20share%20the%20next%20batch%20details?" target="_blank" rel="noopener" class="btn-cta btn-cta-wa">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.556 4.116 1.528 5.843L.057 23.571a.75.75 0 0 0 .921.921l5.734-1.472A11.955 11.955 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75a9.713 9.713 0 0 1-4.95-1.356l-.355-.211-3.683.945.972-3.572-.232-.368A9.712 9.712 0 0 1 2.25 12C2.25 6.615 6.615 2.25 12 2.25S21.75 6.615 21.75 12 17.385 21.75 12 21.75z"/></svg>
+      Ask on WhatsApp
+    </a>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="container">
+  <div class="stats-strip">
+    <div class="stat-item"><div class="stat-num">8</div><div class="stat-lbl">Weeks</div></div>
+    <div class="stat-item"><div class="stat-num">5</div><div class="stat-lbl">Modules</div></div>
+    <div class="stat-item"><div class="stat-num">3</div><div class="stat-lbl">Live Projects</div></div>
+    <div class="stat-item"><div class="stat-num">500+</div><div class="stat-lbl">Students Placed</div></div>
+  </div>
+</div>
+
+<!-- WHAT YOU WILL LEARN -->
+<section class="outcomes">
+  <div class="container">
+    <span class="section-label">Outcomes</span>
+    <h2 class="section-title">What You'll Be Able to Do</h2>
+    <p class="section-sub">By the end of this course you'll independently build, publish, and share professional Power BI dashboards.</p>
+    <div class="outcomes-grid">
+      <div class="outcome-card">
+        <div class="outcome-icon"><svg width="16" height="16" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><path d="M2 20h20"/></svg></div>
+        <div class="outcome-text"><strong>Build Interactive Dashboards</strong>Create slicers, drill-throughs, and KPI cards from real datasets.</div>
+      </div>
+      <div class="outcome-card">
+        <div class="outcome-icon"><svg width="16" height="16" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div>
+        <div class="outcome-text"><strong>Connect & Clean Data</strong>Import from Excel, CSV, databases and transform with Power Query.</div>
+      </div>
+      <div class="outcome-card">
+        <div class="outcome-icon"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+        <div class="outcome-text"><strong>Model Data Relationships</strong>Design star schemas and understand cardinality between tables.</div>
+      </div>
+      <div class="outcome-card">
+        <div class="outcome-icon"><svg width="16" height="16" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <div class="outcome-text"><strong>Write Basic DAX</strong>Use SUM, CALCULATE, IF, and time intelligence functions confidently.</div>
+      </div>
+      <div class="outcome-card">
+        <div class="outcome-icon"><svg width="16" height="16" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+        <div class="outcome-text"><strong>Publish to Power BI Service</strong>Share dashboards with stakeholders and set up scheduled refresh.</div>
+      </div>
+      <div class="outcome-card">
+        <div class="outcome-icon"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <div class="outcome-text"><strong>Secure Your Reports</strong>Apply Row-Level Security to control who sees what data.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CURRICULUM -->
+<section class="curriculum">
+  <div class="container">
+    <span class="section-label">Curriculum · Beginner Level</span>
+    <h2 class="section-title">Course Modules</h2>
+    <p class="section-sub">5 structured modules + a capstone project. Intermediate and Expert levels coming soon.</p>
+
+    <!-- Module 1 -->
+    <div class="module open" id="mod1">
+      <div class="module-hd" onclick="toggleModule('mod1')">
+        <span class="module-num">01</span>
+        <div class="module-info">
+          <div class="module-title">Power BI Fundamentals</div>
+          <div class="module-meta">Week 1–2 · 6 lessons</div>
+        </div>
+        <div class="module-chevron"><svg width="16" height="16" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></div>
+      </div>
+      <div class="module-body" id="mod1-body">
+        <div class="module-body-inner">
+          <ul class="lesson-list">
+            <li class="lesson"><div class="lesson-dot"><svg width="9" height="9" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div>What is Business Intelligence and why Power BI?</div></li>
+            <li class="lesson"><div class="lesson-dot"><svg width="9" height="9" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div>Installing Power BI Desktop and navigating the interface <span class="lesson-tag hands">Hands-on</span></div></li>
+            <li class="lesson"><div class="lesson-dot"><svg width="9" height="9" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div>Report View, Data View, and Model View — when to use each</div></li>
+            <li class="lesson"><div class="lesson-dot"><svg width="9" height="9" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div>Connecting to Excel and CSV files <span class="lesson-tag hands">Hands-on</span></div></li>
+            <li class="lesson"><div class="lesson-dot"><svg width="9" height="9" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div>Your first chart: Bar, Line, and Pie visuals</div></li>
+            <li class="lesson"><div class="lesson-dot"><svg width="9" height="9" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div>Formatting visuals: colors, fonts, titles, borders <span class="lesson-tag hands">Hands-on</span></div></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Module 2 -->
+    <div class="module" id="mod2">
+      <div class="module-hd" onclick="toggleModule('mod2')">
+        <span class="module-num">02</span>
+        <div class="module-info">
+          <div class="module-title">Data Transformation with Power Query</div>
+          <div class="module-meta">Week 2–3 · 7 lessons</div>
+        </div>
+        <div class="module-chevron"><svg width="16" height="16" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></div>
+      </div>
+      <div class="module-body" id="mod2-body">
+        <div class="module-body-inner">
+          <ul class="lesson-list">
+            <li class="lesson"><div class="lesson-dot"><svg width="9" height="9" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div>Introduction to Power Query Editor</div></li>
+            <li class="lesson"><div class="lesson-dot"><svg width="9" height="9" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div>Removing duplicates, filtering rows, handling null values <span class="lesson-tag hands">Hands-on</span></div></li>
+            <li class="lesson"><div class="lesson-dot"><svg width="9" height="9" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div>Changing data types: text, number, date, boolean</div></li>
+            <li class="lesson"><div class="lesson-dot"><svg width="9" height="9" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div>Splitting columns, renaming, and reordering <span class="lesson-tag hands">Hands-on</span></div></li>
+            <li class="lesson"><div class="lesson-dot"><svg width="9" height="9" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div>Merging queries (equivalent of SQL JOIN) <span class="lesson-tag hands">Hands-on</span></div></li>
+            <li class="lesson"><div class="lesson-dot"><svg width="9" height="9" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div>Appending queries to combine tables</div></li>
+            <li class="lesson"><div class="lesson-dot"><svg width="9" height="9" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div>Understanding Applied Steps and the M language (overview)</div></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Module 3 -->
+    <div class="module" id="mod3">
+      <div class="module-hd" onclick="toggleModule('mod3')">
+        <span class="module-num">03</span>
+        <div class="module-info">
+          <div class="module-title">Data Modeling & DAX Basics</div>
+          <div class="module-meta">Week 3–4 · 8 lessons</div>
+        </div>
+        <div class="module-chevron"><svg width="16" height="16" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></div>
+      </div>
+      <div class="module-body" id="mod3-body">
+        <div class="module-body-inner">
+          <ul class="lesson-list">
+            <li class="lesson"><div class="lesson-dot"><svg width="9" height="9" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div>What is a data model? Fact vs dimension tables</div></li>
+            <li class="lesson"><div class="lesson-dot"><svg width="9" height="9" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div>Creating relationships between tables <span class="lesson-tag hands">Hands-on</span></div></li>
+            <li class="lesson"><div class="lesson-dot"><svg width="9" height="9" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div>Understanding cardinality (one-to-many, many-to-many)</div></li>
+            <li class="lesson"><div class="lesson-dot"><svg width="9" height="9" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div>Cross-filter direction and when to use bidirectional</div></li>
+            <li class="lesson"><div class="lesson-dot"><svg width="9" height="9" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div>Introduction to DAX: measures vs calculated columns <span class="lesson-tag">DAX</span></div></li>
+            <li class="lesson"><div class="lesson-dot"><svg width="9" height="9" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div>Core DAX functions: SUM, COUNT, AVERAGE, MIN, MAX <span class="lesson-tag hands">Hands-on</span></div></li>
+            <li class="lesson"><div class="lesson-dot"><svg width="9" height="9" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div>CALCULATE — the most important DAX function <span class="lesson-tag">DAX</span></div></li>
+            <li class="lesson"><div class="lesson-dot"><svg width="9" height="9" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div>IF, SWITCH, and conditional DAX logic <span class="lesson-tag hands">Hands-on</span></div></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Module 4 -->
+    <div class="module" id="mod4">
+      <div class="module-hd" onclick="toggleModule('mod4')">
+        <span class="module-num">04</span>
+        <div class="module-info">
+          <div class="module-title">Building Professional Reports</div>
+          <div class="module-meta">Week 5–6 · 7 lessons</div>
+        </div>
+        <div class="module-chevron"><svg width="16" height="16" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></div>
+      </div>
+      <div class="module-body" id="mod4-body">
+        <div class="module-body-inner">
+          <ul class="lesson-list">
+            <li class="lesson"><div class="lesson-dot"><svg width="9" height="9" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div>Dashboard design principles: layout, color, whitespace</div></li>
+            <li class="lesson"><div class="lesson-dot"><svg width="9" height="9" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div>KPI cards, gauge charts, and matrix visuals <span class="lesson-tag hands">Hands-on</span></div></li>
+            <li class="lesson"><div class="lesson-dot"><svg width="9" height="9" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div>Slicers, page filters, and visual-level filters <span class="lesson-tag hands">Hands-on</span></div></li>
+            <li class="lesson"><div class="lesson-dot"><svg width="9" height="9" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div>Drill-through and drill-down navigation</div></li>
+            <li class="lesson"><div class="lesson-dot"><svg width="9" height="9" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div>Conditional formatting: color scales, data bars, icons</div></li>
+            <li class="lesson"><div class="lesson-dot"><svg width="9" height="9" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div>Bookmarks and buttons for report navigation</div></li>
+            <li class="lesson"><div class="lesson-dot"><svg width="9" height="9" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div>Mobile layout view — optimizing for phones <span class="lesson-tag hands">Hands-on</span></div></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Module 5 -->
+    <div class="module" id="mod5">
+      <div class="module-hd" onclick="toggleModule('mod5')">
+        <span class="module-num">05</span>
+        <div class="module-info">
+          <div class="module-title">Publishing, Sharing & Security</div>
+          <div class="module-meta">Week 7–8 · 6 lessons</div>
+        </div>
+        <div class="module-chevron"><svg width="16" height="16" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></div>
+      </div>
+      <div class="module-body" id="mod5-body">
+        <div class="module-body-inner">
+          <ul class="lesson-list">
+            <li class="lesson"><div class="lesson-dot"><svg width="9" height="9" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div>Publishing reports to Power BI Service <span class="lesson-tag hands">Hands-on</span></div></li>
+            <li class="lesson"><div class="lesson-dot"><svg width="9" height="9" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div>Workspaces, apps, and organizing reports</div></li>
+            <li class="lesson"><div class="lesson-dot"><svg width="9" height="9" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div>Sharing with links, embedding, and export (PDF / PPT)</div></li>
+            <li class="lesson"><div class="lesson-dot"><svg width="9" height="9" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div>Row-Level Security (RLS) — basics <span class="lesson-tag hands">Hands-on</span></div></li>
+            <li class="lesson"><div class="lesson-dot"><svg width="9" height="9" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div>Scheduled data refresh and data gateway overview</div></li>
+            <li class="lesson"><div class="lesson-dot"><svg width="9" height="9" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div>Course recap + what's next (Intermediate roadmap)</div></li>
+          </ul>
+          <div class="capstone">
+            <div class="capstone-label">Capstone Projects</div>
+            <p><strong style="color:var(--gold)">Project 1:</strong> End-to-end Sales Performance Dashboard — connect raw data, clean it, model relationships, build KPIs, publish and share.<br><br><strong style="color:var(--gold)">Project 2:</strong> HR Attrition Dashboard — filters by department, role, and tenure; includes drill-through to individual records.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- WHO IS THIS FOR -->
+<section class="audience">
+  <div class="container">
+    <span class="section-label">Who Is This For</span>
+    <h2 class="section-title">Is This Course Right for You?</h2>
+    <p class="section-sub" style="margin-bottom:24px">You don't need any prior Power BI or coding experience.</p>
+    <div class="audience-grid">
+      <div class="aud-card"><div class="aud-icon">🎓</div><div>Students and freshers who want <strong>job-ready BI skills</strong> before campus placements.</div></div>
+      <div class="aud-card"><div class="aud-icon">📊</div><div>Analysts working in Excel who want to <strong>move up to Power BI</strong> and handle bigger datasets.</div></div>
+      <div class="aud-card"><div class="aud-icon">💼</div><div>Professionals from any domain — finance, HR, marketing — who need to <strong>present data convincingly</strong>.</div></div>
+      <div class="aud-card"><div class="aud-icon">🚀</div><div>Career-switchers targeting <strong>Data Analyst, BI Developer, or Reporting Analyst</strong> roles.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TOOLS -->
+<section class="tools">
+  <div class="container">
+    <span class="section-label">Tools You'll Learn</span>
+    <div class="tools-row">
+      <div class="tool-chip">Power BI Desktop</div>
+      <div class="tool-chip">Power BI Service</div>
+      <div class="tool-chip">Power Query (M)</div>
+      <div class="tool-chip">DAX</div>
+      <div class="tool-chip">Excel / CSV</div>
+      <div class="tool-chip">Data Modeling</div>
+      <div class="tool-chip">Row-Level Security</div>
+      <div class="tool-chip">Power BI Mobile</div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing">
+  <div class="container">
+    <span class="section-label">Pricing</span>
+    <h2 class="section-title" style="text-align:center;margin-bottom:32px">One-Time Fee. Lifetime Access.</h2>
+    <div class="price-card">
+      <div class="price-badge">Beginner Level · Power BI</div>
+      <div class="price-amount"><span>₹</span>14,000</div>
+      <div class="price-note">One-time payment · EMI available on request</div>
+      <ul class="price-includes">
+        <li class="price-inc"><svg width="15" height="15" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>8 weeks of structured live + recorded content</li>
+        <li class="price-inc"><svg width="15" height="15" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>34 hands-on lessons with real datasets</li>
+        <li class="price-inc"><svg width="15" height="15" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>2 capstone projects with peer review</li>
+        <li class="price-inc"><svg width="15" height="15" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>WhatsApp support from instructors</li>
+        <li class="price-inc"><svg width="15" height="15" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Completion certificate</li>
+        <li class="price-inc"><svg width="15" height="15" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Access to Intermediate level when launched</li>
+      </ul>
+      <button class="price-btn" onclick="openModal()">Enroll Now →</button>
+      <a href="https://wa.me/919079622142?text=Hi!%20I%20want%20to%20join%20the%20Power%20BI%20Beginner%20course.%20Can%20you%20share%20the%20next%20batch%20details?" target="_blank" rel="noopener" class="price-btn price-btn-wa" style="display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.556 4.116 1.528 5.843L.057 23.571a.75.75 0 0 0 .921.921l5.734-1.472A11.955 11.955 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75a9.713 9.713 0 0 1-4.95-1.356l-.355-.211-3.683.945.972-3.572-.232-.368A9.712 9.712 0 0 1 2.25 12C2.25 6.615 6.615 2.25 12 2.25S21.75 6.615 21.75 12 17.385 21.75 12 21.75z"/></svg>
+        Chat on WhatsApp
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ENROLL MODAL -->
+<div class="modal-ov" id="enrollModal">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-title">Enroll in Power BI</div>
+    <p class="modal-sub">Fill in your details and we'll reach out within 24 hours with batch details and payment link.</p>
+    <form action="https://formsubmit.co/adampathak761@gmail.com" method="POST" onsubmit="handleSubmit(event)">
+      <input type="hidden" name="_subject" value="Power BI Beginner Enrollment">
+      <input type="hidden" name="_captcha" value="false">
+      <div class="fg">
+        <label>Full Name *</label>
+        <input type="text" name="name" placeholder="Your name" required>
+      </div>
+      <div class="fg">
+        <label>Phone *</label>
+        <input type="tel" name="phone" placeholder="+91 98765 43210" required>
+      </div>
+      <div class="fg">
+        <label>Email *</label>
+        <input type="email" name="email" placeholder="you@email.com" required>
+      </div>
+      <div class="fg">
+        <label>Message (optional)</label>
+        <textarea name="message" placeholder="Any questions?"></textarea>
+      </div>
+      <button type="submit" class="submit-btn">Send Enrollment Request →</button>
+    </form>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <p><a href="index.html">← Back to Marutinovatech</a> &nbsp;·&nbsp; Power BI Beginner Course &nbsp;·&nbsp; ₹14,000 one-time</p>
+</footer>
+
+<script>
+/* Accordion */
+function toggleModule(id) {
+  var mod = document.getElementById(id);
+  var body = document.getElementById(id + '-body');
+  var isOpen = mod.classList.contains('open');
+  if (isOpen) {
+    body.style.maxHeight = body.scrollHeight + 'px';
+    requestAnimationFrame(function(){ body.style.maxHeight = '0'; mod.classList.remove('open'); });
+  } else {
+    mod.classList.add('open');
+    body.style.maxHeight = body.scrollHeight + 'px';
+    body.addEventListener('transitionend', function once(){ body.style.maxHeight = ''; body.removeEventListener('transitionend', once); }, {once:true});
+  }
+}
+
+/* Open first module by default */
+(function(){
+  var b = document.getElementById('mod1-body');
+  if(b) b.style.maxHeight = b.scrollHeight + 'px';
+})();
+
+/* Modal */
+function openModal() {
+  document.getElementById('enrollModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('enrollModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('enrollModal').addEventListener('click', function(e){
+  if(e.target === this) closeModal();
+});
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape') closeModal();
+});
+
+/* Form submit */
+function handleSubmit(e) {
+  e.preventDefault();
+  var btn = e.target.querySelector('.submit-btn');
+  btn.textContent = 'Sending…';
+  btn.disabled = true;
+  fetch(e.target.action, {
+    method: 'POST',
+    body: new FormData(e.target),
+    headers: {Accept: 'application/json'}
+  }).then(function(){
+    btn.textContent = '✓ Sent! We\'ll be in touch soon.';
+    setTimeout(closeModal, 2000);
+  }).catch(function(){
+    btn.textContent = 'Error — try WhatsApp instead';
+    btn.disabled = false;
+  });
+}
+</script>
+</body>
+</html>
