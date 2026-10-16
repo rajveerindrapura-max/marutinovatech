@@ -1,9 +1,9 @@
-/**
- * Seed script — imports legacy JSON data into SQLite on first run.
- * Idempotent (skips if tables already have data). Creates admin user with bcrypt hash.
- * 
- * ℹ️ NOTE: Re-seeding data requires deleting data/marutinovatech.db first!
- */
+const path = require('path');
+const fs = require('fs');
+const bcrypt = require('bcryptjs');
+const config = require('../config');
+const { getDb } = require('./connection');
+const { createTables } = require('./schema');
 
 function seed() {
   const db = getDb();
