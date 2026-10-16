@@ -2,8 +2,8 @@
   "name": "marutinovatech-backend",
   "version": "2.0.0",
   "description": "Backend API for MarutiNovaTech Courses — Express + SQLite",
-  "main": "src/server.js",
   "scripts": {
+    "build": "echo 'Build ready'",
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
     "test": "jest --verbose --forceExit --detectOpenHandles",
