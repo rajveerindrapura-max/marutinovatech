@@ -33,5 +33,10 @@
   },
   "overrides": {
     "glob": "^13.0.6"
+  },
+  "allowScripts": {
+    "@parcel/watcher@2.6.0": true,
+    "better-sqlite3@13.0.3": true,
+    "unrs-resolver@1.12.2": true
   }
 }
