@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/sql-lab", "destination": "/sql.html" },
+    { "source": "/sql", "destination": "/sql.html" },
+    { "source": "/playground", "destination": "/sql.html" },
+    { "source": "/dashboard", "destination": "/dashboard.html" },
+    { "source": "/python", "destination": "/python.html" },
+    { "source": "/python-lab", "destination": "/python.html" },
+    { "source": "/api/(.*)", "destination": "/api/index.js" }
+  ]
+}

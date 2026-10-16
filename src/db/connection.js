@@ -8,18 +8,26 @@ let db = null;
 function getDb() {
   if (db) return db;
 
-  // Ensure the data directory exists
-  const dbDir = path.dirname(config.db.path);
+  // On Vercel / Serverless, the root directory is read-only; use /tmp which is writable
+  const isServerless = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
+  const targetPath = isServerless ? path.join('/tmp', 'marutinovatech.db') : config.db.path;
+
+  // Ensure the database directory exists
+  const dbDir = path.dirname(targetPath);
   if (!fs.existsSync(dbDir)) {
     fs.mkdirSync(dbDir, { recursive: true });
   }
 
-  db = new Database(config.db.path);
+  db = new Database(targetPath);
 
   // Enable WAL mode for better concurrent read performance
-  db.pragma('journal_mode = WAL');
-  db.pragma('foreign_keys = ON');
-  db.pragma('busy_timeout = 5000');
+  try {
+    db.pragma('journal_mode = WAL');
+    db.pragma('foreign_keys = ON');
+    db.pragma('busy_timeout = 5000');
+  } catch (e) {
+    // Suppress pragma errors in constrained serverless environments
+  }
 
   return db;
 }
