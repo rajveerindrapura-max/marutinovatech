@@ -16,6 +16,15 @@ function ensureInitialized() {
 }
 
 module.exports = (req, res) => {
-  ensureInitialized();
-  return app(req, res);
+  try {
+    ensureInitialized();
+    return app(req, res);
+  } catch (err) {
+    console.error('Unhandled serverless API error:', err);
+    if (!res.headersSent) {
+      res.statusCode = 500;
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({ error: 'Internal Server Error', message: err.message }));
+    }
+  }
 };
