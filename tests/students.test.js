@@ -67,11 +67,15 @@ describe('GET /api/v1/students (protected)', () => {
 
 describe('GET /api/v1/students/:id (protected)', () => {
   it('should return a student by ID', async () => {
+    const listRes = await request(app)
+      .get('/api/v1/students')
+      .set('Authorization', `Bearer ${adminToken}`);
+    const targetStudent = listRes.body[0];
     const res = await request(app)
-      .get('/api/v1/students/rahul-sharma')
+      .get(`/api/v1/students/${targetStudent.id}`)
       .set('Authorization', `Bearer ${adminToken}`);
     expect(res.status).toBe(200);
-    expect(res.body.id).toBe('rahul-sharma');
+    expect(res.body.id).toBe(targetStudent.id);
     expect(res.body).toHaveProperty('name');
     expect(res.body).toHaveProperty('email');
   });
@@ -91,8 +95,13 @@ describe('GET /api/v1/students/me (authenticated student)', () => {
   });
 
   it('should return own student record with student token', async () => {
+    const listRes = await request(app)
+      .get('/api/v1/students')
+      .set('Authorization', `Bearer ${adminToken}`);
+    const targetStudent = listRes.body[0];
+
     const studentToken = jwt.sign(
-      { id: 2, email: 'student@marutinova.com', role: 'student' },
+      { id: 2, email: targetStudent.email, role: 'student' },
       config.jwt.secret,
       { expiresIn: '1h' }
     );
@@ -100,19 +109,24 @@ describe('GET /api/v1/students/me (authenticated student)', () => {
       .get('/api/v1/students/me')
       .set('Authorization', `Bearer ${studentToken}`);
     expect(res.status).toBe(200);
-    expect(res.body.email).toBe('student@marutinova.com');
+    expect(res.body.email).toBe(targetStudent.email);
   });
 });
 
 describe('PATCH /api/v1/students/:id/progress', () => {
   it('should update completedQuestions for authenticated student', async () => {
+    const listRes = await request(app)
+      .get('/api/v1/students')
+      .set('Authorization', `Bearer ${adminToken}`);
+    const targetStudent = listRes.body[0];
+
     const studentToken = jwt.sign(
-      { id: 2, email: 'student@marutinova.com', role: 'student' },
+      { id: 2, email: targetStudent.email, role: 'student' },
       config.jwt.secret,
       { expiresIn: '1h' }
     );
     const res = await request(app)
-      .patch('/api/v1/students/rahul-sharma/progress')
+      .patch(`/api/v1/students/${targetStudent.id}/progress`)
       .set('Authorization', `Bearer ${studentToken}`)
       .send({
         completedQuestions: ['q01', 'q02', 'q03'],
@@ -124,13 +138,18 @@ describe('PATCH /api/v1/students/:id/progress', () => {
   });
 
   it('should reject non-admin student attempting to patch another student record', async () => {
+    const listRes = await request(app)
+      .get('/api/v1/students')
+      .set('Authorization', `Bearer ${adminToken}`);
+    const targetStudent = listRes.body[0];
+
     const otherStudentToken = jwt.sign(
       { id: 3, email: 'other@example.com', role: 'student' },
       config.jwt.secret,
       { expiresIn: '1h' }
     );
     const res = await request(app)
-      .patch('/api/v1/students/rahul-sharma/progress')
+      .patch(`/api/v1/students/${targetStudent.id}/progress`)
       .set('Authorization', `Bearer ${otherStudentToken}`)
       .send({
         completedQuestions: ['q01'],

@@ -62,7 +62,9 @@ function updateProgress(req, res) {
     if (targetStudent) {
       const sEmail = (targetStudent.email || '').toLowerCase().trim();
       const sId = String(targetStudent.id || '').toLowerCase().trim();
-      if (sEmail !== userEmail && sId !== userId && targetId !== sEmail && targetId !== sId) {
+      const isOwner = (userEmail && (userEmail === sEmail || userEmail === targetId)) ||
+                      (userId && (userId === sId || userId === targetId));
+      if (!isOwner) {
         return res.status(403).json({ error: 'Forbidden: Cannot modify another student profile' });
       }
     }

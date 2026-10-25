@@ -45,14 +45,16 @@ describe('GET /api/v1/courses', () => {
 
 describe('GET /api/v1/courses/:id', () => {
   it('should return a single course by ID', async () => {
-    const res = await request(app).get('/api/v1/courses/1');
+    const listRes = await request(app).get('/api/v1/courses');
+    const firstCourse = listRes.body[0];
+    const res = await request(app).get(`/api/v1/courses/${firstCourse.id}`);
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('title');
-    expect(res.body.id).toBe('1');
+    expect(res.body.id).toBe(String(firstCourse.id));
   });
 
   it('should return 404 for non-existent course', async () => {
-    const res = await request(app).get('/api/v1/courses/999');
+    const res = await request(app).get('/api/v1/courses/non-existent-course-id-999');
     expect(res.status).toBe(404);
     expect(res.body).toHaveProperty('error');
   });

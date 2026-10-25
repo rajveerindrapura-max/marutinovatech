@@ -18,17 +18,25 @@ function createFallbackDb() {
 
   let rawStudents = [];
   try {
-    if (fs.existsSync(studentsPath)) {
-      rawStudents = JSON.parse(fs.readFileSync(studentsPath, 'utf8'));
-    }
-  } catch (e) {}
+    rawStudents = require('../../data/students.json');
+  } catch (e) {
+    try {
+      if (fs.existsSync(studentsPath)) {
+        rawStudents = JSON.parse(fs.readFileSync(studentsPath, 'utf8'));
+      }
+    } catch (e2) {}
+  }
 
   let rawCourses = [];
   try {
-    if (fs.existsSync(coursesPath)) {
-      rawCourses = JSON.parse(fs.readFileSync(coursesPath, 'utf8'));
-    }
-  } catch (e) {}
+    rawCourses = require('../../data/courses.json');
+  } catch (e) {
+    try {
+      if (fs.existsSync(coursesPath)) {
+        rawCourses = JSON.parse(fs.readFileSync(coursesPath, 'utf8'));
+      }
+    } catch (e2) {}
+  }
 
   let students = rawStudents.map(s => ({
     id: s.id,

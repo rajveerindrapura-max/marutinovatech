@@ -21,11 +21,12 @@ if (!config.isTest) {
   app.use(morgan(config.isDev ? 'dev' : 'combined'));
 }
 
-// ── CORS — Restricted to configured origin ─────────────────────
+// ── CORS — Configured origin or wildcard ───────────────────────
 app.use(cors({
-  origin: config.cors.origin,
-  methods: ['GET', 'POST', 'OPTIONS'],
+  origin: config.cors.origin === '*' ? true : config.cors.origin,
+  methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
 }));
 
 // ── Body Parsing with size limit ───────────────────────────────
