@@ -18,6 +18,10 @@ function ensureInitialized() {
 module.exports = (req, res) => {
   try {
     ensureInitialized();
+    // Normalize URL if prefix was stripped by Vercel catch-all router
+    if (req.url && !req.url.startsWith('/api') && req.url.startsWith('/v1')) {
+      req.url = '/api' + req.url;
+    }
     return app(req, res);
   } catch (err) {
     console.error('Unhandled serverless API error:', err);
